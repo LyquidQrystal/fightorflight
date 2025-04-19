@@ -17,7 +17,9 @@ public class ClientBusEvent {
             var storage = CobblemonClient.INSTANCE.getStorage();
             int slot = storage.getSelectedSlot();
             var pokemon = storage.getMyParty().get(slot);
-            MoveSlotsRender.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true), pokemon);
+            if (pokemon != null) {
+                MoveSlotsRender.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true), pokemon);
+            }
         }
     }
 }

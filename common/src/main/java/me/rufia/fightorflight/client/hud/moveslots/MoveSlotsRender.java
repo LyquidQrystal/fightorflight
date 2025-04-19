@@ -24,6 +24,9 @@ public class MoveSlotsRender {
     public static void render(GuiGraphics graphics, float tickDelta, Pokemon pokemon) {
         Minecraft minecraft = Minecraft.getInstance();
         var player = minecraft.player;
+        if (!CobblemonFightOrFlight.visualEffectConfig().enable_move_indicator) {
+            return;
+        }
         if (player == null || player.isSpectator() || pokemon == null) {
             CobblemonFightOrFlight.LOGGER.info("Failed to render the icon.");
             return;

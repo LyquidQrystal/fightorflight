@@ -177,7 +177,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float minimum_melee_attack_interval = 1.0f;
     @Comment("The maximum time between pokemons melee attacks. In seconds.")
     public float maximum_melee_attack_interval = 3.0f;
-    @Comment("Minimum damage wild pokemon will do with ranged attacks")
+    @Comment("Minimum damage wild pokemon would do with ranged attacks")
     public float minimum_ranged_attack_damage = 1.0f;
     @Comment("Maximum damage wild pokemon would do with ranged attacks")
     public float maximum_ranged_attack_damage = 50.0f;

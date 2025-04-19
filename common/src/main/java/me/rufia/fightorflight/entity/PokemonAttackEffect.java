@@ -545,10 +545,12 @@ public class PokemonAttackEffect {
                     addProjectileEntity(pokemonEntity, target, bullet, move);
                 }
             } else if (b5 || b7 || b8) {
-                boolean success = target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
-                PokemonUtils.setHurtByPlayer(pokemonEntity, target);
-                PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
-                applyPostEffect(pokemonEntity, target, move, success);
+                if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, target)) {
+                    boolean success = target.hurt(pokemonEntity.damageSources().mobAttack(pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
+                    PokemonUtils.setHurtByPlayer(pokemonEntity, target);
+                    PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
+                    applyPostEffect(pokemonEntity, target, move, success);
+                }
                 //applyTypeEffect(pokemonEntity, target);
             } else if (b6) {
                 //Should not be processed here.

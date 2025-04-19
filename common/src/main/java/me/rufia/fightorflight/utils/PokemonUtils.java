@@ -1,8 +1,12 @@
 package me.rufia.fightorflight.utils;
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
+import com.cobblemon.mod.common.battles.BattleBuilder;
+import com.cobblemon.mod.common.battles.BattleFormat;
+import com.cobblemon.mod.common.battles.BattleRegistry;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.client.animation.PlayPosableAnimationPacket;
 import com.cobblemon.mod.common.net.messages.client.effect.RunPosableMoLangPacket;
@@ -332,6 +336,13 @@ public class PokemonUtils {
         return CobblemonFightOrFlight.commonConfig().shouldOverrideUpdateMaxHealth;
     }
 
+    public static String getNatureName(PokemonEntity pokemonEntity){
+        return getNatureName(pokemonEntity.getPokemon());
+    }
+    public static String getNatureName(Pokemon pokemon){
+        return pokemon.getNature().getDisplayName().toLowerCase().replace("cobblemon.nature.", "");
+    }
+
     public static int getMaxHealth(PokemonEntity pokemonEntity) {
         return getMaxHealth(pokemonEntity.getPokemon());
     }
@@ -471,6 +482,81 @@ public class PokemonUtils {
             return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth();
         }
         return false;
+    }
+
+    public static boolean pokemonTryForceEncounter(PokemonEntity attackingPokemon, Entity hurtTarget) {
+        if (hurtTarget instanceof PokemonEntity defendingPokemon) {
+            if (attackingPokemon.getPokemon().isPlayerOwned()) {
+                if (defendingPokemon.getPokemon().isPlayerOwned()) {
+                    if (CobblemonFightOrFlight.commonConfig().force_player_battle_on_pokemon_hurt) {
+                        return pokemonForceEncounterPvP(attackingPokemon, defendingPokemon);
+                    }
+                } else {
+                    if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
+                        return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
+                    }
+                }
+            } else if (defendingPokemon.getPokemon().isPlayerOwned()) {
+                if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
+                    return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean pokemonForceEncounterPvP(PokemonEntity playerPokemon, PokemonEntity opponentPokemon) {
+        if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer
+                && opponentPokemon.getOwner() instanceof ServerPlayer serverOpponent) {
+
+            if (serverPlayer == serverOpponent // I don't see why this should ever happen, but probably best to account for it
+                    || !canBattlePlayer(serverPlayer)
+                    || !canBattlePlayer(serverOpponent)) {
+                return false;
+            }
+
+            BattleBuilder.INSTANCE.pvp1v1(serverPlayer,
+                    serverOpponent,
+                    null,
+                    null,
+                    BattleFormat.Companion.getGEN_9_SINGLES(),
+                    false,
+                    false);
+        }
+        return false;
+    }
+
+    public static boolean pokemonForceEncounterPvE(PokemonEntity playerPokemon, PokemonEntity wildPokemon) {
+        if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer) {
+
+            if (!canBattlePlayer(serverPlayer)) {
+                return false;
+            }
+
+            BattleBuilder.INSTANCE.pve(serverPlayer,
+                    wildPokemon,
+                    playerPokemon.getPokemon().getUuid(),
+                    BattleFormat.Companion.getGEN_9_SINGLES(),
+                    false,
+                    false,
+                    Cobblemon.config.getDefaultFleeDistance(),
+                    Cobblemon.INSTANCE.getStorage().getParty(serverPlayer));
+        }
+        return false;
+    }
+
+    public static boolean canBattlePlayer(ServerPlayer serverPlayer) {
+        boolean playerHasAlivePokemon = false;
+        for (Pokemon pokemon : Cobblemon.INSTANCE.getStorage().getParty(serverPlayer)) {
+            if (!pokemon.isFainted()) {
+                playerHasAlivePokemon = true;
+                break;
+            }
+        }
+
+        return BattleRegistry.INSTANCE.getBattleByParticipatingPlayer(serverPlayer) == null
+                && playerHasAlivePokemon
+                && serverPlayer.isAlive();
     }
 
     public static boolean shouldCheckPokeStaff() {

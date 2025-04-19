@@ -26,7 +26,7 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
     @Override
     protected Map<ResourceLocation, MoveDataContainer> prepare(ResourceManager resourceManager, ProfilerFiller profiler) {
         Map<ResourceLocation, MoveDataContainer> map = new HashMap<>();
-        CobblemonFightOrFlight.LOGGER.info("[FOF] Preparing to read");
+        CobblemonFightOrFlight.LOGGER.info("[FOF] Preparing to read move data");
         prepareTag(resourceManager, "stat", StatChangeMoveDataContainer.class, map);
         prepareTag(resourceManager, "status", StatusEffectMoveDataContainer.class, map);
         prepareTag(resourceManager, "misc", MiscMoveDataContainer.class, map);
@@ -84,6 +84,4 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
         }
         CobblemonFightOrFlight.LOGGER.info("[FOF] {} move data files processed.", fileCount);
     }
-
-
 }

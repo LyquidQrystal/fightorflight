@@ -117,48 +117,48 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         super.onHitEntity(result);
         Entity target = result.getEntity();
         Entity entity2 = this.getOwner();
+        PokemonEntity pokemonEntity = entity2 instanceof PokemonEntity pokemon ? pokemon : null;
         DamageSource damageSource;
         float f = (float) this.getDeltaMovement().length();
-
-        if (entity2 instanceof LivingEntity livingEntity) {
-            damageSource = this.damageSources().mobAttack(livingEntity);
-            livingEntity.setLastHurtMob(target);
+        if (pokemonEntity != null) {
+            damageSource = this.damageSources().mobAttack(pokemonEntity);
+            pokemonEntity.setLastHurtMob(target);
         } else {
             damageSource = this.damageSources().generic();
         }
 
         boolean bl = target.getType() == EntityType.ENDERMAN;
-
-        if (target.hurt(damageSource, getDamage())) {
-            if (bl) {
-                return;
-            }
-            if (target instanceof LivingEntity livingEntity) {
-                if (this.knockback > 0) {
-                    double d = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-                    Vec3 vec3 = this.getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize().scale((double) this.knockback * 0.6 * d);
-                    if (vec3.lengthSqr() > 0.0) {
-                        livingEntity.push(vec3.x, 0.1, vec3.z);
-                    }
+        if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, target)) {
+            if (target.hurt(damageSource, getDamage())) {
+                if (bl) {
+                    return;
                 }
-                if (entity2 instanceof PokemonEntity pokemonEntity) {
-                    if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
-                        applyTypeEffect(pokemonEntity, livingEntity);
+                if (target instanceof LivingEntity livingEntity) {
+                    if (this.knockback > 0) {
+                        double d = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+                        Vec3 vec3 = this.getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize().scale((double) this.knockback * 0.6 * d);
+                        if (vec3.lengthSqr() > 0.0) {
+                            livingEntity.push(vec3.x, 0.1, vec3.z);
+                        }
                     }
-                    if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
-                        Move move = PokemonUtils.getMove(pokemonEntity);
-                        PokemonAttackEffect.applyPostEffect(pokemonEntity, livingEntity, move, true);
+                    if (pokemonEntity != null) {
+                        if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
+                            applyTypeEffect(pokemonEntity, livingEntity);
+                        }
+                        if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                            Move move = PokemonUtils.getMove(pokemonEntity);
+                            PokemonAttackEffect.applyPostEffect(pokemonEntity, livingEntity, move, true);
+                        }
                     }
-                }
 
+                }
+                this.discard();
+            } else {
+                this.setDeltaMovement(this.getDeltaMovement().scale(-0.1));
+                this.setYRot(this.getYRot() + 180.0F);
+                this.yRotO += 180.0F;
             }
-            this.discard();
-        } else {
-            this.setDeltaMovement(this.getDeltaMovement().scale(-0.1));
-            this.setYRot(this.getYRot() + 180.0F);
-            this.yRotO += 180.0F;
         }
-
     }
 
     protected void onHitBlock(BlockHitResult result) {

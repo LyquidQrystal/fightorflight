@@ -1,12 +1,8 @@
 package me.rufia.fightorflight.goals;
 
-import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.battles.BattleBuilder;
-import com.cobblemon.mod.common.battles.BattleFormat;
 import com.cobblemon.mod.common.battles.BattleRegistry;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
@@ -14,7 +10,6 @@ import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.MeleeAttackGoal;
 
 import java.util.Arrays;
@@ -98,7 +93,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         }
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
 
-        if (!pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
+        if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
                 if (Arrays.stream(CobblemonFightOrFlight.moveConfig().self_centered_aoe_moves).toList().contains(move.getName())) {
@@ -116,80 +111,5 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         }
 
         return false;
-    }
-
-    public boolean pokemonTryForceEncounter(PokemonEntity attackingPokemon, Entity hurtTarget) {
-        if (hurtTarget instanceof PokemonEntity defendingPokemon) {
-            if (attackingPokemon.getPokemon().isPlayerOwned()) {
-                if (defendingPokemon.getPokemon().isPlayerOwned()) {
-                    if (CobblemonFightOrFlight.commonConfig().force_player_battle_on_pokemon_hurt) {
-                        return pokemonForceEncounterPvP(attackingPokemon, defendingPokemon);
-                    }
-                } else {
-                    if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
-                        return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
-                    }
-                }
-            } else if (defendingPokemon.getPokemon().isPlayerOwned()) {
-                if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
-                    return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
-                }
-            }
-        }
-        return false;
-    }
-
-    public boolean pokemonForceEncounterPvP(PokemonEntity playerPokemon, PokemonEntity opponentPokemon) {
-        if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer
-                && opponentPokemon.getOwner() instanceof ServerPlayer serverOpponent) {
-
-            if (serverPlayer == serverOpponent // I don't see why this should ever happen, but probably best to account for it
-                    || !canBattlePlayer(serverPlayer)
-                    || !canBattlePlayer(serverOpponent)) {
-                return false;
-            }
-
-            BattleBuilder.INSTANCE.pvp1v1(serverPlayer,
-                    serverOpponent,
-                    null,
-                    null,
-                    BattleFormat.Companion.getGEN_9_SINGLES(),
-                    false,
-                    false);
-        }
-        return false;
-    }
-
-    public boolean pokemonForceEncounterPvE(PokemonEntity playerPokemon, PokemonEntity wildPokemon) {
-        if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer) {
-
-            if (!canBattlePlayer(serverPlayer)) {
-                return false;
-            }
-
-            BattleBuilder.INSTANCE.pve(serverPlayer,
-                    wildPokemon,
-                    playerPokemon.getPokemon().getUuid(),
-                    BattleFormat.Companion.getGEN_9_SINGLES(),
-                    false,
-                    false,
-                    Cobblemon.config.getDefaultFleeDistance(),
-                    Cobblemon.INSTANCE.getStorage().getParty(serverPlayer));
-        }
-        return false;
-    }
-
-    public boolean canBattlePlayer(ServerPlayer serverPlayer) {
-        boolean playerHasAlivePokemon = false;
-        for (Pokemon pokemon : Cobblemon.INSTANCE.getStorage().getParty(serverPlayer)) {
-            if (!pokemon.isFainted()) {
-                playerHasAlivePokemon = true;
-                break;
-            }
-        }
-
-        return BattleRegistry.INSTANCE.getBattleByParticipatingPlayer(serverPlayer) == null
-                && playerHasAlivePokemon
-                && serverPlayer.isAlive();
     }
 }

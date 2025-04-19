@@ -1,3 +1,9 @@
+# v0.7.8
+### New features:
+* Added configs to enable/disable the move indicator, adjust its position and size.
+### Bug Fixes:
+* Fixed the log spam on the neoforge side.
+* Fixed the bug that range attack won't trigger the battle when the config is enabled.
 # v0.7.7
 ### New features:
 - Type effectiveness for Pokemon: 2x damage for super effective moves, 0.5x damage for not very super effective moves and 0.1x damage for no effect. 
