@@ -44,9 +44,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Arrays;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
@@ -77,6 +75,9 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<String> COMMAND_DATA;
     @Unique
     private static final EntityDataAccessor<BlockPos> TARGET_BLOCK_POS;
+
+    @Unique
+    private static final List<FOFMove> MOVES_FOF=new ArrayList<>();//This should only be accessed in the server side!
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);

@@ -84,9 +84,9 @@ Though I haven't made contact with them, I don't mind they use my code if necess
   - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
     - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
     - Example: Pokemon gain strength when using Swords Dance, the duration will be longer than using Power-up Punch, and the cooldown will be longer / Using Telekinesis will levitate the target.
-  - Targeting whitelist
   - Compatibility with LivelierPokemon
 - Things that might not be done in a short period of time:
+  - Datapack driven behavior setting(quite complex)
   - Add an item similar to the Sticky Glob(Sounds cool, but we still got many things to do.)
   - Repel effect.(It's being worked on by the Cobblemon team according to their roadmap.)
   - Attack Position for Poke Staff(not available currently. It is quite difficult.)

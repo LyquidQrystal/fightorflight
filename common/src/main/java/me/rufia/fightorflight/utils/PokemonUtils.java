@@ -336,10 +336,11 @@ public class PokemonUtils {
         return CobblemonFightOrFlight.commonConfig().shouldOverrideUpdateMaxHealth;
     }
 
-    public static String getNatureName(PokemonEntity pokemonEntity){
+    public static String getNatureName(PokemonEntity pokemonEntity) {
         return getNatureName(pokemonEntity.getPokemon());
     }
-    public static String getNatureName(Pokemon pokemon){
+
+    public static String getNatureName(Pokemon pokemon) {
         return pokemon.getNature().getDisplayName().toLowerCase().replace("cobblemon.nature.", "");
     }
 
@@ -485,6 +486,9 @@ public class PokemonUtils {
     }
 
     public static boolean pokemonTryForceEncounter(PokemonEntity attackingPokemon, Entity hurtTarget) {
+        if (attackingPokemon == null || hurtTarget == null) {
+            return false;
+        }
         if (hurtTarget instanceof PokemonEntity defendingPokemon) {
             if (attackingPokemon.getPokemon().isPlayerOwned()) {
                 if (defendingPokemon.getPokemon().isPlayerOwned()) {

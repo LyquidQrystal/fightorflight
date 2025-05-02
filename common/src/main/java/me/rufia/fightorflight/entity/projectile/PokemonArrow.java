@@ -117,6 +117,9 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         super.onHitEntity(result);
         Entity target = result.getEntity();
         Entity entity2 = this.getOwner();
+        if ( entity2 == null) {
+            return;
+        }
         PokemonEntity pokemonEntity = entity2 instanceof PokemonEntity pokemon ? pokemon : null;
         DamageSource damageSource;
         float f = (float) this.getDeltaMovement().length();

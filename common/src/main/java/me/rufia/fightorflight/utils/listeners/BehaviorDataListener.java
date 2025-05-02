@@ -63,6 +63,6 @@ public class BehaviorDataListener extends SimplePreparableReloadListener<Map<Res
                 ++fileCount;
             }
         }
-        CobblemonFightOrFlight.LOGGER.info("[FOF] {} move data files processed.", fileCount);
+        CobblemonFightOrFlight.LOGGER.info("[FOF] {} behavior data files processed.", fileCount);
     }
 }

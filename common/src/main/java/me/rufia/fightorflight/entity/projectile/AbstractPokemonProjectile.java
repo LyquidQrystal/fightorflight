@@ -101,7 +101,7 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         super.onHitEntity(result);
         Entity owner = getOwner();
         Entity target = result.getEntity();
-        if (owner instanceof PokemonEntity pokemonEntity && target instanceof LivingEntity livingEntity) {
+        if (owner instanceof PokemonEntity pokemonEntity && target instanceof LivingEntity) {
             Move move = PokemonUtils.getMove(pokemonEntity);
             PokemonUtils.setHurtByPlayer(pokemonEntity, target);
             PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
