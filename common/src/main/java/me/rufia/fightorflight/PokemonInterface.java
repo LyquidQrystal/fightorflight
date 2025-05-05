@@ -80,4 +80,10 @@ public interface PokemonInterface {
     default void setCapturedBy(int id) {
 
     }
+
+    default void refreshMovesList() {
+    }
+
+    default void switchMove(Move move) {
+    }
 }

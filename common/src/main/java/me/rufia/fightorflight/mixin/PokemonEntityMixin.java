@@ -1,7 +1,6 @@
 package me.rufia.fightorflight.mixin;
 
 
-import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
@@ -77,7 +76,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<BlockPos> TARGET_BLOCK_POS;
 
     @Unique
-    private static final List<FOFMove> MOVES_FOF=new ArrayList<>();//This should only be accessed in the server side!
+    private static final List<FOFMove> MOVES_FOF = new ArrayList<>();//This should only be accessed in the server side!
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
@@ -361,6 +360,53 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             setAttackTime(getAttackTime() - 1);
         }
 
+    }
+
+    @Override
+    public void refreshMovesList() {
+        if (level().isClientSide) {
+            return;
+        }
+        MOVES_FOF.clear();
+        Pokemon pokemon = getPokemon();
+        for (Move move : pokemon.getMoveSet()) {
+            MOVES_FOF.add(new FOFMove(move.getName(), 0, 0));
+        }
+    }
+
+    @Override
+    public void switchMove(Move move) {
+        if (move == null) {
+            return;
+        }
+        if (MOVES_FOF.isEmpty()) {
+            refreshMovesList();
+        }
+        String oldMoveName = getCurrentMove();
+        int index = 0;
+        while (index < 4) {
+            if (MOVES_FOF.get(index) != null) {
+                if (Objects.equals(MOVES_FOF.get(index).getName(), oldMoveName)) {
+                    MOVES_FOF.get(index).setRemainingCooldown(getAttackTime());
+                    MOVES_FOF.get(index).setOriginalCooldown(getMaxAttackTime());
+                    for (int i = 0; i < 4; ++i) {
+                        if (MOVES_FOF.get(i) != null && Objects.equals(MOVES_FOF.get(i).getName(), move.getName())) {
+                            if (MOVES_FOF.get(i).getRemainingCooldown() <= 10) {
+                                setAttackTime(10);
+                                setMaxAttackTime(10);
+                            } else {
+                                FOFMove m = MOVES_FOF.get(i);
+                                setAttackTime(m.getRemainingCooldown());
+                                setMaxAttackTime(m.getOriginalCooldown());
+                            }
+                        }
+                    }
+                    break;
+                }
+            }
+            ++index;
+        }
+        setCurrentMove(move);
     }
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))

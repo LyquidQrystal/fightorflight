@@ -52,9 +52,7 @@ public class SendMoveSlotHandler implements NetworkPacketHandler<SendMoveSlotPac
                         if (PokemonAttackEffect.canChangeMove(pokemonEntity)) {
                             Move move = pokemon.getMoveSet().get(moveSlot);
                             if (move != null) {
-                                //CobblemonFightOrFlight.LOGGER.info(move.getDisplayName().toString());
-                                ((PokemonInterface) pokemonEntity).setCurrentMove(move);
-                                PokemonAttackEffect.refreshAttackTime(pokemonEntity,20);
+                                ((PokemonInterface) pokemonEntity).switchMove(move);
                                 player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemon.getDisplayName(), move.getDisplayName()));
                             }
                         }

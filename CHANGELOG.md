@@ -1,3 +1,12 @@
+# v0.7.9
+### New features:
+* Moves use independent cooldown time now.
+* There will be an internal cooldown(10 ticks, 0.5s) when switching the moves and the move's cooldown is lower than 10 ticks.
+* The cooldown of moves with a charging turn(Solar Beam) or moves that require recharging(Hyper Beam) will be doubled.
+### Bug Fixes:
+* Fix the bug that the arrow_projectile might cause a crash
+* Fix the bug that the melee attack and range attack can't change fluently.
+
 # v0.7.8
 ### New features:
 * Added configs to enable/disable the move indicator, adjust its position and size.

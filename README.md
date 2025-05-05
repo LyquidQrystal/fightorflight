@@ -77,13 +77,14 @@ Though I haven't made contact with them, I don't mind they use my code if necess
     - Sheer Force works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
 
 ### Features/Changes that is not released currently:
-- Added new configs to set the position of the indicator
 ## TODO
 - Main Goal For the Next Update:
+  - Status move effect
 - Things that might be done in a short period of time(1~3 big updates):
   - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
     - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
     - Example: Pokemon gain strength when using Swords Dance, the duration will be longer than using Power-up Punch, and the cooldown will be longer / Using Telekinesis will levitate the target.
+    - It might take a lot of time to cover most of the status moves so it won't be removed from this section currently.
   - Compatibility with LivelierPokemon
 - Things that might not be done in a short period of time:
   - Datapack driven behavior setting(quite complex)

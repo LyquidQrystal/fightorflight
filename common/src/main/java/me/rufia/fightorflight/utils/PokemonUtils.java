@@ -49,7 +49,7 @@ public class PokemonUtils {
         Move move = getRangeAttackMove(pokemonEntity);
         boolean b1 = pokemonEntity.getPokemon().getAttack() < pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
         boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
-        boolean b3 = move != null;//The trainer selected a physical move.
+        boolean b3 = move != null;//The trainer selected a range attack move.
         if (b2) {
             return b1 && CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
         } else {
@@ -163,7 +163,7 @@ public class PokemonUtils {
 
     public static boolean isMeleeAttackMove(Move move) {
         if (move == null) {
-            return true;
+            return false;
         }
         String moveName = move.getName();
         boolean isSpecial = isSpecialMove(move);
@@ -175,7 +175,7 @@ public class PokemonUtils {
 
     public static boolean isRangeAttackMove(Move move) {
         if (move == null) {
-            return true;
+            return false;
         }
         String moveName = move.getName();
         boolean isSpecial = isSpecialMove(move);
@@ -286,7 +286,7 @@ public class PokemonUtils {
 
 
     public static void sendAnimationPacket(PokemonEntity pokemonEntity, String mode) {
-        if (!((LivingEntity) pokemonEntity).level().isClientSide) {
+        if (!pokemonEntity.level().isClientSide) {
             var pkt = new PlayPosableAnimationPacket(pokemonEntity.getId(), Set.of(mode), List.of());
             pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> true).forEach((pkt::sendToPlayer));
         }

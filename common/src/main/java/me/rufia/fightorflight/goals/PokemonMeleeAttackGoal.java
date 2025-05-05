@@ -70,7 +70,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
     }
 
     public boolean canContinueToUse() {
-        return PokemonUtils.shouldFightTarget((PokemonEntity) mob) && super.canContinueToUse() && !PokemonUtils.moveCommandAvailable((PokemonEntity) mob);
+        return PokemonUtils.shouldFightTarget((PokemonEntity) mob) && super.canContinueToUse() && !PokemonUtils.moveCommandAvailable((PokemonEntity) mob) && PokemonUtils.shouldMelee((PokemonEntity) mob);
     }
 
     protected void checkAndPerformAttack(LivingEntity target) {
@@ -78,8 +78,8 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
             if (mob instanceof PokemonEntity pokemonEntity) {
                 if (((PokemonInterface) pokemonEntity).getAttackTime() == 0) {
                     this.resetAttackCooldown();
-                    pokemonDoHurtTarget(target);
                     PokemonAttackEffect.resetAttackTime(pokemonEntity, 1);
+                    pokemonDoHurtTarget(target);
                 }
             }
         }
@@ -92,13 +92,13 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
             }
         }
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
-
+        //CobblemonFightOrFlight.LOGGER.info("Trying to use melee attack");
         if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
                 if (Arrays.stream(CobblemonFightOrFlight.moveConfig().self_centered_aoe_moves).toList().contains(move.getName())) {
                     PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity, true);
-                    if (PokemonUtils.isMeleeAttackMove(move)) {
+                    if (PokemonUtils.isPhysicalMove(move)) {
                         PokemonUtils.sendAnimationPacket(pokemonEntity, "physical");
                     } else {
                         PokemonUtils.sendAnimationPacket(pokemonEntity, "special");

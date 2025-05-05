@@ -73,7 +73,7 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal {
     }
 
     public boolean canContinueToUse() {
-        if (target == null) {
+        if (target == null || !PokemonUtils.shouldShoot(pokemonEntity)) {
             return false;
         }
         return (this.canUse() || !this.pokemonEntity.getNavigation().isDone()) && !isTargetInBattle();
@@ -82,7 +82,7 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal {
     public void stop() {
         this.target = null;
         this.seeTime = 0;
-        setAttackTime(-1);
+        pokemonEntity.getNavigation().stop();
     }
 
     public boolean requiresUpdateEveryTick() {
