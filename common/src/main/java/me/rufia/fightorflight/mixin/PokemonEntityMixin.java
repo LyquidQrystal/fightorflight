@@ -8,12 +8,14 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.goals.targeting.*;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -356,9 +358,26 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (getNextCryTime() >= 0) {
             setNextCryTime(getNextCryTime() - 1);
         }
-        if (getAttackTime() > 0) {
-            setAttackTime(getAttackTime() - 1);
+        int attackTime = getAttackTime();
+        if (attackTime > 0) {
+            setAttackTime(attackTime - 1);
+        } else {
+            PokemonEntity self = (PokemonEntity) (Object) this;
+            Move move = PokemonUtils.getStatusMove(self);
+            if (move != null) {
+                if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                    if (MoveData.moveData.containsKey(move.getName())) {
+                        for (MoveData data : MoveData.moveData.get(move.getName())) {
+                            data.invoke(self, null);
+                        }
+                        PokemonUtils.makeParticle(10,self, ParticleTypes.HAPPY_VILLAGER);
+                        setAttackTime(300);
+                        setMaxAttackTime(300);
+                    }
+                }
+            }
         }
+
 
     }
 

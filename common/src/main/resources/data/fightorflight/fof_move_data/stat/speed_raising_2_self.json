@@ -1,0 +1,16 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_use",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "speed",
+  "move_list": [
+    "geomancy",
+    "rockpolish",
+    "agility",
+    "autotomize",
+    "shiftgear"
+  ],
+  "stage": 2
+}

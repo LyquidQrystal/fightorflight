@@ -517,6 +517,9 @@ public class PokemonAttackEffect {
     }
 
     public static void pokemonPerformRangedAttack(PokemonEntity pokemonEntity, LivingEntity target) {
+        if (pokemonEntity == null || target == null) {
+            return;
+        }
         Move move = PokemonUtils.getRangeAttackMove(pokemonEntity);
         AbstractPokemonProjectile bullet;
         PokemonUtils.sendAnimationPacket(pokemonEntity, "special");

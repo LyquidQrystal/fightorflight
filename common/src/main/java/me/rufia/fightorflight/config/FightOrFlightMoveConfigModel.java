@@ -239,6 +239,65 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     public String[] burn_status_move = {
             "willowisp"
     };
+    @Comment("Status moves that are used on the user.")
+    public String[] self_targeting_status_move = {
+            "bulkup",
+            "meditate",
+            "coil",
+            "calmmind",
+            "takeheart",
+
+            "charge",
+            "defensecurl",
+            "harden",
+            "withdraw",
+
+            "slackoff",
+            "synthesis",
+            "milkdrink",
+            "healorder",
+            "recover",
+            "morningsun",
+            "moonlight",
+            "softboiled",
+            "roost",
+
+            "geomancy",
+
+            "tidyup",
+            "dragondance",
+
+            "cosmicpower",
+            "defendorder",
+
+            "barrier",
+            "irondefense",
+            "shelter",
+            "acidarmor",
+            "amnesia",
+
+            "rockpolish",
+            "agility",
+            "autotomize",
+
+            "shiftgear",
+
+            "cottonguard",
+
+            "shellsmash",
+
+            "victorydance",
+            "quiverdance",
+
+            "honeclaws",
+            "sharpen",
+            "workup",
+            "growth",
+
+            "swordsdance",
+            "nastyplot",
+            "tailglow"
+    };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")
     public boolean pokemon_griefing = false;

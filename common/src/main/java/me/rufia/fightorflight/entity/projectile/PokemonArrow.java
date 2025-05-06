@@ -117,7 +117,7 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         super.onHitEntity(result);
         Entity target = result.getEntity();
         Entity entity2 = this.getOwner();
-        if ( entity2 == null) {
+        if (entity2 == null) {
             return;
         }
         PokemonEntity pokemonEntity = entity2 instanceof PokemonEntity pokemon ? pokemon : null;
@@ -128,9 +128,13 @@ public class PokemonArrow extends AbstractPokemonProjectile {
             pokemonEntity.setLastHurtMob(target);
         } else {
             damageSource = this.damageSources().generic();
+
         }
 
         boolean bl = target.getType() == EntityType.ENDERMAN;
+        if (pokemonEntity == null) {
+            this.discard();
+        }
         if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, target)) {
             if (target.hurt(damageSource, getDamage())) {
                 if (bl) {

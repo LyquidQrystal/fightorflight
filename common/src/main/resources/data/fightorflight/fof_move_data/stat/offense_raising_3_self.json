@@ -1,0 +1,12 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_use",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "attack",
+  "move_list": [
+    "tailglow"
+  ],
+  "stage": 2
+}

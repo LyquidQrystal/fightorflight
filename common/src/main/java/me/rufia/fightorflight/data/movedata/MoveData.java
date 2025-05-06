@@ -77,7 +77,7 @@ public abstract class MoveData {
     }
 
     public int calculateEffectDuration(PokemonEntity pokemonEntity) {
-        return Math.max(pokemonEntity.getPokemon().getLevel() / 10, 1);
+        return Math.max(pokemonEntity.getPokemon().getLevel() / 20, 1)+7;
     }
 
     public MoveData(String type, String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name) {

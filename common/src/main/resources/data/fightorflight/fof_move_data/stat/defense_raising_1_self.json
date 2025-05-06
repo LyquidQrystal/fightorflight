@@ -7,7 +7,21 @@
   "name": "defense",
   "move_list": [
     "psyshieldbash",
-    "skullbash"
+    "skullbash",
+
+    "bulkup",
+    "meditate",
+    "coil",
+    "calmmind",
+    "takeheart",
+    "charge",
+    "defensecurl",
+    "harden",
+    "withdraw",
+    "victorydance",
+    "quiverdance",
+    "cosmicpower",
+    "defendorder"
   ],
   "stage": 1
 }

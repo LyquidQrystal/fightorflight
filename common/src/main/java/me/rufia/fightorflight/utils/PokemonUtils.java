@@ -210,6 +210,20 @@ public class PokemonUtils {
         return null;
     }
 
+    public static Move getStatusMove(PokemonEntity pokemonEntity) {
+        Move move = getMove(pokemonEntity);
+        if (move == null) {
+            return null;
+        }
+        boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().self_targeting_status_move).toList().contains(move.getName());
+        if (b1) {
+            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+            return move;
+        }
+        return null;
+    }
+
+
     public static boolean isSpecialMove(Move move) {
         return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getSPECIAL());
     }
