@@ -138,7 +138,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         targetSelector.addGoal(4, new HurtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(4, new CaughtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
-        targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, (arg) -> arg instanceof Enemy && !(!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_creeper_proactive && arg instanceof Creeper)));
+        targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, PokemonUtils::canAttackTargetProactively));
     }
 
     @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))

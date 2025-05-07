@@ -6,9 +6,11 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.utils.TargetingWhitelist;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import org.jetbrains.annotations.Nullable;
 
+import java.util.Objects;
 import java.util.function.Predicate;
 
 public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
@@ -41,11 +43,22 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
 
     protected void findTarget() {
         super.findTarget();
+        if (!(mob instanceof PokemonEntity pokemonEntity)) {
+            return;
+        }
+
         if (this.target != null) {
             if (this.target.distanceToSqr(this.mob) > safeDistanceSqr) {
                 this.target = null;
-            } else if (TargetingWhitelist.getWhitelist((PokemonEntity) this.mob).contains(target.getEncodeId())) {
+            } else if (TargetingWhitelist.getWhitelist(pokemonEntity).contains(target.getEncodeId())) {
                 this.target = null;
+            } else if (CobblemonFightOrFlight.commonConfig().pokemon_proactiev_level == 1) {
+                if (target instanceof NeutralMob neutralMob) {
+                    var mobTarget = neutralMob.getTarget();
+                    if (!Objects.equals(mobTarget, pokemonEntity.getOwner())) {
+                        this.target = null;
+                    }
+                }
             }
         }
     }

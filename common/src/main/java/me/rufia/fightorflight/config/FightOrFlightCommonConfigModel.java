@@ -106,6 +106,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean do_pokemon_defend_owner = true;
     @Comment("Do player Pokemon defend their owners proactively? (follows the same rules as Iron Golems!!!)")
     public boolean do_pokemon_defend_proactive = true;
+    @Comment("0 zero means follow the same rule as Iron Golem. 1 means ignores neutral mobs that are not aiming at the player.")
+    public int pokemon_proactiev_level=1;
     @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
     public boolean do_pokemon_defend_creeper_proactive = false;
     @Comment("Can player Pokemon target other players? (EXPERIMENTAL)")
