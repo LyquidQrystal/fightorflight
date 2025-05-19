@@ -580,16 +580,16 @@ public class PokemonUtils {
                 && serverPlayer.isAlive();
     }
 
-    public static boolean canAttackTargetProactively(LivingEntity livingEntity){
-        if(livingEntity==null){
+    public static boolean canAttackTargetProactively(LivingEntity livingEntity) {
+        if (livingEntity == null) {
             return false;
         }
-        boolean isEnemy=livingEntity instanceof Enemy;
-        boolean creeperTest=!(!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_creeper_proactive && livingEntity instanceof Creeper);
+        boolean isEnemy = livingEntity instanceof Enemy;
+        boolean creeperTest = !(!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_creeper_proactive && livingEntity instanceof Creeper);
         return isEnemy && creeperTest;
     }
 
     public static boolean shouldCheckPokeStaff() {
-        return true;//TODO replace it with the config.
+        return CobblemonFightOrFlight.commonConfig().should_check_poke_staff;//TODO replace it with the config.
     }
 }

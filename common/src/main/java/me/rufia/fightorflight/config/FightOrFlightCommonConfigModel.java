@@ -87,15 +87,15 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
             "teravolt"
     };
     @Comment("Whitelist for all pokemon.(won't influence the Poke Staff)")
-    public String[] all_pokemon_targeting_whitelist={
+    public String[] all_pokemon_targeting_whitelist = {
             "minecraft:villager"
     };
     @Comment("Whitelist for wild pokemon.")
-    public String[] wild_pokemon_targeting_whitelist={
+    public String[] wild_pokemon_targeting_whitelist = {
 
     };
     @Comment("Whitelist for player owned pokemon.(won't influence the Poke Staff)")
-    public String[] player_owned_pokemon_targeting_whitelist={
+    public String[] player_owned_pokemon_targeting_whitelist = {
 
     };
     @Comment("Allow the Pokemon to use the teleport move to flee if the Pokemon had learnt it?")
@@ -107,7 +107,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Do player Pokemon defend their owners proactively? (follows the same rules as Iron Golems!!!)")
     public boolean do_pokemon_defend_proactive = true;
     @Comment("0 zero means follow the same rule as Iron Golem. 1 means ignores neutral mobs that are not aiming at the player.")
-    public int pokemon_proactiev_level=1;
+    public int pokemon_proactiev_level = 1;
     @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
     public boolean do_pokemon_defend_creeper_proactive = false;
     @Comment("Can player Pokemon target other players? (EXPERIMENTAL)")
@@ -230,5 +230,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Poke Staff")
     @Comment("The Pokemon stays still after finishing the move command.")
     public boolean stay_after_move_command = true;
+    @Comment("If the player need to hold a Poke Staff to use the command keybind")
+    public boolean should_check_poke_staff = true;
 
 }

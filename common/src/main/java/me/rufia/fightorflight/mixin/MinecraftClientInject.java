@@ -74,9 +74,9 @@ public abstract class MinecraftClientInject {
                         return;
                     }
                 }
-                int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
-                NetworkManager.sendToServer(new SendMoveSlotPacket(slot, moveSlot));
             }
+            int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+            NetworkManager.sendToServer(new SendMoveSlotPacket(slot, moveSlot));
         }
     }
 
