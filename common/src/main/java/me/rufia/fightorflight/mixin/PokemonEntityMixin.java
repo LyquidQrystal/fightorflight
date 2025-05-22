@@ -373,16 +373,18 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             setAttackTime(attackTime - 1);
         } else {
             PokemonEntity self = (PokemonEntity) (Object) this;
-            Move move = PokemonUtils.getStatusMove(self);
-            if (move != null) {
-                if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
-                    if (MoveData.moveData.containsKey(move.getName())) {
-                        for (MoveData data : MoveData.moveData.get(move.getName())) {
-                            data.invoke(self, null);
+            if (self.getOwner() != null) {
+                Move move = PokemonUtils.getStatusMove(self);
+                if (move != null) {
+                    if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                        if (MoveData.moveData.containsKey(move.getName())) {
+                            for (MoveData data : MoveData.moveData.get(move.getName())) {
+                                data.invoke(self, null);
+                            }
+                            PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
+                            setAttackTime(300);
+                            setMaxAttackTime(300);
                         }
-                        PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
-                        setAttackTime(300);
-                        setMaxAttackTime(300);
                     }
                 }
             }

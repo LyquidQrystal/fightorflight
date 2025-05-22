@@ -63,9 +63,8 @@ public class CobblemonFightOrFlight {
         moveConfig = AutoConfig.getConfigHolder(FightOrFlightMoveConfigModel.class).getConfig();
         visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
         CobblemonFightOrFlightNetwork.init();
-        ReloadListenerRegistry.register(PackType.SERVER_DATA, new MoveDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "movedata"));//unfinished
-        //ReloadListenerRegistry.register(PackType.SERVER_DATA,new BehaviorDataListener(),ResourceLocation.fromNamespaceAndPath(MODID, "behaviordata"));
-        //TODO enable this after the feature is finished
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new MoveDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "movedata"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new BehaviorDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "behaviordata"));
         TargetingWhitelist.init();
     }
 

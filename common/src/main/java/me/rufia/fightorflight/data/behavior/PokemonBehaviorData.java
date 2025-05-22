@@ -1,26 +1,24 @@
 package me.rufia.fightorflight.data.behavior;
 
+import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.signednumber.SignedFloat;
 import me.rufia.fightorflight.utils.signednumber.SignedInt;
 import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.LivingEntity;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
+import java.util.*;
 
-public abstract class PokemonBehaviorData {
-    public static final Map<String, List<MoveData>> behaviorData = new HashMap<>();
-    private final List<String> species;
-    private final String form;
+public class PokemonBehaviorData {
+    public static final Map<String, List<PokemonBehaviorData>> behaviorData = new HashMap<>();
+    private final String species;
+    private final List<String> aspects;
     private final String gender;
     private final List<String> biome;
     private final List<String> ability;
-    private final List<String> move;
+    private final List<String> moves;
     private final List<String> nature;
     private final String levelRequirement;
     private final String healthRatio;
@@ -31,12 +29,12 @@ public abstract class PokemonBehaviorData {
     private final String distanceToPlayer;
     private final String type;
 
-    public PokemonBehaviorData(List<String> species, String form, String gender, List<String> ability, List<String> move, List<String> nature, List<String> biome, String levelRequirement, String healthRatio, String lightLevel, String x, String y, String z, String distanceToPlayer, String type) {
+    public PokemonBehaviorData(String species, List<String> aspects, String gender, List<String> ability, List<String> move, List<String> nature, List<String> biome, String levelRequirement, String healthRatio, String lightLevel, String x, String y, String z, String distanceToPlayer, String type) {
         this.species = species;
-        this.form = form;
+        this.aspects = aspects;
         this.ability = ability;
         this.gender = gender;
-        this.move = move;
+        this.moves = move;
         this.nature = nature;
         this.biome = biome;
         this.levelRequirement = levelRequirement;
@@ -53,7 +51,7 @@ public abstract class PokemonBehaviorData {
         return type;
     }
 
-    public boolean check(Entity entity, PokemonEntity pokemonEntity) {
+    public boolean check(LivingEntity entity, PokemonEntity pokemonEntity) {
         if (entity != null && pokemonEntity != null) {
             return check(pokemonEntity) && checkDTP(entity, pokemonEntity);
         }
@@ -66,6 +64,7 @@ public abstract class PokemonBehaviorData {
                     && checkBiome(pokemonEntity)
                     && checkLightLevel(pokemonEntity)
                     && checkHealthRatio(pokemonEntity)
+                    && checkMove(pokemonEntity)
                     && checkX(pokemonEntity)
                     && checkY(pokemonEntity)
                     && checkZ(pokemonEntity);
@@ -78,11 +77,11 @@ public abstract class PokemonBehaviorData {
             return false;
         }
         return checkItem(species, pokemon.getSpecies().getName())
-                && checkItem(form, pokemon.getForm().getName())
                 && checkItem(gender, pokemon.getGender().toString())
                 && checkItem(nature, PokemonUtils.getNatureName(pokemon))
                 && checkItem(ability, pokemon.getAbility().getName())
-                && checkLevel(pokemon);
+                && checkLevel(pokemon)
+                && checkAspects(aspects, pokemon.getAspects());
     }
 
     private boolean checkItem(String targetData, String pokemonData) {
@@ -99,6 +98,15 @@ public abstract class PokemonBehaviorData {
         return true;
     }
 
+    private boolean checkAspects(List<String> requiredAspects, Set<String> pokemonAspects) {
+        for (String aspect : requiredAspects) {
+            if (!pokemonAspects.contains(aspect)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     private boolean checkLevel(Pokemon pokemon) {
         SignedInt signedInt = new SignedInt();
         if (signedInt.load(levelRequirement)) {
@@ -106,6 +114,20 @@ public abstract class PokemonBehaviorData {
             return signedInt.check(pokemonLvl);
         }
         return levelRequirement.isEmpty();
+    }
+
+    private boolean checkMove(PokemonEntity pokemonEntity) {
+        if (moves.isEmpty()) {
+            return true;
+        }
+        var moveSet = pokemonEntity.getPokemon().getMoveSet();
+        for (Move m : moveSet) {
+            String moveName = m.getName();
+            if (moves.contains(moveName)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private boolean checkHealthRatio(PokemonEntity pokemonEntity) {
@@ -150,6 +172,7 @@ public abstract class PokemonBehaviorData {
         return z.isEmpty();
     }
 
+    //Distance to player
     private boolean checkDTP(Entity entity, PokemonEntity pokemonEntity) {
         SignedFloat signedFloat = new SignedFloat();
         if (signedFloat.load(distanceToPlayer)) {
