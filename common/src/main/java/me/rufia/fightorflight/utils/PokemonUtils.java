@@ -11,6 +11,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.client.animation.PlayPosableAnimationPacket;
 import com.cobblemon.mod.common.net.messages.client.effect.RunPosableMoLangPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
@@ -37,27 +38,11 @@ import java.util.*;
 
 public class PokemonUtils {
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
-        Move move = getMeleeMove(pokemonEntity);
-        boolean b1 = pokemonEntity.getPokemon().getAttack() > pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
-        boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
-        boolean b3 = move != null;//The trainer selected a physical move.
-        if (b2) {
-            return b1 || !CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
-        } else {
-            return b3;
-        }
+        return ((PokemonInterface) pokemonEntity).getAttackMode() == 1;
     }
 
     public static boolean shouldShoot(PokemonEntity pokemonEntity) {
-        Move move = getRangeAttackMove(pokemonEntity);
-        boolean b1 = pokemonEntity.getPokemon().getAttack() < pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
-        boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
-        boolean b3 = move != null;//The trainer selected a range attack move.
-        if (b2) {
-            return b1 && CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
-        } else {
-            return b3;
-        }
+        return ((PokemonInterface) pokemonEntity).getAttackMode() == 2;
     }
 
     public static boolean shouldFightTarget(PokemonEntity pokemonEntity) {
@@ -67,7 +52,7 @@ public class PokemonUtils {
 
         LivingEntity owner = pokemonEntity.getOwner();
         if (owner != null) {
-            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || (pokemonEntity.getTarget() == null || pokemonEntity.getTarget() == owner)) {
+            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || pokemonEntity.getTarget() == null || pokemonEntity.getTarget() == owner || pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
                 return false;
             }
 
@@ -438,22 +423,27 @@ public class PokemonUtils {
 
 
     public static boolean moveCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.MOVE == getCommandMode(pokemonEntity);
+
+        return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.MOVE == getCommandMode(pokemonEntity);
+
     }
 
     public static boolean moveAttackCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.MOVE_ATTACK == getCommandMode(pokemonEntity);
+        return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.MOVE_ATTACK == getCommandMode(pokemonEntity);
     }
 
     public static boolean stayCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.STAY == getCommandMode(pokemonEntity);
+        return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.STAY == getCommandMode(pokemonEntity);
     }
 
     public static boolean attackPositionAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.ATTACK_POSITION == getCommandMode(pokemonEntity);
+        return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.ATTACK_POSITION == getCommandMode(pokemonEntity);
     }
 
     public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
+        if (pokemon.getOwner() == null) {
+            return false;
+        }
         PokeStaffComponent.CMDMODE cmd = getCommandMode(pokemon);
         switch (cmd) {
             case ATTACK, ATTACK_POSITION, MOVE_ATTACK, STAY, MOVE -> {

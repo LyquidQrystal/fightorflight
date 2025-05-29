@@ -570,10 +570,7 @@ public class PokemonAttackEffect {
             shootProjectileEntity(pokemonEntity, target, bullet);
             addProjectileEntity(pokemonEntity, target, bullet);
         }
-
-
     }
-
 
     public static void pokemonExplode(PokemonEntity entity, Level level) {
         if (!level.isClientSide) {

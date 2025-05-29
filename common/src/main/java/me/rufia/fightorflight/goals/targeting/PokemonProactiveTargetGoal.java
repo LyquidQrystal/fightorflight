@@ -21,7 +21,7 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
     //    this.safeDistanceSqr = safeDistanceSqr;
     //}
 
-    public PokemonProactiveTargetGoal(Mob mob, Class<T> targetType, int randomInterval, boolean mustSee, boolean mustReach, @Nullable Predicate<LivingEntity> targetPredicate) {
+    public PokemonProactiveTargetGoal(Mob mob, Class<T> targetType, float safeDistanceSqr, int randomInterval, boolean mustSee, boolean mustReach, @Nullable Predicate<LivingEntity> targetPredicate) {
         super(mob, targetType, randomInterval, mustSee, mustReach, targetPredicate);
         this.safeDistanceSqr = safeDistanceSqr;
     }
@@ -52,7 +52,7 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
                 this.target = null;
             } else if (TargetingWhitelist.getWhitelist(pokemonEntity).contains(target.getEncodeId())) {
                 this.target = null;
-            } else if (CobblemonFightOrFlight.commonConfig().pokemon_proactiev_level == 1) {
+            } else if (CobblemonFightOrFlight.commonConfig().pokemon_proactive_level == 1) {
                 if (target instanceof NeutralMob neutralMob) {
                     var mobTarget = neutralMob.getTarget();
                     if (!Objects.equals(mobTarget, pokemonEntity.getOwner())) {

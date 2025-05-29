@@ -61,6 +61,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Unique
     private static final EntityDataAccessor<Integer> DATA_ID_CAPTURED_BY;
     @Unique
+    private static final EntityDataAccessor<Integer> ATTACK_MODE;
+    @Unique
     private static final EntityDataAccessor<Integer> ATTACK_TIME;
     @Unique
     private static final EntityDataAccessor<Integer> MAX_ATTACK_TIME;
@@ -93,6 +95,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         COMMAND_DATA = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         TARGET_BLOCK_POS = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.BLOCK_POS);
         GAME_TICK = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
+        ATTACK_MODE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);//0 means the pokemon can't attack, 1 for melee, 2 for range attack.
     }
 
     protected void createTargetBlockPos() {
@@ -134,6 +137,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Inject(method = "registerGoals", at = @At("TAIL"))
     protected void registerFOFGoals(CallbackInfo ci) {
         PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+        float proactiveRadiusSqr = (float) Math.pow(CobblemonFightOrFlight.commonConfig().pokemon_defend_proactive_radius, 2);
         targetSelector.addGoal(1, new PokemonCommandedTargetGoal<>(pokemonEntity, LivingEntity.class, false));
         targetSelector.addGoal(2, new PokemonOwnerHurtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(3, new PokemonOwnerHurtTargetGoal(pokemonEntity));
@@ -141,7 +145,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         targetSelector.addGoal(4, new HurtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(4, new CaughtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
-        targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, 5, false, false, PokemonUtils::canAttackTargetProactively));
+        targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, proactiveRadiusSqr, 5, false, false, PokemonUtils::canAttackTargetProactively));
     }
 
     @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
@@ -163,6 +167,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         builder.define(COMMAND_DATA, "");
         builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
         builder.define(GAME_TICK, 0);
+        builder.define(ATTACK_MODE, 0);
         PokemonEntity.Companion.createAttributes();
     }
 
@@ -296,6 +301,16 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         entityData.set(DATA_ID_CAPTURED_BY, id);
     }
 
+    @Override
+    public int getAttackMode() {
+        return entityData.get(ATTACK_MODE);
+    }
+
+    @Unique
+    private void setAttackMode(int attackMode) {
+        entityData.set(ATTACK_MODE, attackMode);
+    }
+
     @ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
     private float hurtDamageTweak(float amount) {
         if (PokemonUtils.shouldRetreat((PokemonEntity) (Object) this)) {
@@ -320,6 +335,11 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                 PokemonUtils.entityHpToPokemonHp((PokemonEntity) (Object) this, -d, false);
             }
         }
+        if (CobblemonFightOrFlight.commonConfig().slow_down_after_hurt) {
+            if (!getPokemon().isPlayerOwned()) {
+                addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 0));
+            }
+        }
     }
 
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
@@ -330,11 +350,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (source.getEntity() instanceof LivingEntity livingEntity) {
             if (!PokemonAttackEffect.shouldBeHurtByAllyMob(((PokemonEntity) (Object) this), livingEntity)) {
                 cir.setReturnValue(false);
-            }
-        }
-        if (CobblemonFightOrFlight.commonConfig().slow_down_after_hurt) {
-            if (!getPokemon().isPlayerOwned()) {
-                addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 0));
             }
         }
     }
@@ -389,7 +404,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                 }
             }
         }
-
+        updateAttackMode();
         backendMoveCooldown();
     }
 
@@ -412,6 +427,34 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             setGameTick(0);
         } else {
             setGameTick(gameTick + 1);
+        }
+    }
+
+    @Unique
+    private void updateAttackMode() {
+        PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+        Pokemon pokemon = pokemonEntity.getPokemon();
+        Move move = PokemonUtils.getMove(pokemonEntity);
+        boolean attackIsHigher = pokemon.getAttack() > pokemon.getSpecialAttack();//The default setting.
+        boolean hasOwner = pokemonEntity.getOwner() != null;//The pokemon has no trainer.
+        boolean moveAvailable = move != null;
+        if (hasOwner) {
+            setAttackMode(0);
+            if (moveAvailable) {
+                if (PokemonUtils.isMeleeAttackMove(move)) {
+                    setAttackMode(1);
+                } else if (PokemonUtils.isRangeAttackMove(move)) {
+                    setAttackMode(2);
+                }
+                setCurrentMove(move);
+            }
+        } else {
+            if (!attackIsHigher) {
+                if (CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack) {
+                    setAttackMode(2);
+                }
+            }
+            setAttackMode(1);
         }
     }
 

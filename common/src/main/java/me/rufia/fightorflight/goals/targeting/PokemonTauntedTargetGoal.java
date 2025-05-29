@@ -12,7 +12,7 @@ import net.minecraft.world.phys.AABB;
 public class PokemonTauntedTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
     protected PokemonEntity pokemonEntity;
     protected PokemonEntity targetPokemon;
-    protected float safeDistanceSqr = CobblemonFightOrFlight.moveConfig().status_move_radius;
+    protected float safeDistanceSqr = (float) Math.pow(CobblemonFightOrFlight.moveConfig().status_move_radius, 2);
 
     public PokemonTauntedTargetGoal(Mob mob, Class<T> targetType, boolean mustSee) {
         super(mob, targetType, 10, mustSee, false, (entity) -> {

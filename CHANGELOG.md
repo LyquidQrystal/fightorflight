@@ -1,3 +1,16 @@
+# v0.8.0
+## This changelog is unfinished.
+### New Features:
+* Player's pokemons can use the status move that raises the user's stats to enhance themselves now(The move needs to be selected by the player). 
+* Added new config pokemon_proactive_level to stop the pokemon from attacking neutural mobs that are not hostile to the owner.
+* Added new config should_check_poke_staff to set if the player needs to hold the Poke Staff to use the command keybinds.
+* Added new config
+* Added new config enable_datapack driven behavior. This feature is still not finished.
+### Bug Fixes:
+* The cooldown of the not selected moves can be reduced correctly now.
+### Misc:
+* Optimized a part of the algorithm, possibly solving performance issues
+
 # v0.7.9
 ### New features:
 * Moves use independent cooldown time now.

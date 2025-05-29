@@ -60,16 +60,13 @@ public class PokemonRangedAttackGoal extends PokemonAttackGoal {
         if (!PokemonUtils.shouldShoot(pokemonEntity) || PokemonUtils.moveCommandAvailable(pokemonEntity)) {
             return false;
         }
-        if (pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
-            return false;
-        }
         LivingEntity livingEntity = this.pokemonEntity.getTarget();
-        if (livingEntity != null && livingEntity.isAlive()) {
+        if (livingEntity != null && livingEntity.isAlive() && PokemonUtils.shouldFightTarget(pokemonEntity)) {
             this.target = livingEntity;
-            return PokemonUtils.shouldFightTarget(pokemonEntity);
-        } else {
-            return false;
+            return true;
         }
+        return false;
+
     }
 
     public boolean canContinueToUse() {

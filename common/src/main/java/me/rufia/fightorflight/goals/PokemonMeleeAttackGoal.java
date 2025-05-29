@@ -50,7 +50,6 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle && isTargetInBattle()) {
             this.mob.getNavigation().setSpeedModifier(0);
         } else {
-
             this.mob.getNavigation().setSpeedModifier(this.speedModifier);
         }
     }
@@ -64,7 +63,7 @@ public class PokemonMeleeAttackGoal extends MeleeAttackGoal {
 
     public boolean canUse() {
         if (mob instanceof PokemonEntity pokemonEntity) {
-            return !PokemonUtils.moveCommandAvailable(pokemonEntity) && PokemonUtils.shouldMelee(pokemonEntity) && PokemonUtils.shouldFightTarget(pokemonEntity) && super.canUse();
+            return PokemonUtils.shouldMelee(pokemonEntity) && PokemonUtils.shouldFightTarget(pokemonEntity) && !PokemonUtils.moveCommandAvailable(pokemonEntity) && super.canUse();
         }
         return false;
     }

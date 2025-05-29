@@ -44,7 +44,9 @@ public class PokemonCommandedTargetGoal<T extends LivingEntity> extends NearestA
 
     @Override
     public boolean canUse() {
-        if (pokemonEntity.isBusy() || pokemonEntity.getOwner() == null){return false;}
+        if (pokemonEntity.isBusy() || pokemonEntity.getOwner() == null) {
+            return false;
+        }
         return super.canUse();
     }
 }

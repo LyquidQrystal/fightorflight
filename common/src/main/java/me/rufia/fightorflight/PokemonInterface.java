@@ -86,4 +86,8 @@ public interface PokemonInterface {
 
     default void switchMove(Move move) {
     }
+
+    default int getAttackMode() {
+        return 0;
+    }
 }
