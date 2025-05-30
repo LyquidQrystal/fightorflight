@@ -7,12 +7,14 @@ import me.rufia.fightorflight.utils.RayTrace;
 import net.minecraft.core.Vec3i;
 
 import java.util.EnumSet;
+
 //TODO uncompleted
 public class PokemonAttackPosGoal extends PokemonAttackGoal {
     private final PokemonEntity pokemonEntity;
     private final double speedModifier;
 
     public PokemonAttackPosGoal(PokemonEntity pokemonEntity, double speedModifier) {
+        super(pokemonEntity, speedModifier);
         this.pokemonEntity = pokemonEntity;
         this.speedModifier = speedModifier;
         this.setFlags(EnumSet.of(Flag.MOVE, Flag.LOOK));
@@ -43,10 +45,5 @@ public class PokemonAttackPosGoal extends PokemonAttackGoal {
         var result = RayTrace.rayTraceBlock(pokemonEntity, PokemonUtils.getAttackRadius());
         var pos = result.getBlockPos();
         return vec3i != null && vec3i.getX() == pos.getX() && vec3i.getY() == pos.getY() && vec3i.getZ() == pos.getZ();//TODO implement it
-    }
-
-    @Override
-    protected PokemonEntity getPokemonEntity() {
-        return pokemonEntity;
     }
 }

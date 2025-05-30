@@ -7,7 +7,10 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
-import me.rufia.fightorflight.goals.*;
+import me.rufia.fightorflight.goals.PokemonAttackGoal;
+import me.rufia.fightorflight.goals.PokemonAvoidGoal;
+import me.rufia.fightorflight.goals.PokemonGoToPosGoal;
+import me.rufia.fightorflight.goals.PokemonPanicGoal;
 import me.rufia.fightorflight.net.CobblemonFightOrFlightNetwork;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.TargetingWhitelist;
@@ -79,8 +82,7 @@ public class CobblemonFightOrFlight {
         float pursuitSpeed = 1.2f * speedMultiplier;
 
         goalAdder.accept(pokemonEntity, 3, new PokemonGoToPosGoal(pokemonEntity, pursuitSpeed));
-        goalAdder.accept(pokemonEntity, 3, new PokemonMeleeAttackGoal(pokemonEntity, pursuitSpeed, true));
-        goalAdder.accept(pokemonEntity, 3, new PokemonRangedAttackGoal(pokemonEntity, pursuitSpeed, PokemonUtils.getAttackRadius()));
+        goalAdder.accept(pokemonEntity, 3, new PokemonAttackGoal(pokemonEntity, pursuitSpeed));
         goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, PokemonUtils.getAttackRadius() * 3, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
     }

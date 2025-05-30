@@ -25,7 +25,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
@@ -85,8 +84,6 @@ public class PokemonUtils {
                 }
             }
         }
-        //if (pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
-
         return !pokemonEntity.isBusy();
     }
 
@@ -109,22 +106,30 @@ public class PokemonUtils {
             CobblemonFightOrFlight.LOGGER.info("PokemonEntity is null");//This will be shown if the projectile hits the target and the pokemon is recalled
             return null;
         }
-        String moveName = !(((PokemonInterface) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
+        Move firstMove = pokemonEntity.getPokemon().getMoveSet().get(0);
+        String moveName = "";
+        if (!((PokemonInterface) pokemonEntity).getCurrentMove().isEmpty()) {
+            moveName = ((PokemonInterface) pokemonEntity).getCurrentMove();
+        } else {
+            if (firstMove != null) {
+                moveName = firstMove.getName();
+            }
+        }
         Move move = null;
         boolean flag = false;
-        if (moveName == null) {
-            return null;
-        }
-        for (MoveTemplate m : getAllLearnableMoveTemplates(pokemonEntity.getPokemon())) {
-            move = m.create();
-            if (m.getName().equals(moveName)) {
-                flag = true;
-                break;
+        if (!moveName.isEmpty()) {
+            for (MoveTemplate m : getAllLearnableMoveTemplates(pokemonEntity.getPokemon())) {
+                move = m.create();
+                if (m.getName().equals(moveName)) {
+                    flag = true;
+                    break;
+                }
             }
         }
         if (!flag) {
             move = pokemonEntity.getPokemon().getMoveSet().get(0);
         }
+
         if (move == null) {
             if (!pokemonEntity.level().isClientSide) {
                 CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);//Will appear in the log when you send a pokemon out for a short period of time in the client environment, so I remove it from the client environment.
@@ -180,7 +185,7 @@ public class PokemonUtils {
         }
 
         if (isMeleeAttackMove(move)) {
-            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+            //((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
@@ -192,7 +197,7 @@ public class PokemonUtils {
             return null;
         }
         if (isRangeAttackMove(move)) {
-            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
+            //((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
@@ -423,9 +428,7 @@ public class PokemonUtils {
 
 
     public static boolean moveCommandAvailable(PokemonEntity pokemonEntity) {
-
         return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.MOVE == getCommandMode(pokemonEntity);
-
     }
 
     public static boolean moveAttackCommandAvailable(PokemonEntity pokemonEntity) {

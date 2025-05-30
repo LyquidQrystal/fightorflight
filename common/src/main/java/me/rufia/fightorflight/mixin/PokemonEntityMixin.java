@@ -53,6 +53,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Shadow(remap = false)
     public abstract Pokemon getPokemon();
 
+    @Shadow
+    private int ticksLived;
     @Unique
     @Nullable
     private LivingEntity fightorflight$clientSideCachedAttackTarget;
@@ -76,8 +78,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<String> COMMAND_DATA;
     @Unique
     private static final EntityDataAccessor<BlockPos> TARGET_BLOCK_POS;
-    @Unique
-    private static final EntityDataAccessor<Integer> GAME_TICK;
 
     @Unique
     private static final List<FOFMove> MOVES_FOF = new ArrayList<>();//This should only be accessed in the server side!
@@ -94,7 +94,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         COMMAND = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         COMMAND_DATA = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         TARGET_BLOCK_POS = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.BLOCK_POS);
-        GAME_TICK = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
         ATTACK_MODE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);//0 means the pokemon can't attack, 1 for melee, 2 for range attack.
     }
 
@@ -166,7 +165,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         builder.define(COMMAND, "");
         builder.define(COMMAND_DATA, "");
         builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
-        builder.define(GAME_TICK, 0);
         builder.define(ATTACK_MODE, 0);
         PokemonEntity.Companion.createAttributes();
     }
@@ -206,14 +204,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Override
     public void setMaxAttackTime(int val) {
         entityData.set(MAX_ATTACK_TIME, val);
-    }
-
-    private void setGameTick(int val) {
-        entityData.set(GAME_TICK, val);
-    }
-
-    private int getGameTick() {
-        return entityData.get(GAME_TICK);
     }
 
     @Override
@@ -306,8 +296,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         return entityData.get(ATTACK_MODE);
     }
 
-    @Unique
-    private void setAttackMode(int attackMode) {
+    @Override
+    public void setAttackMode(int attackMode) {
         entityData.set(ATTACK_MODE, attackMode);
     }
 
@@ -404,29 +394,34 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                 }
             }
         }
-        updateAttackMode();
-        backendMoveCooldown();
+        slowTick();
+    }
+
+    @Unique
+    private void slowTick() {
+        int t = ticksLived % 20;
+        if (!level().isClientSide) {
+            CobblemonFightOrFlight.LOGGER.info("{} {}", getPokemon().getSpecies().getName(), t);
+        }
+        if (t == 11) {
+            if (!level().isClientSide) {
+                updateAttackMode();
+                backendMoveCooldown();
+            }
+        }
+
     }
 
     @Unique
     private void backendMoveCooldown() {
-        int gameTick = getGameTick();
-        if (gameTick == 10 && BACKEND_TICK == 9 && !level().isClientSide) {
-            for (FOFMove move : MOVES_FOF) {
-                if (!Objects.equals(move.getName(), getCurrentMove())) {
-                    int remainingTime = move.getRemainingCooldown();
-                    if (remainingTime > 5) {
-                        CobblemonFightOrFlight.LOGGER.info("remainingTime: {}", remainingTime);
-                        move.setRemainingCooldown(remainingTime - 20);
-                    }
+        for (FOFMove move : MOVES_FOF) {
+            if (!Objects.equals(move.getName(), getCurrentMove())) {
+                int remainingTime = move.getRemainingCooldown();
+                if (remainingTime > 25) {
+                    //CobblemonFightOrFlight.LOGGER.info("remainingTime: {}", remainingTime);
+                    move.setRemainingCooldown(remainingTime - 20);
                 }
             }
-        }
-        BACKEND_TICK = gameTick;
-        if (gameTick == 20) {
-            setGameTick(0);
-        } else {
-            setGameTick(gameTick + 1);
         }
     }
 
@@ -439,22 +434,24 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         boolean hasOwner = pokemonEntity.getOwner() != null;//The pokemon has no trainer.
         boolean moveAvailable = move != null;
         if (hasOwner) {
-            setAttackMode(0);
+            //CobblemonFightOrFlight.LOGGER.info("OWNER DETECTED");
             if (moveAvailable) {
+                //CobblemonFightOrFlight.LOGGER.info("{} MOVE:{}", pokemon.getSpecies().getName(), move.getName());
                 if (PokemonUtils.isMeleeAttackMove(move)) {
                     setAttackMode(1);
                 } else if (PokemonUtils.isRangeAttackMove(move)) {
                     setAttackMode(2);
+                } else {
+                    setAttackMode(0);
                 }
                 setCurrentMove(move);
             }
         } else {
-            if (!attackIsHigher) {
-                if (CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack) {
-                    setAttackMode(2);
-                }
+            if (!attackIsHigher && CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack) {
+                setAttackMode(2);
+            } else {
+                setAttackMode(1);
             }
-            setAttackMode(1);
         }
     }
 

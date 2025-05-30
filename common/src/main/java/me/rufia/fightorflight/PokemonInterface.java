@@ -90,4 +90,6 @@ public interface PokemonInterface {
     default int getAttackMode() {
         return 0;
     }
+
+    default void setAttackMode(int attackMode){}
 }
