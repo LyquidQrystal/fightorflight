@@ -55,6 +55,8 @@ public class SendMoveSlotHandler implements NetworkPacketHandler<SendMoveSlotPac
                                 ((PokemonInterface) pokemonEntity).switchMove(move);
                                 player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemon.getDisplayName(), move.getDisplayName()));
                             }
+                        } else {
+                            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed", pokemon.getDisplayName()));
                         }
                     }
                 }

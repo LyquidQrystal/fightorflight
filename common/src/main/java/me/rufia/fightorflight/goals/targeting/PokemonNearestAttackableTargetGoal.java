@@ -13,6 +13,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 public class PokemonNearestAttackableTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
     public int ticksUntilNewAngerParticle = 0;
     public float safeDistanceSqr = 36;
+    private int ticksNextDataBehaviorCheckCycle = 0;
 
     public PokemonNearestAttackableTargetGoal(Mob mob, Class<T> targetType, float safeDistanceSqr, boolean mustSee, boolean mustReach) {
         super(mob, targetType, mustSee, mustReach);
@@ -21,23 +22,29 @@ public class PokemonNearestAttackableTargetGoal<T extends LivingEntity> extends 
 
     public boolean canUse() {
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
+        if (!PokemonUtils.WildPokemonCanPerformUnprovokedAttack(pokemonEntity)) {
+            return false;
+        }
         if (CobblemonFightOrFlight.commonConfig().enable_datapack_driven_behavior) {
+            ++ticksNextDataBehaviorCheckCycle;
+            if (ticksNextDataBehaviorCheckCycle == 20) {
+                ticksNextDataBehaviorCheckCycle = 0;
+            }
             String speciesName = pokemonEntity.getPokemon().getSpecies().getName();
-            if (PokemonBehaviorData.behaviorData.containsKey(speciesName)) {
-                var dataList = PokemonBehaviorData.behaviorData.get(speciesName);
-                for (PokemonBehaviorData data : dataList) {
-                    if (data.getType().equals("proactive")) {
-                        if (!data.check(pokemonEntity)) {
-                            return false;
+            if (ticksNextDataBehaviorCheckCycle == 11) {
+                if (PokemonBehaviorData.behaviorData.containsKey(speciesName)) {
+                    var dataList = PokemonBehaviorData.behaviorData.get(speciesName);
+                    for (PokemonBehaviorData data : dataList) {
+                        if (data.getType().equals("proactive")) {
+                            if (!data.check(pokemonEntity)) {
+                                return false;
+                            }
                         }
                     }
                 }
             }
         }
-        if (!PokemonUtils.WildPokemonCanPerformUnprovokedAttack(pokemonEntity) || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && pokemonEntity.getLightLevelDependentMagicValue() >= 0.5f)) {
-            return false;
-        }
-        if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD) {
+        if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && pokemonEntity.getLightLevelDependentMagicValue() >= 0.5f)) {
             return false;
         } else {
             if (ticksUntilNewAngerParticle < 1) {

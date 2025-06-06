@@ -1,9 +1,11 @@
 package me.rufia.fightorflight.mixin;
 
 
+import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
+import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
@@ -23,6 +25,7 @@ import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
+import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -32,6 +35,7 @@ import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.target.HurtByTargetGoal;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -81,8 +85,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Unique
     private static final List<FOFMove> MOVES_FOF = new ArrayList<>();//This should only be accessed in the server side!
-    @Unique
-    private static int BACKEND_TICK = 0;
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
@@ -309,7 +311,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         PokemonMultipliers pokemonMultipliers = new PokemonMultipliers((PokemonEntity) (Object) this);
         Pokemon pokemon = getPokemon();
-        float def = Math.max(pokemon.getDefence(), pokemon.getSpecialDefence());
+        int specialDef = (int) (pokemon.getSpecialDefence() * (pokemon.heldItem().is(CobblemonItems.ASSAULT_VEST) ? 1.3f : 1f));
+        float def = Math.max(pokemon.getDefence(), specialDef);
         return amount * (1 - pokemonMultipliers.getMaximumDamageReduction() * Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
         //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
     }
@@ -328,6 +331,18 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (CobblemonFightOrFlight.commonConfig().slow_down_after_hurt) {
             if (!getPokemon().isPlayerOwned()) {
                 addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 100, 0));
+            }
+        }
+        if (damageSource.is(DamageTypes.MOB_ATTACK) && damageAmount > 0) {
+            PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+            var entity = damageSource.getEntity();
+            if (entity instanceof LivingEntity livingEntity) {
+                if (getPokemon().heldItem().is(CobblemonItems.ROCKY_HELMET)) {
+                    entity.hurt(damageSources().thorns(pokemonEntity), livingEntity.getMaxHealth() / 6);
+                }
+                if (PokemonUtils.abilityIs(pokemonEntity, "roughskin") || PokemonUtils.abilityIs(pokemonEntity, "ironbarbs")) {
+                    entity.hurt(damageSources().thorns(pokemonEntity), livingEntity.getMaxHealth() / 8);
+                }
             }
         }
     }
@@ -379,16 +394,19 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         } else {
             PokemonEntity self = (PokemonEntity) (Object) this;
             if (self.getOwner() != null) {
-                Move move = PokemonUtils.getStatusMove(self);
-                if (move != null) {
-                    if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
-                        if (MoveData.moveData.containsKey(move.getName())) {
-                            for (MoveData data : MoveData.moveData.get(move.getName())) {
-                                data.invoke(self, null);
+                if (!getPokemon().heldItem().is(CobblemonItems.ASSAULT_VEST)) {
+                    Move move = PokemonUtils.getStatusMove(self);
+                    if (move != null) {
+                        if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                            if (MoveData.moveData.containsKey(move.getName())) {
+                                for (MoveData data : MoveData.moveData.get(move.getName())) {
+                                    data.invoke(self, null);
+                                }
+                                PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
+                                PokemonUtils.sendAnimationPacket(self, "status");
+                                setAttackTime(300);
+                                setMaxAttackTime(300);
                             }
-                            PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
-                            setAttackTime(300);
-                            setMaxAttackTime(300);
                         }
                     }
                 }
@@ -400,16 +418,39 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Unique
     private void slowTick() {
         int t = ticksLived % 20;
-        if (!level().isClientSide) {
-            CobblemonFightOrFlight.LOGGER.info("{} {}", getPokemon().getSpecies().getName(), t);
-        }
+        int sec = ticksLived / 20;
         if (t == 11) {
             if (!level().isClientSide) {
                 updateAttackMode();
                 backendMoveCooldown();
             }
         }
+        if ((sec + 2) % 5 == 0 && t == 17) {
+            turnBasedHeldItemTrigger();
+        }
+    }
 
+    @Unique
+    private void turnBasedHeldItemTrigger() {
+        PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+        Pokemon pokemon = pokemonEntity.getPokemon();
+        ItemStack itemStack = pokemon.heldItem();
+        float maxHealth = pokemonEntity.getMaxHealth();
+        if (itemStack.is(CobblemonItems.LEFTOVERS)) {
+            heal(maxHealth / 16);
+        } else if (itemStack.is(CobblemonItems.STICKY_BARB)) {
+            if (!PokemonUtils.abilityIs(pokemonEntity, "magicguard")) {
+                hurt(damageSources().magic(), maxHealth / 8);
+            }
+        } else if (itemStack.is(CobblemonItems.BLACK_SLUDGE)) {
+            if (PokemonUtils.hasType(pokemon, ElementalTypes.INSTANCE.getPOISON())) {
+                heal(maxHealth / 16);
+            } else {
+                if (!PokemonUtils.abilityIs(pokemonEntity, "magicguard")) {
+                    hurt(damageSources().magic(), maxHealth / 8);
+                }
+            }
+        }
     }
 
     @Unique
@@ -418,7 +459,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             if (!Objects.equals(move.getName(), getCurrentMove())) {
                 int remainingTime = move.getRemainingCooldown();
                 if (remainingTime > 25) {
-                    //CobblemonFightOrFlight.LOGGER.info("remainingTime: {}", remainingTime);
                     move.setRemainingCooldown(remainingTime - 20);
                 }
             }
@@ -434,9 +474,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         boolean hasOwner = pokemonEntity.getOwner() != null;//The pokemon has no trainer.
         boolean moveAvailable = move != null;
         if (hasOwner) {
-            //CobblemonFightOrFlight.LOGGER.info("OWNER DETECTED");
             if (moveAvailable) {
-                //CobblemonFightOrFlight.LOGGER.info("{} MOVE:{}", pokemon.getSpecies().getName(), move.getName());
                 if (PokemonUtils.isMeleeAttackMove(move)) {
                     setAttackMode(1);
                 } else if (PokemonUtils.isRangeAttackMove(move)) {
@@ -488,10 +526,10 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                     for (int i = 0; i < 4; ++i) {
                         FOFMove m = MOVES_FOF.get(i);
                         if (m != null && Objects.equals(m.getName(), move.getName())) {
-                            if (m.getRemainingCooldown() <= 10) {
+                            if (m.getRemainingCooldown() < 10) {
                                 setAttackTime(10);
                                 setMaxAttackTime(10);
-                            } else {
+                            } else if (m.getRemainingCooldown() > 10) {
                                 setAttackTime(m.getRemainingCooldown());
                                 setMaxAttackTime(m.getOriginalCooldown());
                             }

@@ -141,7 +141,7 @@ public class FOFExplosion extends Explosion {
         }
 
         this.toBlow.addAll(set);
-        PokemonAttackEffect.dealAoEDamage(pokemon, source, shouldHurtAlly);
+        PokemonAttackEffect.dealAoEDamage(pokemon, source, shouldHurtAlly, false);
     }
 
     public void finalizeExplosion() {
@@ -248,7 +248,7 @@ public class FOFExplosion extends Explosion {
         } else {
             blockInteraction1 = BlockInteraction.KEEP;
         }
-        return new FOFExplosion(source.level(), source, pokemonEntity, source.damageSources().mobAttack(pokemonEntity), null, x, y, z, radius, shouldCreateFire, blockInteraction1, shouldHurtAlly, isProjectileExplosion);
+        return new FOFExplosion(source.level(), source, pokemonEntity, source.damageSources().explosion(pokemonEntity, pokemonEntity), null, x, y, z, radius, shouldCreateFire, blockInteraction1, shouldHurtAlly, isProjectileExplosion);
     }
 
     protected static float calculateRadius(PokemonEntity pokemonEntity) {

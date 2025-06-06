@@ -3,7 +3,8 @@
 ### 施工中
 ### 需要[Architectury](https://modrinth.com/mod/architectury-api) !!!
 ## 自 0.5.3 （原mod最后一个版本） 之后的特性/改动
-自己录的一个简单的演示视频：https://www.bilibili.com/video/BV1yac2ehEEH
+自己录的一个简单的演示视频：https://www.bilibili.com/video/BV1yac2ehEEH  
+宝可杖使用说明：https://www.bilibili.com/video/BV16yfiYREuW/
 ### v0.7.2 已经实现的特性/改动:
 - **关闭野生宝可梦主动攻击** 我个人不喜欢这个特性，宝可梦无时无刻不在刷，尽管不是所有宝可梦都会主动攻击，但是当主动攻击开启时你很容易就会获得在朱/紫被肯泰罗群殴的糟糕的游戏体验。 当然你要想开可以在config中打开
 - **更低的最高伤害值:** 我看到有人在curseforge页面上说宝可梦伤害太高了，所以我把最高伤害的默认值调低了。作为补偿，达到最高伤害所需的能力值也被调低了。你也可以使用config进一步调整

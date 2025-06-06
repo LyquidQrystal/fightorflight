@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
+import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.battles.BattleBuilder;
 import com.cobblemon.mod.common.battles.BattleFormat;
 import com.cobblemon.mod.common.battles.BattleRegistry;
@@ -99,6 +100,21 @@ public class PokemonUtils {
         moves.addAll(pokemon.getForm().getMoves().getEggMoves());
         //Might be a huge load for a big server?
         return moves;
+    }
+
+    public static boolean hasType(PokemonEntity pokemonEntity, ElementalType type){
+        return hasType(pokemonEntity.getPokemon(),type);
+    }
+
+    public static boolean hasType(Pokemon pokemon,ElementalType type){
+        ElementalType type1=pokemon.getPrimaryType();
+        if(type1!=type){
+            ElementalType type2=pokemon.getSecondaryType();
+            if(type2!=null){
+                return type2 == type;
+            }
+        }
+        return true;
     }
 
     public static Move getMove(PokemonEntity pokemonEntity) {
@@ -459,8 +475,8 @@ public class PokemonUtils {
     }
 
     public static void clearCommand(PokemonEntity pokemonEntity) {
-        ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
-        ((PokemonInterface) (Object) pokemonEntity).setCommandData("");
+        ((PokemonInterface) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
+        ((PokemonInterface) pokemonEntity).setCommandData("");
     }
 
     public static void finishMoving(PokemonEntity pokemonEntity) {

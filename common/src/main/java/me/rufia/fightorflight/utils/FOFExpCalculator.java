@@ -32,8 +32,6 @@ public class FOFExpCalculator {
         float affectionMultiplier = battlePokemon.getFriendship() >= 220 ? 1.2f : 1.0f;
         float gimmickBoost = Cobblemon.config.getExperienceMultiplier();
         float term3 = term1 * term2 + 1;
-        int result = Math.round(term3 * luckyEggMultiplier * evolutionMultiplier * affectionMultiplier * gimmickBoost * FOFExpMultiplier) + 1;
-        CobblemonFightOrFlight.LOGGER.info(Integer.toString(result));
-        return result;
+        return Math.round(term3 * luckyEggMultiplier * evolutionMultiplier * affectionMultiplier * gimmickBoost * FOFExpMultiplier) + 1;
     }
 }

@@ -166,7 +166,7 @@ public class PokemonAttackGoal extends Goal {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
                 if (Arrays.stream(CobblemonFightOrFlight.moveConfig().self_centered_aoe_moves).toList().contains(move.getName())) {
-                    PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity, true);
+                    PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity, true, PokemonUtils.isMeleeAttackMove(move));
                     if (PokemonUtils.isPhysicalMove(move)) {
                         PokemonUtils.sendAnimationPacket(pokemonEntity, "physical");
                     } else {

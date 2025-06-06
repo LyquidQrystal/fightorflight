@@ -1,11 +1,20 @@
+# v0.8.1
+### New Features:
+* Added tooltip for Oran Lucky Egg
+* Rocky helmet(Held Item)/Rough Skin(Ability)/Iron Barbs(Ability) hurts the attacker now.
+* Whenever the Pokémon holding Shell Bell deals damage with a move, it restores HP equal to 1/8 of the damage dealt now.
+* Pokemon holding Assault Vest won't try to use status movesb now.
+* Pokemon holding Leftovers will be healed slowly.
+* Pokemon holding Sticky Barb will be hurt slowly. The holder can't be changed on contact currently.
+* Poison type Pokemon holding Black Sludge will be healed slowly. The other Pokemon will be hurt slowly.
+### Changes:
+* Some damage types is changed to indirect magic to avoid being recognized as making contact with a Pokemon.
+
 # v0.8.0
-## This changelog is unfinished.
 ### New Features:
 * Player's pokemons can use the status move that raises the user's stats to enhance themselves now(The move needs to be selected by the player). 
 * Added new config pokemon_proactive_level to stop the pokemon from attacking neutural mobs that are not hostile to the owner.
 * Added new config should_check_poke_staff to set if the player needs to hold the Poke Staff to use the command keybinds.
-* Added new config
-* Added new config enable_datapack driven behavior. This feature is still not finished.
 ### Bug Fixes:
 * The cooldown of the not selected moves can be reduced correctly now.
 ### Misc:

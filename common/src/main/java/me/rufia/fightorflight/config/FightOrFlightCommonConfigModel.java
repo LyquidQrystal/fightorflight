@@ -51,7 +51,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public String[] more_peaceful_nature = {"docile", "timid", "gentle", "careful"};
     @Comment("The aggression multiplier for natures above.")
     public float more_peaceful_nature_multiplier = -2f;
-    @Comment("If the behavior data will work?(Datapack required)")
+    @Comment("If the behavior data will work?(Still W.I.P, not avialable yet)")
     public boolean enable_datapack_driven_behavior = true;
     @Comment("Forms that will always be aggressive")
     public String[] always_aggro_aspects = {

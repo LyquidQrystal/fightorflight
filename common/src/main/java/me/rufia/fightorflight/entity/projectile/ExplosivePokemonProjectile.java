@@ -54,8 +54,10 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
             Entity hurtTarget = result.getEntity();
             if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
                 if (result.getEntity() instanceof LivingEntity target) {
-                    PokemonAttackEffect.applyPostEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity), true);
-                    explode(pokemonEntity);
+                    if (!PokemonAttackEffect.shouldHurtAllyMob(pokemonEntity, target)) {
+                        PokemonAttackEffect.applyPostEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity), true);
+                        explode(pokemonEntity);
+                    }
                 }
             }
         }
