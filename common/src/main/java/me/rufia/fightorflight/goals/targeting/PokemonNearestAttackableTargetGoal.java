@@ -21,43 +21,49 @@ public class PokemonNearestAttackableTargetGoal<T extends LivingEntity> extends 
     }
 
     public boolean canUse() {
-        PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
-        if (!PokemonUtils.WildPokemonCanPerformUnprovokedAttack(pokemonEntity)) {
+        if (this.randomInterval > 0 && this.mob.getRandom().nextInt(this.randomInterval) != 0) {
             return false;
-        }
-        if (CobblemonFightOrFlight.commonConfig().enable_datapack_driven_behavior) {
-            ++ticksNextDataBehaviorCheckCycle;
-            if (ticksNextDataBehaviorCheckCycle == 20) {
-                ticksNextDataBehaviorCheckCycle = 0;
+        } else {
+            PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
+            if (!PokemonUtils.WildPokemonCanPerformUnprovokedAttack(pokemonEntity)) {
+                return false;
             }
-            String speciesName = pokemonEntity.getPokemon().getSpecies().getName();
-            if (ticksNextDataBehaviorCheckCycle == 11) {
-                if (PokemonBehaviorData.behaviorData.containsKey(speciesName)) {
-                    var dataList = PokemonBehaviorData.behaviorData.get(speciesName);
-                    for (PokemonBehaviorData data : dataList) {
-                        if (data.getType().equals("proactive")) {
-                            if (!data.check(pokemonEntity)) {
-                                return false;
+            if (CobblemonFightOrFlight.commonConfig().enable_datapack_driven_behavior) {
+                ++ticksNextDataBehaviorCheckCycle;
+                if (ticksNextDataBehaviorCheckCycle == 20) {
+                    ticksNextDataBehaviorCheckCycle = 0;
+                }
+                String speciesName = pokemonEntity.getPokemon().getSpecies().getName();
+                if (ticksNextDataBehaviorCheckCycle == 11) {
+                    if (PokemonBehaviorData.behaviorData.containsKey(speciesName)) {
+                        var dataList = PokemonBehaviorData.behaviorData.get(speciesName);
+                        for (PokemonBehaviorData data : dataList) {
+                            if (data.getType().equals("proactive")) {
+                                if (!data.check(pokemonEntity)) {
+                                    return false;
+                                }
                             }
                         }
                     }
                 }
             }
-        }
-        if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && pokemonEntity.getLightLevelDependentMagicValue() >= 0.5f)) {
-            return false;
-        } else {
-            if (ticksUntilNewAngerParticle < 1) {
-                CobblemonFightOrFlight.PokemonEmoteAngry(this.mob);
-                ticksUntilNewAngerParticle = 25;
+            if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && pokemonEntity.getLightLevelDependentMagicValue() >= 0.5f)) {
+                return false;
             } else {
-                ticksUntilNewAngerParticle = ticksUntilNewAngerParticle - 1;
+                if (ticksUntilNewAngerParticle < 1) {
+                    CobblemonFightOrFlight.PokemonEmoteAngry(this.mob);
+                    ticksUntilNewAngerParticle = 25;
+                } else {
+                    ticksUntilNewAngerParticle = ticksUntilNewAngerParticle - 1;
+                }
             }
-        }
 
-        return super.canUse();
+            this.findTarget();
+            return this.target != null;
+        }
     }
 
+    @Override
     protected void findTarget() {
         super.findTarget();
 

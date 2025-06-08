@@ -9,27 +9,24 @@ import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import net.minecraft.world.phys.AABB;
 
-public class PokemonTauntedTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
+public class PokemonTauntedTargetGoal extends NearestAttackableTargetGoal<PokemonEntity> {
     protected PokemonEntity pokemonEntity;
     protected PokemonEntity targetPokemon;
     protected float safeDistanceSqr = (float) Math.pow(CobblemonFightOrFlight.moveConfig().status_move_radius, 2);
 
-    public PokemonTauntedTargetGoal(Mob mob, Class<T> targetType, boolean mustSee) {
-        super(mob, targetType, 10, mustSee, false, (entity) -> {
-            if (entity instanceof TamableAnimal tamable) {
-                return tamable.getOwner() != null || CobblemonFightOrFlight.moveConfig().wild_pokemon_taunt;
+    public PokemonTauntedTargetGoal(PokemonEntity entity, boolean mustSee) {
+        super(entity, PokemonEntity.class, 10, mustSee, false, (livingEntity) -> {
+            if (livingEntity instanceof PokemonEntity pokemon) {
+                return pokemon.getOwner() != null;
             }
             return false;
         });
-        pokemonEntity = (PokemonEntity) mob;
+        pokemonEntity = entity;
     }
 
     public boolean isTaunted() {
-        if (pokemonEntity.getOwner() != null) {
-            return false;
-        }
-        for (PokemonEntity pokemonEntity1 : pokemonEntity.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(pokemonEntity.position(), safeDistanceSqr, safeDistanceSqr, safeDistanceSqr), (entity) -> entity.getOwner() != null || CobblemonFightOrFlight.moveConfig().wild_pokemon_taunt)) {
-            if (PokemonUtils.canTaunt(pokemonEntity1)) {
+        if (target instanceof PokemonEntity pokemonEntity1) {
+            if (pokemonEntity1.getOwner() != null && PokemonUtils.canTaunt(pokemonEntity1)) {
                 targetPokemon = pokemonEntity1;
                 return PokemonUtils.WildPokemonCanPerformUnprovokedAttack(pokemonEntity);
             }
@@ -39,9 +36,16 @@ public class PokemonTauntedTargetGoal<T extends LivingEntity> extends NearestAtt
     }
 
     public boolean canUse() {
-        if (isTaunted()) {
-            target = targetPokemon;
-            return true;
+        if (!CobblemonFightOrFlight.moveConfig().wild_pokemon_taunt || pokemonEntity.getOwner() != null) {
+            return false;
+        }
+        if (super.canUse()) {
+            if (isTaunted()) {
+                target = targetPokemon;
+                return true;
+            } else {
+                target = null;
+            }
         }
         return false;
     }

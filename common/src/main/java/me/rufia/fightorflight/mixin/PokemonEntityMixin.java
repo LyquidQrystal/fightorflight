@@ -142,7 +142,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         targetSelector.addGoal(1, new PokemonCommandedTargetGoal<>(pokemonEntity, LivingEntity.class, false));
         targetSelector.addGoal(2, new PokemonOwnerHurtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(3, new PokemonOwnerHurtTargetGoal(pokemonEntity));
-        targetSelector.addGoal(3, new PokemonTauntedTargetGoal<>(pokemonEntity, PokemonEntity.class, false));
+        targetSelector.addGoal(3, new PokemonTauntedTargetGoal(pokemonEntity, false));
         targetSelector.addGoal(4, new HurtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(4, new CaughtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));

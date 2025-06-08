@@ -27,8 +27,11 @@ public class MoveSlotsRender {
         if (!CobblemonFightOrFlight.visualEffectConfig().enable_move_indicator) {
             return;
         }
-        if (player == null || player.isSpectator() || pokemon == null) {
+        if (player == null || pokemon == null) {
             CobblemonFightOrFlight.LOGGER.info("Failed to render the icon.");
+            return;
+        }
+        if (player.isSpectator()) {
             return;
         }
 
