@@ -15,7 +15,6 @@ import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleOptions;
-import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -38,13 +37,10 @@ import net.minecraft.world.level.storage.loot.parameters.LootContextParams;
 import net.minecraft.world.phys.Vec3;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Map;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 
 public class FOFExplosion extends Explosion {
     protected static final ExplosionDamageCalculator EXPLOSION_DAMAGE_CALCULATOR = new ExplosionDamageCalculator();
-    protected static final int MAX_DROPS_PER_COMBINED_STACK = 16;
     protected final boolean fire;
     protected final Explosion.BlockInteraction blockInteraction;
     protected final RandomSource random;
@@ -89,10 +85,6 @@ public class FOFExplosion extends Explosion {
         return state.isAir() && fluid.isEmpty() ? Optional.empty() : Optional.of(Math.max(state.getBlock().getExplosionResistance(), fluid.getExplosionResistance()));
     }
 
-    public boolean shouldBlockExplode(Explosion explosion, BlockGetter reader, BlockPos pos, BlockState state, float power) {
-        return true;
-    }
-
     public void explode() {
         this.level.gameEvent(this.source, GameEvent.EXPLODE, new Vec3(this.x, this.y, this.z));
         Set<BlockPos> set = Sets.newHashSet();
@@ -101,9 +93,9 @@ public class FOFExplosion extends Explosion {
             for (int k = 0; k < 16; ++k) {
                 for (int l = 0; l < 16; ++l) {
                     if (j == 0 || j == 15 || k == 0 || k == 15 || l == 0 || l == 15) {
-                        double d = (double) ((float) j / 15.0F * 2.0F - 1.0F);
-                        double e = (double) ((float) k / 15.0F * 2.0F - 1.0F);
-                        double f = (double) ((float) l / 15.0F * 2.0F - 1.0F);
+                        double d = (float) j / 15.0F * 2.0F - 1.0F;
+                        double e = (float) k / 15.0F * 2.0F - 1.0F;
+                        double f = (float) l / 15.0F * 2.0F - 1.0F;
                         double g = Math.sqrt(d * d + e * e + f * f);
                         d /= g;
                         e /= g;
@@ -144,6 +136,11 @@ public class FOFExplosion extends Explosion {
         PokemonAttackEffect.dealAoEDamage(pokemon, source, shouldHurtAlly, false);
     }
 
+    @Override
+    public void finalizeExplosion(boolean spawnParticles) {
+        finalizeExplosion();
+    }
+
     public void finalizeExplosion() {
         if (this.level.isClientSide) {
             this.level.playLocalSound(this.x, this.y, this.z, SoundEvents.GENERIC_EXPLODE.value(), SoundSource.BLOCKS, 4.0F, (1.0F + (this.level.random.nextFloat() - this.level.random.nextFloat()) * 0.2F) * 0.7F, false);
@@ -166,37 +163,22 @@ public class FOFExplosion extends Explosion {
         //replace it with type-specific particle
 
         if (bl) {
-            ObjectArrayList<Pair<ItemStack, BlockPos>> objectArrayList = new ObjectArrayList<>();
-            boolean bl2 = pokemon.getOwner() instanceof Player;
+            List<Pair<ItemStack, BlockPos>> list = new ArrayList<>();
             Util.shuffle(this.toBlow, this.level.random);
-            ObjectListIterator<BlockPos> it1 = this.toBlow.iterator();
-            while (it1.hasNext()) {
-                BlockPos blockPos = it1.next();
-                BlockState blockState = this.level.getBlockState(blockPos);
-                net.minecraft.world.level.block.Block block = blockState.getBlock();
-                if (!blockState.isAir()) {
-                    BlockPos blockPos2 = blockPos.immutable();
-                    this.level.getProfiler().push("explosion_blocks");
-                    if (block.dropFromExplosion(this)) {
-                        if (this.level instanceof ServerLevel serverLevel) {
-                            BlockEntity blockEntity = blockState.hasBlockEntity() ? this.level.getBlockEntity(blockPos) : null;
-                            LootParams.Builder builder = (new LootParams.Builder(serverLevel)).withParameter(LootContextParams.ORIGIN, Vec3.atCenterOf(blockPos)).withParameter(LootContextParams.TOOL, ItemStack.EMPTY).withOptionalParameter(LootContextParams.BLOCK_ENTITY, blockEntity).withOptionalParameter(LootContextParams.THIS_ENTITY, this.source);
-                            if (this.blockInteraction == BlockInteraction.DESTROY_WITH_DECAY) {
-                                builder.withParameter(LootContextParams.EXPLOSION_RADIUS, this.radius);
-                            }
-                            blockState.spawnAfterBreak(serverLevel, blockPos, ItemStack.EMPTY, bl2);
-                            blockState.getDrops(builder).forEach((itemStack) -> addBlockDrops(objectArrayList, itemStack, blockPos2));
-                        }
-                    }
 
-                    this.level.setBlock(blockPos, Blocks.AIR.defaultBlockState(), 3);
-                    block.wasExploded(this.level, blockPos, this);
-                    this.level.getProfiler().pop();
-                }
+            for (BlockPos blockPos : this.toBlow) {
+                this.level.getBlockState(blockPos).onExplosionHit(this.level, blockPos, this, (itemStack, blockPosx) -> {
+                    addOrAppendStack(list, itemStack, blockPosx);
+                });
             }
 
-            for (Pair<ItemStack, BlockPos> pair : objectArrayList) {
-                //CobblemonFightOrFlight.LOGGER.info("Scanning");
+            for (Pair<ItemStack, BlockPos> pair : list) {
+                net.minecraft.world.level.block.Block.popResource(this.level, pair.getSecond(), pair.getFirst());
+            }
+
+            this.level.getProfiler().pop();
+
+            for (Pair<ItemStack, BlockPos> pair : list) {
                 net.minecraft.world.level.block.Block.popResource(this.level, pair.getSecond(), pair.getFirst());
             }
         }
@@ -214,24 +196,6 @@ public class FOFExplosion extends Explosion {
         return this.blockInteraction != Explosion.BlockInteraction.KEEP;
     }
 
-    protected static void addBlockDrops(ObjectArrayList<Pair<ItemStack, BlockPos>> dropPositionArray, ItemStack stack, BlockPos pos) {
-        int i = dropPositionArray.size();
-
-        for (int j = 0; j < i; ++j) {
-            Pair<ItemStack, BlockPos> pair = dropPositionArray.get(j);
-            ItemStack itemStack = pair.getFirst();
-            if (ItemEntity.areMergable(itemStack, stack)) {
-                ItemStack itemStack2 = ItemEntity.merge(itemStack, stack, 16);
-                dropPositionArray.set(j, Pair.of(itemStack2, pair.getSecond()));
-                if (stack.isEmpty()) {
-                    return;
-                }
-            }
-        }
-
-        dropPositionArray.add(Pair.of(stack, pos));
-    }
-
     public static FOFExplosion createExplosion(Entity source, PokemonEntity pokemonEntity, double x, double y, double z, boolean shouldHurtAlly, boolean isProjectileExplosion) {
         if (pokemonEntity == null) {
             CobblemonFightOrFlight.LOGGER.warn("trying to create a new FOFExplosion without PokemonEntity");
@@ -244,7 +208,7 @@ public class FOFExplosion extends Explosion {
         BlockInteraction blockInteraction1;
         if (CobblemonFightOrFlight.moveConfig().pokemon_griefing) {
             blockInteraction1 = BlockInteraction.DESTROY_WITH_DECAY;
-            CobblemonFightOrFlight.LOGGER.info("will destroy blocks");
+            //CobblemonFightOrFlight.LOGGER.info("will destroy blocks");
         } else {
             blockInteraction1 = BlockInteraction.KEEP;
         }
@@ -261,5 +225,20 @@ public class FOFExplosion extends Explosion {
 
     protected float pokemonExplosionBaseValue(boolean isProjectileExplosion) {
         return (isProjectileExplosion ? 0.0f : 5.0f);
+    }
+
+    protected static void addOrAppendStack(List<Pair<ItemStack, BlockPos>> drops, ItemStack stack, BlockPos pos) {
+        for(int i = 0; i < drops.size(); ++i) {
+            Pair<ItemStack, BlockPos> pair = drops.get(i);
+            ItemStack itemStack = pair.getFirst();
+            if (ItemEntity.areMergable(itemStack, stack)) {
+                drops.set(i, Pair.of(ItemEntity.merge(itemStack, stack, 16), (BlockPos)pair.getSecond()));
+                if (stack.isEmpty()) {
+                    return;
+                }
+            }
+        }
+
+        drops.add(Pair.of(stack, pos));
     }
 }

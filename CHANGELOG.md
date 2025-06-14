@@ -14,7 +14,7 @@
 * Fixed the bug that the projectiles could cause friendly fire.
 ### Misc:
 * More optimization, possibly solving performance issue.
-* 
+
 # v0.8.0
 ### New Features:
 * Player's pokemons can use the status move that raises the user's stats to enhance themselves now(The move needs to be selected by the player). 
