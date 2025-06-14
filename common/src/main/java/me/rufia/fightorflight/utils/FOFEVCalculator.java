@@ -26,10 +26,10 @@ public class FOFEVCalculator {
         var item = battlePokemon.heldItem();
 
         var yield = opponentPokemon.getForm().getEvYield();
-        var total = new HashMap<Stat, Integer>(yield);
-        for (Map.Entry<Stat,Integer> entry: yield.entrySet()){
-            int boost=!item.isEmpty()&&item.is(POWER_ITEM.get(entry.getKey()))?8:0;
-            total.put(entry.getKey(), boost+yield.get(entry.getKey()));
+        var total = new HashMap<>(yield);
+        for (Map.Entry<Stat, Integer> entry : yield.entrySet()) {
+            int boost = FOFHeldItemManager.canUseHeldItemGlobal() && !item.isEmpty() && item.is(POWER_ITEM.get(entry.getKey())) ? 8 : 0;
+            total.put(entry.getKey(), boost + yield.get(entry.getKey()));
         }
         return total;
     }

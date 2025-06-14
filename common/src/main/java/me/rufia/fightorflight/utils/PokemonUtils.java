@@ -329,7 +329,7 @@ public class PokemonUtils {
     }
 
     public static boolean shouldRetreat(PokemonEntity pokemonEntity) {
-        ItemStack i = pokemonEntity.getPokemon().heldItem();
+        //TODO Eject Button
         return pokemonEntity.getOwner() != null && pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
     }
 

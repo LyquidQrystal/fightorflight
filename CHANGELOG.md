@@ -1,3 +1,11 @@
+# V0.8.2
+### New Features:
+#### New Config:
+* can_use_held_item. If the pokemon can use held item(This config has the highest priority)
+* can_use_held_item_damage_influencing. If the pokemon can use damage-increasing held item
+* can_use_held_item_hp_influencing. If the pokemon can use hp-restoring/damage-inflicting held item(Life Orb not included)
+### Bug Fixes:
+* Pokemon's explosion won't accidentally destroy gravestone from Pneumono_'s mod.(It's the only one reported in the issue, might be useful for the other blocks that shouldn't be destroyed by explosion)
 # v0.8.1
 ### New Features:
 * Added tooltip for Oran Lucky Egg

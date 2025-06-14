@@ -235,5 +235,11 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean stay_after_move_command = true;
     @Comment("If the player need to hold a Poke Staff to use the command keybind")
     public boolean should_check_poke_staff = true;
-
+    @ConfigEntry.Category("Held item")
+    @Comment("If the pokemon can use held item(This config has the highest priority)")
+    public boolean can_use_held_item = true;
+    @Comment("If the pokemon can use damage-increasing held item")
+    public boolean can_use_held_item_damage_influencing = true;
+    @Comment("If the pokemon can use hp-restoring/damage-inflicting held item(Life Orb not included)")
+    public boolean can_use_held_item_hp_influencing = true;
 }

@@ -311,7 +311,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         PokemonMultipliers pokemonMultipliers = new PokemonMultipliers((PokemonEntity) (Object) this);
         Pokemon pokemon = getPokemon();
-        int specialDef = (int) (pokemon.getSpecialDefence() * (pokemon.heldItem().is(CobblemonItems.ASSAULT_VEST) ? 1.3f : 1f));
+        int specialDef = (int) (pokemon.getSpecialDefence() * (FOFHeldItemManager.canUse(pokemon, CobblemonItems.ASSAULT_VEST) ? 1.3f : 1f));
         float def = Math.max(pokemon.getDefence(), specialDef);
         return amount * (1 - pokemonMultipliers.getMaximumDamageReduction() * Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
         //CobblemonFightOrFlight.LOGGER.info(String.format("base dmg:%f,reduced dmg:%f",amount,amount1));
@@ -337,7 +337,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
             var entity = damageSource.getEntity();
             if (entity instanceof LivingEntity livingEntity) {
-                if (getPokemon().heldItem().is(CobblemonItems.ROCKY_HELMET)) {
+                if (FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.ROCKY_HELMET)) {
                     entity.hurt(damageSources().thorns(pokemonEntity), livingEntity.getMaxHealth() / 6);
                 }
                 if (PokemonUtils.abilityIs(pokemonEntity, "roughskin") || PokemonUtils.abilityIs(pokemonEntity, "ironbarbs")) {
@@ -394,7 +394,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         } else {
             PokemonEntity self = (PokemonEntity) (Object) this;
             if (self.getOwner() != null) {
-                if (!getPokemon().heldItem().is(CobblemonItems.ASSAULT_VEST)) {
+                if (!FOFHeldItemManager.canUse(self, CobblemonItems.ASSAULT_VEST)) {
                     Move move = PokemonUtils.getStatusMove(self);
                     if (move != null) {
                         if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
@@ -432,17 +432,19 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Unique
     private void turnBasedHeldItemTrigger() {
+        if (!FOFHeldItemManager.canUseHeldItemHPInfluencing()) {
+            return;
+        }
         PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
         Pokemon pokemon = pokemonEntity.getPokemon();
-        ItemStack itemStack = pokemon.heldItem();
         float maxHealth = pokemonEntity.getMaxHealth();
-        if (itemStack.is(CobblemonItems.LEFTOVERS)) {
+        if (FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.LEFTOVERS)) {
             heal(maxHealth / 16);
-        } else if (itemStack.is(CobblemonItems.STICKY_BARB)) {
+        } else if (FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.STICKY_BARB)) {
             if (!PokemonUtils.abilityIs(pokemonEntity, "magicguard")) {
                 hurt(damageSources().magic(), maxHealth / 8);
             }
-        } else if (itemStack.is(CobblemonItems.BLACK_SLUDGE)) {
+        } else if (FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.BLACK_SLUDGE)) {
             if (PokemonUtils.hasType(pokemon, ElementalTypes.INSTANCE.getPOISON())) {
                 heal(maxHealth / 16);
             } else {

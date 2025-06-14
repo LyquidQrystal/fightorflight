@@ -14,6 +14,7 @@ import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
 import me.rufia.fightorflight.entity.projectile.PokemonArrow;
 import me.rufia.fightorflight.entity.projectile.PokemonBullet;
 import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
+import me.rufia.fightorflight.utils.FOFHeldItemManager;
 import me.rufia.fightorflight.utils.PokemonMultipliers;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.TypeEffectiveness;
@@ -201,6 +202,9 @@ public class PokemonAttackEffect {
 
     public static float getHeldItemDmgMultiplier(PokemonEntity pokemonEntity, Entity target) {
         //Variables that might be needed.
+        if (!FOFHeldItemManager.canUseHeldItemDamageInfluencing()) {
+            return 1f;
+        }
         ItemStack heldItem = PokemonUtils.getHeldItem(pokemonEntity);
         Move move = PokemonUtils.getMove(pokemonEntity);
         ElementalType type = null;
@@ -450,7 +454,7 @@ public class PokemonAttackEffect {
         boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().recoil_moves_allHP).toList().contains(move.getName());
         boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(move.getName());
         boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(move.getName());
-        boolean b6 = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.LIFE_ORB);
+        boolean b6 = FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.LIFE_ORB);
         float dmg = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
         if (b1) {
             pokemonRecallWithAnimation(pokemonEntity);
@@ -463,7 +467,7 @@ public class PokemonAttackEffect {
         }
 
         if (b4 || b5) {
-            boolean hasBigRoot = pokemonEntity.getPokemon().heldItem().is(CobblemonItems.BIG_ROOT);
+            boolean hasBigRoot = FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.BIG_ROOT);
             float percent = (b4 ? 0.5f : 0.75f) * (hasBigRoot ? 1.3f : 1.0f);
             pokemonEntity.heal(dmg * percent);
         }
@@ -490,7 +494,7 @@ public class PokemonAttackEffect {
         }
 
         if (!PokemonUtils.isSheerForce(pokemonEntity)) {
-            if (pokemonEntity.getPokemon().heldItem().is(CobblemonItems.SHELL_BELL)) {
+            if (FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.SHELL_BELL)) {
                 float healAmount = dmg / 8;
                 pokemonEntity.heal(healAmount > 1 ? healAmount : 1);
             }
