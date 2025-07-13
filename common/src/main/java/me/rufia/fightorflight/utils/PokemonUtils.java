@@ -16,6 +16,7 @@ import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.compat.LivelierPokemonCompat;
 import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import net.minecraft.core.BlockPos;
@@ -102,15 +103,15 @@ public class PokemonUtils {
         return moves;
     }
 
-    public static boolean hasType(PokemonEntity pokemonEntity, ElementalType type){
-        return hasType(pokemonEntity.getPokemon(),type);
+    public static boolean hasType(PokemonEntity pokemonEntity, ElementalType type) {
+        return hasType(pokemonEntity.getPokemon(), type);
     }
 
-    public static boolean hasType(Pokemon pokemon,ElementalType type){
-        ElementalType type1=pokemon.getPrimaryType();
-        if(type1!=type){
-            ElementalType type2=pokemon.getSecondaryType();
-            if(type2!=null){
+    public static boolean hasType(Pokemon pokemon, ElementalType type) {
+        ElementalType type1 = pokemon.getPrimaryType();
+        if (type1 != type) {
+            ElementalType type2 = pokemon.getSecondaryType();
+            if (type2 != null) {
                 return type2 == type;
             }
         }
@@ -594,8 +595,8 @@ public class PokemonUtils {
             return false;
         }
         boolean isEnemy = livingEntity instanceof Enemy;
-        boolean creeperTest = !(!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_creeper_proactive && livingEntity instanceof Creeper);
-        return isEnemy && creeperTest;
+
+        return isEnemy;
     }
 
     public static boolean shouldCheckPokeStaff() {

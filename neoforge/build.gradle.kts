@@ -49,6 +49,8 @@ dependencies {
 
     include(modApi("me.shedaniel.cloth:cloth-config-neoforge:${project.properties["cloth_config_version"]}")!!)
     modImplementation("com.cobblemon:neoforge:${project.properties["cobblemon_version"]}")
+
+    modImplementation("maven.modrinth:livelierpokemon:2.0.4+1.21.1-neoforge")
 }
 
 tasks {

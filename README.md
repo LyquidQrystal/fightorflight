@@ -2,7 +2,7 @@ This version is no longer server-side only. I added new items and entities to su
 Though I haven't made contact with them, I don't mind they use my code if necessary.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
-### Features included in v0.8.0:
+### Features included in v0.8.1:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -77,15 +77,15 @@ Though I haven't made contact with them, I don't mind they use my code if necess
     - Sheer Force works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
 
 ### Features/Changes that is not released currently:
+- Cat Pokemon will attack Creeper proactively now.(LivelierPokemon is required to enable this feature because it has a cat pokemon category in its config. If you don't have this mod, nothing special will happen, all pokemon will follow do_pokemon_defend_creeper_proactive)
 ## TODO
-- Main Goal For the Next Update:
+- Main Goal For the Following Updates:
   - Status move effect
 - Things that might be done in a short period of time(1~3 big updates):
   - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
     - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
     - Example: Pokemon gain strength when using Swords Dance, the duration will be longer than using Power-up Punch, and the cooldown will be longer / Using Telekinesis will levitate the target.
     - It might take a lot of time to cover most of the status moves so it won't be removed from this section currently.
-  - Compatibility with LivelierPokemon
 - Things that might not be done in a short period of time:
   - Datapack driven behavior setting(quite complex)
   - Add an item similar to the Sticky Glob(Sounds cool, but we still got many things to do.)

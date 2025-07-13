@@ -113,6 +113,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float pokemon_defend_proactive_radius = 8f;
     @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
     public boolean do_pokemon_defend_creeper_proactive = false;
+    @Comment("If the player's cat pokemon will attack the creeper proactively(LivelierPokemon required) ")
+    public boolean do_cat_pokemon_defend_creeper_proactive = true;
     @Comment("Can player Pokemon target other players? (EXPERIMENTAL)")
     public boolean do_player_pokemon_attack_other_players = false;
     @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
@@ -242,4 +244,5 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean can_use_held_item_damage_influencing = true;
     @Comment("If the pokemon can use hp-restoring/damage-inflicting held item(Life Orb not included)")
     public boolean can_use_held_item_hp_influencing = true;
+
 }

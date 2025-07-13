@@ -37,6 +37,8 @@ dependencies {
 
     //Cobblemon
     modApi("com.cobblemon:fabric:${project.properties["cobblemon_version"]}")
+
+    modImplementation("maven.modrinth:livelierpokemon:2.0.4+1.21.1-fabric")
 }
 
 tasks {
