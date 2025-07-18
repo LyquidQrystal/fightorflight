@@ -4,8 +4,8 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.client.model.PokemonBulletModel;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.entity.projectile.PokemonBullet;
 import net.minecraft.client.model.geom.ModelLayers;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -55,7 +55,7 @@ public class PokemonBulletRenderer extends EntityRenderer<PokemonBullet> {
         poseStack.scale(1.5F, 1.5F, 1.5F);
         VertexConsumer vertexConsumer2 = buffer.getBuffer(RENDER_TYPE);
         int colorCode = FastColor.ARGB32.colorFromFloat((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, 0.75F);
-        this.model.renderToBuffer(poseStack, vertexConsumer2, packedLight, OverlayTexture.NO_OVERLAY);
+        this.model.renderToBuffer(poseStack, vertexConsumer2, packedLight, OverlayTexture.NO_OVERLAY, colorCode);
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }

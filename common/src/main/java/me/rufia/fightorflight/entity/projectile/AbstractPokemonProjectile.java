@@ -85,9 +85,9 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
 
     public void applyTypeEffect(PokemonEntity pokemonEntity, LivingEntity hurtTarget) {
         if (!Objects.equals(getElementalType(), pokemonEntity.getPokemon().getPrimaryType().getName())) {
-            //PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget, getElementalType());
+            PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget, getElementalType());
         } else {
-            //PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget);
+            PokemonAttackEffect.applyTypeEffect(pokemonEntity, hurtTarget);
         }
     }
 

@@ -50,11 +50,6 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         super.shoot(x, y, z, velocity, inaccuracy);
     }
 
-    public void lerpTo(double x, double y, double z, float yRot, float xRot, int lerpSteps, boolean teleport) {
-        this.setPos(x, y, z);
-        this.setRot(yRot, xRot);
-    }
-
     public void lerpMotion(double x, double y, double z) {
         super.lerpMotion(x, y, z);
     }

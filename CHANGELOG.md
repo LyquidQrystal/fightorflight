@@ -1,5 +1,10 @@
+# V0.8.3
+Bug Fixes:
+* Fixed the bug that the bullet/ball projectiles didn't explode when hitting mobs.
+* Fixed the bug that the color of the bullet/ball projectiles wasn't influenced by the move's type.
 # V0.8.2
 ### New Features:
+* If you installed LivelierPokemon, the cat Pokemon will attack Creeper proactively.(can be disabled in the config, the cat pokemon category is in livelierpokemon-categories.json5 if you installed that mod.)
 #### New Config:
 * can_use_held_item. If the pokemon can use held item(This config has the highest priority)
 * can_use_held_item_damage_influencing. If the pokemon can use damage-increasing held item
