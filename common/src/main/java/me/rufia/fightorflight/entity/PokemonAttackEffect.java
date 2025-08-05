@@ -553,7 +553,7 @@ public class PokemonAttackEffect {
                 }
             } else if (b1 || b2) {
                 for (int i = 0; i < (b1 ? 1 : rand.nextInt(3) + 1); ++i) {
-                    bullet = new PokemonBullet(pokemonEntity.level(), pokemonEntity, target);
+                    bullet = new PokemonBullet(pokemonEntity.level(), pokemonEntity);
                     shootProjectileEntity(pokemonEntity, target, bullet);
                     addProjectileEntity(pokemonEntity, target, bullet, move);
                 }

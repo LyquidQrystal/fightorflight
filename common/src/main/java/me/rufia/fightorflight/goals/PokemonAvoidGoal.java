@@ -60,7 +60,7 @@ public class PokemonAvoidGoal extends Goal {
             this.toAvoid = this.mob.level().getNearestEntity(this.mob.level().getEntitiesOfClass(Player.class, this.mob.getBoundingBox().inflate((double) this.maxDist, 3.0, (double) this.maxDist), (livingEntity) -> true), this.avoidEntityTargeting, this.mob, this.mob.getX(), this.mob.getY(), this.mob.getZ());
         } else {
             if (this.mob.getTarget() != null) {
-                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0) {
+                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > CobblemonFightOrFlight.commonConfig().neutral_threshold) {
                     return false;
                 }
 
@@ -99,12 +99,12 @@ public class PokemonAvoidGoal extends Goal {
         for (Move move : moves) {
             if (move.getName().equals("teleport")) {
                 has_teleport = true;
-                LogUtils.getLogger().info("This pokemon got teleport to avoid you");
+                //LogUtils.getLogger().info("This pokemon got teleport to avoid you");
                 break;
             }
         }
 
-        if (CobblemonFightOrFlight.commonConfig().allow_teleport_to_flee && has_teleport) {
+        if (CobblemonFightOrFlight.commonConfig().allow_teleport_to_flee && has_teleport && path != null) {
             for (int i = 0; i < 5; ++i) {
                 this.mob.level().addParticle(ParticleTypes.PORTAL, this.mob.getRandomX(0.5), this.mob.getRandomY(), this.mob.getRandomZ(0.5), 0.0, 0.0, 0.0);
             }
@@ -121,12 +121,10 @@ public class PokemonAvoidGoal extends Goal {
 
     public void tick() {
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
-//        LogUtils.getLogger().info(pokemonEntity.getPokemon().getSpecies().getName() + " is running away " + this.mob.distanceToSqr(this.toAvoid) + " distanceSqr from here");
-
-        if (this.mob.distanceToSqr(this.toAvoid) < (maxDist * 0.5)) {
-            this.mob.getNavigation().setSpeedModifier(this.sprintSpeedModifier);
+        if (pokemonEntity.distanceToSqr(this.toAvoid) < (maxDist * 0.5)) {
+            pokemonEntity.getNavigation().setSpeedModifier(this.sprintSpeedModifier);
         } else {
-            this.mob.getNavigation().setSpeedModifier(this.walkSpeedModifier);
+            pokemonEntity.getNavigation().setSpeedModifier(this.walkSpeedModifier);
         }
 
     }

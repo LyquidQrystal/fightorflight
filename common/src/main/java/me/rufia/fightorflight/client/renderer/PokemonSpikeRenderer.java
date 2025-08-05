@@ -4,42 +4,33 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.math.Axis;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.client.model.PokemonBulletModel;
+import me.rufia.fightorflight.client.model.PokemonSpikeModel;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
-import me.rufia.fightorflight.entity.projectile.PokemonBullet;
-import net.minecraft.client.model.geom.ModelLayers;
+import me.rufia.fightorflight.entity.projectile.PokemonSpike;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererProvider;
 import net.minecraft.client.renderer.texture.OverlayTexture;
-import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
 
-public class PokemonBulletRenderer extends EntityRenderer<PokemonBullet> {
-    private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "textures/entity/tracing_bullet_spark.png");
+public class PokemonSpikeRenderer extends EntityRenderer<PokemonSpike> {
+    private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "textures/entity/spike.png");
     private static final RenderType RENDER_TYPE;
-    private final PokemonBulletModel<PokemonBullet> model;
+    private final PokemonSpikeModel<PokemonSpike> model;
 
-    public PokemonBulletRenderer(EntityRendererProvider.Context context) {
+    public PokemonSpikeRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new PokemonBulletModel<>(context.bakeLayer(ModelLayers.SHULKER_BULLET));
+        model = new PokemonSpikeModel<>(context.bakeLayer(PokemonSpikeModel.LAYER_LOCATION));
     }
 
-    protected int getBlockLightLevel(PokemonBullet entity, BlockPos pos) {
-        return 15;
-    }
-
-    public void render(PokemonBullet entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
-        Color color = Color.white;
-        if (entity.getElementalType() != null) {
-            color = PokemonAttackEffect.getColorFromType(entity.getElementalType());
-        }
-
+    @Override
+    public void render(PokemonSpike entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight){
+        Color color = getColor(entity);
         poseStack.pushPose();
         float f = Mth.rotLerp(partialTicks, entity.yRotO, entity.getYRot());
         float g = Mth.lerp(partialTicks, entity.xRotO, entity.getXRot());
@@ -60,7 +51,12 @@ public class PokemonBulletRenderer extends EntityRenderer<PokemonBullet> {
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
-    public ResourceLocation getTextureLocation(PokemonBullet entity) {
+    public Color getColor(PokemonSpike entity){
+        return Color.white;
+    }
+
+    @Override
+    public ResourceLocation getTextureLocation(PokemonSpike entity) {
         return TEXTURE_LOCATION;
     }
 

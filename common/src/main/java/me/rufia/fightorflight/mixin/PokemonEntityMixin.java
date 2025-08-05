@@ -396,16 +396,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                 if (!FOFHeldItemManager.canUse(self, CobblemonItems.ASSAULT_VEST)) {
                     Move move = PokemonUtils.getStatusMove(self);
                     if (move != null) {
-                        if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
-                            if (MoveData.moveData.containsKey(move.getName())) {
-                                for (MoveData data : MoveData.moveData.get(move.getName())) {
-                                    data.invoke(self, null);
-                                }
-                                PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
-                                PokemonUtils.sendAnimationPacket(self, "status");
-                                setAttackTime(300);
-                                setMaxAttackTime(300);
+                        if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+                            for (MoveData data : MoveData.moveData.get(move.getName())) {
+                                data.invoke(self, null);
                             }
+                            PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
+                            PokemonUtils.sendAnimationPacket(self, "status");
+                            setAttackTime(300);
+                            setMaxAttackTime(300);
                         }
                     }
                 }
@@ -547,15 +545,13 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
     private void dropAllDeathLootInject(ServerLevel world, DamageSource source, CallbackInfo ci) {
-        if (getLastHurtByMob() instanceof PokemonEntity pokemonEntity) {
-            if (pokemonEntity.getOwner() != null) {
-                PokemonEntity self = (PokemonEntity) (Object) this;
-                pokemonEntity.getPokemon().addExperience(new SidemodExperienceSource(CobblemonFightOrFlight.MODID), FOFExpCalculator.calculate(pokemonEntity.getPokemon(), self.getPokemon()));
-                if (CobblemonFightOrFlight.commonConfig().can_gain_ev) {
-                    var map = FOFEVCalculator.calculate(pokemonEntity.getPokemon(), self.getPokemon());
-                    for (Map.Entry<Stat, Integer> entry : map.entrySet()) {
-                        pokemonEntity.getPokemon().getEvs().add(entry.getKey(), entry.getValue());
-                    }
+        if (getLastHurtByMob() instanceof PokemonEntity pokemonEntity && pokemonEntity.getOwner() != null) {
+            PokemonEntity self = (PokemonEntity) (Object) this;
+            pokemonEntity.getPokemon().addExperience(new SidemodExperienceSource(CobblemonFightOrFlight.MODID), FOFExpCalculator.calculate(pokemonEntity.getPokemon(), self.getPokemon()));
+            if (CobblemonFightOrFlight.commonConfig().can_gain_ev) {
+                var map = FOFEVCalculator.calculate(pokemonEntity.getPokemon(), self.getPokemon());
+                for (Map.Entry<Stat, Integer> entry : map.entrySet()) {
+                    pokemonEntity.getPokemon().getEvs().add(entry.getKey(), entry.getValue());
                 }
             }
         }

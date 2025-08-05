@@ -4,6 +4,7 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
 import me.rufia.fightorflight.client.renderer.PokemonArrowRenderer;
 import me.rufia.fightorflight.client.renderer.PokemonBulletRenderer;
+import me.rufia.fightorflight.client.renderer.PokemonSpikeRenderer;
 import me.rufia.fightorflight.client.renderer.PokemonTracingBulletRenderer;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -20,6 +21,7 @@ public final class FOFForgeClient {
         EntityRenderers.register(EntityFightOrFlight.TRACING_BULLET.get(), PokemonTracingBulletRenderer::new);
         EntityRenderers.register(EntityFightOrFlight.ARROW_PROJECTILE.get(), PokemonArrowRenderer::new);
         EntityRenderers.register(EntityFightOrFlight.BULLET.get(), PokemonBulletRenderer::new);
+        EntityRenderers.register(EntityFightOrFlight.SPIKE.get(), PokemonSpikeRenderer::new);
     }
 
     @SubscribeEvent

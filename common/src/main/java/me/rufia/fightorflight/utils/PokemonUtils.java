@@ -16,7 +16,6 @@ import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
-import me.rufia.fightorflight.compat.LivelierPokemonCompat;
 import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import net.minecraft.core.BlockPos;
@@ -27,7 +26,6 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.monster.Creeper;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -127,11 +125,10 @@ public class PokemonUtils {
         String moveName = "";
         if (!((PokemonInterface) pokemonEntity).getCurrentMove().isEmpty()) {
             moveName = ((PokemonInterface) pokemonEntity).getCurrentMove();
-        } else {
-            if (firstMove != null) {
-                moveName = firstMove.getName();
-            }
+        } else if (firstMove != null) {
+            moveName = firstMove.getName();
         }
+
         Move move = null;
         boolean flag = false;
         if (!moveName.isEmpty()) {
@@ -202,7 +199,6 @@ public class PokemonUtils {
         }
 
         if (isMeleeAttackMove(move)) {
-            //((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
@@ -414,12 +410,10 @@ public class PokemonUtils {
     public static boolean canActivateSheerForce(PokemonEntity pokemonEntity) {
         if (pokemonEntity != null && isSheerForce(pokemonEntity)) {
             Move move = getMove(pokemonEntity);
-            if (move != null) {
-                if (MoveData.moveData.containsKey(move.getName())) {
-                    for (MoveData data : MoveData.moveData.get(move.getName())) {
-                        if (data.canActivateSheerForce()) {
-                            return true;
-                        }
+            if (move != null && MoveData.moveData.containsKey(move.getName())) {
+                for (MoveData data : MoveData.moveData.get(move.getName())) {
+                    if (data.canActivateSheerForce()) {
+                        return true;
                     }
                 }
             }
@@ -492,12 +486,8 @@ public class PokemonUtils {
     }
 
     public static void pokemonEntityApproachPos(PokemonEntity pokemonEntity, BlockPos pos, double speedModifier) {
-        if (pos != BlockPos.ZERO) {
-            //CobblemonFightOrFlight.LOGGER.info("Pathfinding");
-
-            if (pokemonEntity.getNavigation().isDone()) {
-                pokemonEntity.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
-            }
+        if (pos != BlockPos.ZERO && pokemonEntity.getNavigation().isDone()) {
+            pokemonEntity.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
         }
     }
 
@@ -518,19 +508,15 @@ public class PokemonUtils {
         }
         if (hurtTarget instanceof PokemonEntity defendingPokemon) {
             if (attackingPokemon.getPokemon().isPlayerOwned()) {
-                if (defendingPokemon.getPokemon().isPlayerOwned()) {
-                    if (CobblemonFightOrFlight.commonConfig().force_player_battle_on_pokemon_hurt) {
-                        return pokemonForceEncounterPvP(attackingPokemon, defendingPokemon);
-                    }
+                if (defendingPokemon.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().force_player_battle_on_pokemon_hurt) {
+                    return pokemonForceEncounterPvP(attackingPokemon, defendingPokemon);
                 } else {
                     if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
                         return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
                     }
                 }
-            } else if (defendingPokemon.getPokemon().isPlayerOwned()) {
-                if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
-                    return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
-                }
+            } else if (defendingPokemon.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
+                return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
             }
         }
         return false;

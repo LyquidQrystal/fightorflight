@@ -35,7 +35,7 @@ public class PokemonPanicGoal extends PanicGoal {
             return true;
         }
         if (this.mob.getLastHurtByMob() != null) {
-            return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0) || Arrays.stream(CobblemonFightOrFlight.commonConfig().always_flee).toList().contains(pokemonEntity.getPokemon().getSpecies().getName().toLowerCase());
+            return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > CobblemonFightOrFlight.commonConfig().neutral_threshold) || Arrays.stream(CobblemonFightOrFlight.commonConfig().always_flee).toList().contains(pokemonEntity.getPokemon().getSpecies().getName().toLowerCase());
         }
         return false;
         //return super.shouldPanic();

@@ -23,7 +23,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
 import net.minecraft.util.Mth;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.ai.goal.Goal;
 import net.minecraft.world.phys.AABB;
@@ -39,7 +38,7 @@ public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
     public static final String COBBLEMON_MOD_ID = "cobblemon";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
-    public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
+    //public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
     private static FightOrFlightCommonConfigModel commonConfig;
     private static FightOrFlightMoveConfigModel moveConfig;
     private static FightOrFlightVisualEffectConfigModel visualEffectConfig;
@@ -89,7 +88,7 @@ public class CobblemonFightOrFlight {
 
     public static double getFightOrFlightCoefficient(PokemonEntity pokemonEntity) {
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack) {
-            return -100;
+            return -100 - Math.abs(commonConfig().neutral_threshold);
         }
 
         Pokemon pokemon = pokemonEntity.getPokemon();
@@ -98,18 +97,16 @@ public class CobblemonFightOrFlight {
         double height = pokemonEntity.position().y;
 
         if (SpeciesNeverAggro(speciesName) || SpeciesAlwaysFlee(speciesName)) {
-            return -100;
+            return -100 - Math.abs(commonConfig().neutral_threshold);
         }
 
         if (SpeciesAlwaysAggro(speciesName) || AspectsAlwaysAggro(pokemonAspects) || BelowAlwaysAggro(height)) {
-            return 100;
+            return 100 + commonConfig().aggressive_threshold;
         }
 
-        float levelMultiplier = CobblemonFightOrFlight.commonConfig().aggression_level_multiplier;
-        double pkmnLevel = levelMultiplier * pokemon.getLevel();
-        double lowStatPenalty = (pkmnLevel * 1.5) + 30;
-        double levelAggressionCoefficient = (pokemon.getAttack() + pokemon.getSpecialAttack()) - lowStatPenalty;
-        double atkDefRatioCoefficient = (pokemon.getAttack() + pokemon.getSpecialAttack()) - (pokemon.getDefence() + pokemon.getSpecialDefence());
+        double levelAggressionCoefficient;
+        //double atkDefRatioCoefficient = (pokemon.getAttack() + pokemon.getSpecialAttack()) - (pokemon.getDefence() + pokemon.getSpecialDefence());//This is not a ratio, obviously.
+        double atkDefDifCoefficient = (double) ((pokemon.getAttack() + pokemon.getSpecialAttack()) - (pokemon.getDefence() + pokemon.getSpecialDefence())) / pokemon.getLevel() * commonConfig().aggression_atk_def_dif_base_value;
         double natureAggressionCoefficient;
         double darknessAggressionCoefficient = 0;
         double intimidateCoefficient = 0;
@@ -138,26 +135,24 @@ public class CobblemonFightOrFlight {
             typeSecondary = typePrimary;
         }
 
-        boolean ghostLightLevelModifier = CobblemonFightOrFlight.commonConfig().ghost_light_level_aggro && (typePrimary.getName() == "ghost" || typeSecondary.getName() == "ghost");
-        boolean darkLightLevelModifier = CobblemonFightOrFlight.commonConfig().dark_light_level_aggro && (typePrimary.getName() == "dark" || typeSecondary.getName() == "dark");
+        boolean ghostLightLevelModifier = CobblemonFightOrFlight.commonConfig().ghost_light_level_aggro && (typePrimary.getName().equals("ghost") || typeSecondary.getName().equals("ghost"));
+        boolean darkLightLevelModifier = CobblemonFightOrFlight.commonConfig().dark_light_level_aggro && (typePrimary.getName().equals("dark") || typeSecondary.getName().equals("dark"));
 
         if (ghostLightLevelModifier || darkLightLevelModifier) {
-            int skyDarken = ((Entity) pokemonEntity).level().getSkyDarken();
-            //LogUtils.getLogger().info(pokemon.getSpecies().getName() + " skyDarken: " + skyDarken);
-            int lightLevel = ((Entity) pokemonEntity).level().getRawBrightness(pokemonEntity.blockPosition(), skyDarken);
-            //LogUtils.getLogger().info(pokemon.getSpecies().getName() + " Raw Brightness: " + lightLevel);
+            int skyDarken = pokemonEntity.level().getSkyDarken();
+            int lightLevel = pokemonEntity.level().getRawBrightness(pokemonEntity.blockPosition(), skyDarken);
             if (lightLevel <= 7) {
-                darknessAggressionCoefficient = pkmnLevel;
+                darknessAggressionCoefficient += commonConfig().aggression_light_level_base_value;
             } else if (lightLevel >= 12) {
-                darknessAggressionCoefficient -= pkmnLevel;
+                darknessAggressionCoefficient -= commonConfig().aggression_light_level_base_value;
             }
         }
 
         //Weights and Clamps:
-        levelAggressionCoefficient = Math.max(-(pkmnLevel + 5), Math.min(pkmnLevel, 1.5d * levelAggressionCoefficient));//5.0d * levelAggressionCoefficient;
-        atkDefRatioCoefficient = Math.max(-pkmnLevel, atkDefRatioCoefficient);
-        natureAggressionCoefficient = (pkmnLevel * 0.5) * natureAggressionCoefficient;//25.0d * natureAggressionCoefficient;
-        double finalResult = levelAggressionCoefficient + atkDefRatioCoefficient + natureAggressionCoefficient + darknessAggressionCoefficient + intimidateCoefficient;
+        levelAggressionCoefficient = commonConfig().aggression_level_base_value * commonConfig().aggression_level_multiplier * pokemon.getLevel() / 100;//5.0d * levelAggressionCoefficient;
+        //atkDefRatioCoefficient = Math.max(-pkmnLevel, atkDefRatioCoefficient);
+        natureAggressionCoefficient = commonConfig.aggression_nature_base_value * natureAggressionCoefficient;//25.0d * natureAggressionCoefficient;
+        double finalResult = levelAggressionCoefficient + atkDefDifCoefficient + natureAggressionCoefficient + darknessAggressionCoefficient + intimidateCoefficient;
 
         return finalResult;
     }
@@ -203,6 +198,10 @@ public class CobblemonFightOrFlight {
 
     public static boolean SpeciesAlwaysFlee(String speciesName) {
         return Arrays.stream(commonConfig().always_flee).toList().contains(speciesName);
+    }
+
+    public static float AUTO_AGGRO_THRESHOLD() {
+        return commonConfig().aggressive_threshold;
     }
 
     public static void PokemonEmoteAngry(Mob mob) {

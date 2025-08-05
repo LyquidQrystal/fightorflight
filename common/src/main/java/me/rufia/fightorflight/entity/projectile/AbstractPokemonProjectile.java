@@ -20,8 +20,6 @@ import net.minecraft.world.phys.EntityHitResult;
 import java.util.Objects;
 
 public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
-
-
     public AbstractPokemonProjectile(EntityType<? extends AbstractPokemonProjectile> entityType, Level level) {
         super(entityType, level);
     }

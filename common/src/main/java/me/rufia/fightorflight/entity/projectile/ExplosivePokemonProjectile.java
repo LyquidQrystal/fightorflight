@@ -50,15 +50,10 @@ public abstract class ExplosivePokemonProjectile extends AbstractPokemonProjecti
     @Override
     protected void onHitEntity(EntityHitResult result) {
         Entity owner = getOwner();
-        if (owner instanceof PokemonEntity pokemonEntity) {
-            Entity hurtTarget = result.getEntity();
-            if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
-                if (result.getEntity() instanceof LivingEntity target) {
-                    if (PokemonAttackEffect.shouldHurtAllyMob(pokemonEntity, target)) {
-                        PokemonAttackEffect.applyPostEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity), true);
-                        explode(pokemonEntity);
-                    }
-                }
+        if (owner instanceof PokemonEntity pokemonEntity && result.getEntity() instanceof LivingEntity hurtTarget) {
+            if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, hurtTarget) && PokemonAttackEffect.shouldHurtAllyMob(pokemonEntity, hurtTarget)) {
+                PokemonAttackEffect.applyPostEffect(pokemonEntity, hurtTarget, PokemonUtils.getMove(pokemonEntity), true);
+                explode(pokemonEntity);
             }
         }
     }

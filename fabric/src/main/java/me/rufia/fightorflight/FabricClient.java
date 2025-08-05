@@ -4,6 +4,7 @@ import com.cobblemon.mod.common.client.CobblemonClient;
 import com.mojang.authlib.minecraft.client.MinecraftClient;
 import me.rufia.fightorflight.client.hud.moveslots.MoveSlotsRender;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
+import me.rufia.fightorflight.client.renderer.PokemonSpikeRenderer;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.client.renderer.PokemonArrowRenderer;
 import me.rufia.fightorflight.client.renderer.PokemonBulletRenderer;
@@ -22,6 +23,7 @@ public final class FabricClient implements ClientModInitializer {
         EntityRendererRegistry.register(EntityFightOrFlight.TRACING_BULLET.get(), PokemonTracingBulletRenderer::new);
         EntityRendererRegistry.register(EntityFightOrFlight.ARROW_PROJECTILE.get(), PokemonArrowRenderer::new);
         EntityRendererRegistry.register(EntityFightOrFlight.BULLET.get(), PokemonBulletRenderer::new);
+        EntityRendererRegistry.register(EntityFightOrFlight.SPIKE.get(), PokemonSpikeRenderer::new);
         for (KeyMapping keyMapping : KeybindFightOrFlight.bindings) {
             KeyBindingHelper.registerKeyBinding(keyMapping);
         }
@@ -31,7 +33,7 @@ public final class FabricClient implements ClientModInitializer {
                 int slot = storage.getSelectedSlot();
                 var pokemon = storage.getMyParty().get(slot);
                 if (pokemon != null) {
-                    MoveSlotsRender.render(drawContext, tickCounter.getGameTimeDeltaPartialTick(true),pokemon);
+                    MoveSlotsRender.render(drawContext, tickCounter.getGameTimeDeltaPartialTick(true), pokemon);
                 }
             }
         }));

@@ -28,7 +28,7 @@ public class PokemonTracingBulletRenderer extends EntityRenderer<PokemonTracingB
 
     public PokemonTracingBulletRenderer(EntityRendererProvider.Context context) {
         super(context);
-        this.model = new PokemonBulletModel(context.bakeLayer(ModelLayers.SHULKER_BULLET));
+        this.model = new PokemonBulletModel<>(context.bakeLayer(ModelLayers.SHULKER_BULLET));
     }
     protected int getBlockLightLevel(PokemonTracingBullet entity, BlockPos pos) {
         return 15;

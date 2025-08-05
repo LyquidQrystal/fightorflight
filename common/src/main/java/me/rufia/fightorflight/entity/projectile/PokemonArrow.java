@@ -5,13 +5,10 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
-import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
 import me.rufia.fightorflight.utils.PokemonUtils;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -21,7 +18,10 @@ import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.*;
+import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.EntityHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 public class PokemonArrow extends AbstractPokemonProjectile {
     protected int knockback;
@@ -88,7 +88,6 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         float m = 0.99F;
         if (this.isInWater()) {
             for (int o = 0; o < 4; ++o) {
-                float p = 0.25F;
                 this.level().addParticle(ParticleTypes.BUBBLE, h - e * 0.25, j - f * 0.25, k - g * 0.25, e, f, g);
             }
 
@@ -98,10 +97,9 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         if (hitResult.getType() != HitResult.Type.MISS) {
             this.onHit(hitResult);
         }
-        this.setDeltaMovement(vec3.scale((double) m));
+        this.setDeltaMovement(vec3.scale(m));
         if (!this.isNoGravity() && !this.noPhysics) {
-            Vec3 vec34 = this.getDeltaMovement();
-            this.setDeltaMovement(vec34.x, vec34.y - getGravity(), vec34.z);
+            applyGravity();
         }
 
         this.setPos(h, j, k);
@@ -111,54 +109,49 @@ public class PokemonArrow extends AbstractPokemonProjectile {
     protected void onHitEntity(EntityHitResult result) {
         super.onHitEntity(result);
         Entity target = result.getEntity();
-        Entity entity2 = this.getOwner();
-        if (entity2 == null) {
-            return;
-        }
-        PokemonEntity pokemonEntity = entity2 instanceof PokemonEntity pokemon ? pokemon : null;
-        DamageSource damageSource;
-        float f = (float) this.getDeltaMovement().length();
-        if (pokemonEntity == null) {
-            this.discard();
-            return;
-        }
-        damageSource = this.damageSources().indirectMagic(this, pokemonEntity);
-
-        boolean bl = target.getType() == EntityType.ENDERMAN;
-        if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, target)) {
-            if (target instanceof LivingEntity livingEntity) {
+        if (getOwner() instanceof PokemonEntity pokemonEntity) {
+            if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, target) && target instanceof LivingEntity livingEntity) {
                 if (!PokemonAttackEffect.shouldHurtAllyMob(pokemonEntity, livingEntity)) {
                     this.discard();
                 } else {
-                    if (target.hurt(damageSource, getDamage())) {
-                        if (bl) {
-                            return;
-                        }
-                        pokemonEntity.setLastHurtMob(target);
-                        if (this.knockback > 0) {
-                            double d = Math.max(0.0, 1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
-                            Vec3 vec3 = this.getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize().scale((double) this.knockback * 0.6 * d);
-                            if (vec3.lengthSqr() > 0.0) {
-                                livingEntity.push(vec3.x, 0.1, vec3.z);
-                            }
-                        }
-                        if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
-                            applyTypeEffect(pokemonEntity, livingEntity);
-                        }
-                        if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
-                            Move move = PokemonUtils.getMove(pokemonEntity);
-                            PokemonAttackEffect.applyPostEffect(pokemonEntity, livingEntity, move, true);
-                        }
-
-                        this.discard();
-                    } else {
+                    if (!hurtTarget(pokemonEntity, livingEntity)) {
                         this.setDeltaMovement(this.getDeltaMovement().scale(-0.1));
                         this.setYRot(this.getYRot() + 180.0F);
                         this.yRotO += 180.0F;
                     }
                 }
             }
+        } else {
+            discard();
         }
+    }
+
+    protected boolean hurtTarget(PokemonEntity pokemonEntity, LivingEntity target) {
+        DamageSource damageSource = this.damageSources().indirectMagic(this, pokemonEntity);
+        if (target.hurt(damageSource, getDamage())) {
+            if (target.getType() == EntityType.ENDERMAN) {
+                this.discard();
+                return false;//To be honest, idk if it's necessary.
+            }
+            pokemonEntity.setLastHurtMob(target);
+            if (this.knockback > 0) {
+                double d = Math.max(0.0, 1.0 - target.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE));
+                Vec3 vec3 = this.getDeltaMovement().multiply(1.0, 0.0, 1.0).normalize().scale((double) this.knockback * 0.6 * d);
+                if (vec3.lengthSqr() > 0.0) {
+                    target.push(vec3.x, 0.1, vec3.z);
+                }
+            }
+            if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
+                applyTypeEffect(pokemonEntity, target);
+            }
+            if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                Move move = PokemonUtils.getMove(pokemonEntity);
+                PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move, true);
+            }
+            this.discard();
+            return true;
+        }
+        return false;
     }
 
     protected void onHitBlock(BlockHitResult result) {

@@ -23,12 +23,24 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public int minimum_attack_level = 5;
     @Comment("The minimum level a Pokemon needs to be to attack unprovoked.")
     public int minimum_attack_unprovoked_level = 10;
-    @Comment("The multiplier used to calculate the wild Pokemon's aggression,lower value can make the high level Pokemon less aggressive.")
+    @Comment("If a wild Pokemon's aggro is above this value, it will attack the player proactively")
+    public float aggressive_threshold = 80f;
+    @Comment("If a wild Pokemon's aggro is above this value and lower than the aggressive_threshold, it will fight back when attacked,if the Pokemon's aggro is lower than this, it will just run away.")
+    public float neutral_threshold = 20f;
+    @Comment("The value of the aggression if the Pokemon's level reaches 100.")
+    public float aggression_level_base_value = 40f;
+    @Comment("The multiplier used to calculate the wild Pokemon's aggression,lower value can make the high level Pokemon less aggressive. Editing the base value is enough, This is kept for the old config files. This still works, though")
     public float aggression_level_multiplier = 1.0f;
+    @Comment("The value of the aggression if [(Atk + Sp. Atk)-(Def + Sp. Def)]/level = 1. The Pokemon level won't be affected by the multiplier above.")
+    public float aggression_atk_def_dif_base_value=30f;
     @Comment("Are Dark types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
     public boolean dark_light_level_aggro = true;
     @Comment("Are Ghost types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
     public boolean ghost_light_level_aggro = true;
+    @Comment("The value of the aggression if the conditions above are met")
+    public float aggression_light_level_base_value = 30f;
+    @Comment("The value of the aggression influenced by the Pokemon's nature.")
+    public float aggression_nature_base_value = 40f;
     @Comment("Pokemon below this map height (y) will always be aggressive.")
     public double always_aggro_below = -128;
     @Comment("Pokemon stops running away if the hp is not full.")

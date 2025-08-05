@@ -26,14 +26,9 @@ public class PokemonBullet extends ExplosivePokemonProjectile{
         this.noPhysics = true;
     }
 
-    public PokemonBullet(Level level, LivingEntity shooter, Entity finalTarget) {
+    public PokemonBullet(Level level, LivingEntity shooter) {
         super(EntityFightOrFlight.BULLET.get(), level);
         initPosition(shooter);
-    }
-
-    public void lerpTo(double x, double y, double z, float yRot, float xRot, int lerpSteps, boolean teleport) {
-        this.setPos(x, y, z);
-        this.setRot(yRot, xRot);
     }
 
     public void tick() {

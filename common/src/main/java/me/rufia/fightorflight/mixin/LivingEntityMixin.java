@@ -42,27 +42,4 @@ public abstract class LivingEntityMixin {
         }
         return damageAmount;
     }
-
-/*
-    //I don't know why the following code doesn't work
-    @ModifyArg(method = "actuallyHurt", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/LivingEntity;getDamageAfterMagicAbsorb(Lnet/minecraft/world/damagesource/DamageSource;F)F"))
-    private float updateDamageAmount(DamageSource damageSource, float damageAmount) {
-        if (damageSource.is(DamageTypeTags.BYPASSES_EFFECTS)) {
-            return damageAmount;
-        } else {
-            if (hasEffect(FOFEffects.RESISTANCE_WEAKENED) && !damageSource.is(DamageTypeTags.BYPASSES_RESISTANCE)) {
-                int amp = -1;
-                var effect = getEffect(FOFEffects.RESISTANCE_WEAKENED);
-                if (effect != null) {
-                    CobblemonFightOrFlight.LOGGER.info("EFFECT DETECTED! Amp:{}", effect.getAmplifier());
-                    amp = effect.getAmplifier();
-                }
-                if (amp > 3) {
-                    amp = 3;
-                }
-                return damageAmount * 5 / (4 - amp);
-            }
-        }
-        return damageAmount;
-    }*/
 }
