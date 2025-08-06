@@ -1,21 +1,21 @@
 package me.rufia.fightorflight;
 
 import com.cobblemon.mod.common.client.CobblemonClient;
-import com.mojang.authlib.minecraft.client.MinecraftClient;
+import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import me.rufia.fightorflight.client.hud.moveslots.MoveSlotsRender;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
-import me.rufia.fightorflight.client.renderer.PokemonSpikeRenderer;
-import me.rufia.fightorflight.entity.EntityFightOrFlight;
+import me.rufia.fightorflight.client.model.PokemonSpikeModel;
 import me.rufia.fightorflight.client.renderer.PokemonArrowRenderer;
 import me.rufia.fightorflight.client.renderer.PokemonBulletRenderer;
+import me.rufia.fightorflight.client.renderer.PokemonSpikeRenderer;
 import me.rufia.fightorflight.client.renderer.PokemonTracingBulletRenderer;
+import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.player.LocalPlayer;
 
 public final class FabricClient implements ClientModInitializer {
     @Override
@@ -24,6 +24,7 @@ public final class FabricClient implements ClientModInitializer {
         EntityRendererRegistry.register(EntityFightOrFlight.ARROW_PROJECTILE.get(), PokemonArrowRenderer::new);
         EntityRendererRegistry.register(EntityFightOrFlight.BULLET.get(), PokemonBulletRenderer::new);
         EntityRendererRegistry.register(EntityFightOrFlight.SPIKE.get(), PokemonSpikeRenderer::new);
+        registerModelLayerLocation();
         for (KeyMapping keyMapping : KeybindFightOrFlight.bindings) {
             KeyBindingHelper.registerKeyBinding(keyMapping);
         }
@@ -37,5 +38,8 @@ public final class FabricClient implements ClientModInitializer {
                 }
             }
         }));
+    }
+    public void registerModelLayerLocation(){
+        EntityModelLayerRegistry.register(PokemonSpikeModel.LAYER_LOCATION,PokemonSpikeModel::createBodyLayer);
     }
 }

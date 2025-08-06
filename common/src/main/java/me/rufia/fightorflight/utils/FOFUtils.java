@@ -72,4 +72,8 @@ public class FOFUtils {
     public static float toAngle(double num) {
         return (float) (num * 57.2957763671875);
     }
+
+    public static float toRad(double num) {
+        return (float) (num / 180 * 3.1415927f);
+    }
 }

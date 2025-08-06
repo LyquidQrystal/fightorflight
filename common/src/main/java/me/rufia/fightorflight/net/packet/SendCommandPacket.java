@@ -23,7 +23,6 @@ public class SendCommandPacket extends PokeStaffCmdPacket {
 
     public SendCommandPacket(int slot, String command, String commandData, boolean isFromPokeStaff) {
         super(slot, isFromPokeStaff);
-        this.slot = slot;
         this.command = command;
         this.commandData = commandData;
     }

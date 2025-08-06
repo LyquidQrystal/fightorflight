@@ -22,7 +22,7 @@ public class PokemonAttackGoal extends Goal {
     private int ticksUntilNewAngerCry = 0;
 
     private int seeTime;
-    private float attackRadiusSqr;
+    private final float attackRadiusSqr;
 
     private boolean strafingClockwise;
     private boolean strafingBackwards;

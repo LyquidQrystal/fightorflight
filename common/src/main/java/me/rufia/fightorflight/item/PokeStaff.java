@@ -104,14 +104,11 @@ public class PokeStaff extends Item {
             PokeStaffComponent.CMDMODE cmdmode = PokeStaffComponent.CMDMODE.valueOf(getCommandMode(stack));
             String cmdData = FOFUtils.createCommandData(player, cmdmode);
 
-            if (!Objects.equals(getCommandMode(stack), PokeStaffComponent.CMDMODE.NOCMD.name())) {
-                if (player.level().isClientSide) {
-                    int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+            if (player.level().isClientSide) {
+                int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+                if (!Objects.equals(getCommandMode(stack), PokeStaffComponent.CMDMODE.NOCMD.name())) {
                     NetworkManager.sendToServer(new SendCommandPacket(slot, getCommandMode(stack), cmdData, true));
-                }
-            } else {
-                if (player.level().isClientSide) {
-                    int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+                } else {
                     NetworkManager.sendToServer(new SendMoveSlotPacket(slot, getMoveSlot(stack), true));
                 }
             }

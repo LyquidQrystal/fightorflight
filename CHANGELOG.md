@@ -1,5 +1,8 @@
 # V0.8.3
-Bug Fixes:
+### New Features:
+* Player's Pokemon can throw the spikes now.
+* Reworked aggression system:
+### Bug Fixes:
 * Fixed the bug that the bullet/ball projectiles didn't explode when hitting mobs.
 * Fixed the bug that the color of the bullet/ball projectiles wasn't influenced by the move's type.
 # V0.8.2

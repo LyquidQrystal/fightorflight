@@ -9,6 +9,7 @@ public abstract class PokeStaffCmdPacket implements NetworkPacket, CustomPacketP
 
     public PokeStaffCmdPacket(int slot, boolean isFromPokeStaff) {
         this.isFromPokeStaff = isFromPokeStaff;
+        this.slot = slot;
     }
 
     public int getSlot() {

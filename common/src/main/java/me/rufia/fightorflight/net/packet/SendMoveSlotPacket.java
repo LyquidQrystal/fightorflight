@@ -19,13 +19,11 @@ public class SendMoveSlotPacket extends PokeStaffCmdPacket {
 
     public SendMoveSlotPacket(int slot, int moveSlot, boolean isFromPokeStaff) {
         super(slot, isFromPokeStaff);
-        this.slot = slot;
         this.moveSlot = moveSlot;
     }
 
     public SendMoveSlotPacket(int slot, int moveSlot) {
         super(slot, false);
-        this.slot = slot;
         this.moveSlot = moveSlot;
     }
 

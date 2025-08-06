@@ -210,7 +210,6 @@ public class PokemonUtils {
             return null;
         }
         if (isRangeAttackMove(move)) {
-            //((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
@@ -221,8 +220,10 @@ public class PokemonUtils {
         if (move == null) {
             return null;
         }
+        boolean b = DamageCategories.INSTANCE.getSTATUS().equals(move.getDamageCategory());
         boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().self_targeting_status_move).toList().contains(move.getName());
-        if (b1) {
+        boolean b2 = MoveData.moveData.containsKey(move.getName());
+        if (b && (b1 || b2)) {
             ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }

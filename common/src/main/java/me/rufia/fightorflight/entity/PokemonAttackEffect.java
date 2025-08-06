@@ -10,14 +10,8 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.data.movedata.MoveData;
-import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
-import me.rufia.fightorflight.entity.projectile.PokemonArrow;
-import me.rufia.fightorflight.entity.projectile.PokemonBullet;
-import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
-import me.rufia.fightorflight.utils.FOFHeldItemManager;
-import me.rufia.fightorflight.utils.PokemonMultipliers;
-import me.rufia.fightorflight.utils.PokemonUtils;
-import me.rufia.fightorflight.utils.TypeEffectiveness;
+import me.rufia.fightorflight.entity.projectile.*;
+import me.rufia.fightorflight.utils.*;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -27,6 +21,7 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -534,7 +529,6 @@ public class PokemonAttackEffect {
         Move move = PokemonUtils.getRangeAttackMove(pokemonEntity);
         AbstractPokemonProjectile bullet;
         PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
-        //LivingEntity livingEntity = pokemonEntity;
         if (move != null) {
             String moveName = move.getName();
             Random rand = new Random();
@@ -579,6 +573,34 @@ public class PokemonAttackEffect {
             bullet = new PokemonArrow(pokemonEntity.level(), pokemonEntity, target);
             shootProjectileEntity(pokemonEntity, target, bullet);
             addProjectileEntity(pokemonEntity, target, bullet);
+        }
+    }
+
+    public static void spreadSpikes(PokemonEntity pokemonEntity, Move move) {
+        if (pokemonEntity == null || move == null) {
+            return;
+        }
+        if (move.getName().equals("spikes")) {
+            var rand = pokemonEntity.level().random;
+            int count = rand.nextIntBetweenInclusive(4, 8);
+            double horizontal = 2 + pokemonEntity.getBbWidth() / 2;
+            for (int i = 0; i < count; ++i) {
+                float d;
+                PokemonSpike spike = new PokemonSpike(pokemonEntity.level(), pokemonEntity);
+                float velocity = 0.6f;
+                spike.setElementalType("ground");
+                if (pokemonEntity.getTarget() instanceof LivingEntity target) {
+                    CobblemonFightOrFlight.LOGGER.info("Spreading the spikes to the target");
+                    d = FOFUtils.toRad(30f * (rand.nextFloat() - 0.5));
+                    double x = target.getX() - pokemonEntity.getX();
+                    double z = target.getZ() - pokemonEntity.getZ();
+                    spike.accurateShoot(x * Mth.cos(d) - z * Mth.sin(d), 0, x * Mth.sin(d) + z * Mth.cos(d), velocity, 0.1f);
+                } else {
+                    d = FOFUtils.toRad(360f / count * (i + (rand.nextFloat() - 0.5) / 2));
+                    spike.accurateShoot(horizontal * Mth.cos(d), 0, horizontal * Mth.sin(d), velocity, 0.1f);
+                }
+                pokemonEntity.level().addFreshEntity(spike);
+            }
         }
     }
 
@@ -755,7 +777,11 @@ public class PokemonAttackEffect {
                 return !(target instanceof Player);
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team) {
-                return !Objects.equals(owner.getTeam(), target.getTeam());
+                if (target instanceof TamableAnimal tamableAnimal) {
+                    return !Objects.equals(owner, tamableAnimal.getOwner());
+                } else {
+                    return !Objects.equals(owner.getTeam(), target.getTeam());
+                }
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner) {
                 return !owner.equals(target);

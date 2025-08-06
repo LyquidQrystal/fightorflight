@@ -392,7 +392,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             setAttackTime(attackTime - 1);
         } else {
             PokemonEntity self = (PokemonEntity) (Object) this;
-            if (self.getOwner() != null) {
+            if (self.getOwner() instanceof Player) {
                 if (!FOFHeldItemManager.canUse(self, CobblemonItems.ASSAULT_VEST)) {
                     Move move = PokemonUtils.getStatusMove(self);
                     if (move != null) {

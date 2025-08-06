@@ -5,13 +5,16 @@ import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.FOFUtils;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.network.syncher.EntityDataAccessor;
+import net.minecraft.network.syncher.EntityDataSerializers;
+import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileDeflection;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
@@ -30,15 +33,28 @@ public class PokemonSpike extends AbstractPokemonProjectile {
     protected String type;
     private BlockState lastState;
     private boolean activated;
+    private static final EntityDataAccessor<Integer> IN_GROUND_TICK;
+
+    static {
+        IN_GROUND_TICK = SynchedEntityData.defineId(PokemonSpike.class, EntityDataSerializers.INT);
+    }
+
+    @Override
+    protected void defineSynchedData(SynchedEntityData.Builder builder) {
+        super.defineSynchedData(builder);
+        builder.define(IN_GROUND_TICK, -1);
+    }
 
     public PokemonSpike(EntityType<? extends AbstractPokemonProjectile> entityType, Level level) {
         super(entityType, level);
         this.noPhysics = true;
-        activated = false;
     }
 
     public PokemonSpike(Level level, LivingEntity shooter) {
         super(EntityFightOrFlight.SPIKE.get(), level);
+        activated = false;
+        life = 0;
+        inGround = false;
         initPosition(shooter);
     }
 
@@ -47,28 +63,39 @@ public class PokemonSpike extends AbstractPokemonProjectile {
     }
 
     protected boolean shouldFall() {
-        return this.inGround && this.level().noCollision((new AABB(this.position(), this.position())).inflate(0.06));
+        return inGround && this.level().noCollision((new AABB(this.position(), this.position())).inflate(0.1));
     }
 
     protected void startFalling() {
-        this.inGround = false;
+        inGround = false;
         Vec3 vec3 = this.getDeltaMovement();
         this.setDeltaMovement(vec3.multiply(this.random.nextFloat() * 0.2F, this.random.nextFloat() * 0.2F, this.random.nextFloat() * 0.2F));
     }
 
     protected void tickDespawn() {
-        ++this.life;
+        var owner = getOwner();
+        if (owner != null && owner.isAlive()) {
+            ++life;
+        } else {
+            life += 10;
+        }
         if (this.life >= getMaxLife()) {
             this.discard();
-        }
-        if (!activated) {
-            activated = true;
         }
     }
 
     @Override
     public void tick() {
         super.tick();
+        if (inGround) {
+            if (getInGroundTick() == -1) {
+                int randomInterval = level().random.nextInt(20);
+                setInGroundTick(tickCount + randomInterval);
+            }
+        } else {
+            setInGroundTick(-1);
+        }
+        checkEntityCollision();
         boolean flag = noPhysics;
         Vec3 vec3 = this.getDeltaMovement();
         if (this.xRotO == 0.0F && this.yRotO == 0.0F) {
@@ -89,14 +116,17 @@ public class PokemonSpike extends AbstractPokemonProjectile {
 
                 for (AABB aabb : voxelshape.toAabbs()) {
                     if (aabb.move(blockpos).contains(vec33)) {
-                        this.inGround = true;
+                        inGround = true;
                         break;
                     }
                 }
             }
         }
 
-        if (this.inGround && !flag) {
+        if (inGround && !flag) {
+            if (!activated) {
+                activated = true;
+            }
             if (this.lastState != blockstate && this.shouldFall()) {
                 this.startFalling();
             } else if (!this.level().isClientSide) {
@@ -125,57 +155,41 @@ public class PokemonSpike extends AbstractPokemonProjectile {
                             entityHitResult = null;
                         }
                     }
-
-                    if (entityHitResult != null && !flag) {
-                        ProjectileDeflection projectileDeflection = this.hitTargetOrDeflectSelf(hitResult);
-                        this.hasImpulse = true;
-                        if (projectileDeflection != ProjectileDeflection.NONE) {
-                            break;
-                        }
+                }
+                if (hitResult != null && !flag) {
+                    ProjectileDeflection projectileDeflection = this.hitTargetOrDeflectSelf(hitResult);
+                    this.hasImpulse = true;
+                    if (projectileDeflection != ProjectileDeflection.NONE) {
+                        break;
                     }
                 }
-
                 if (entityHitResult == null) {
                     break;
                 }
+                hitResult = null;
             }
 
             vec3 = this.getDeltaMovement();
-            double d5 = vec3.x;
-            double d6 = vec3.y;
-            double d1 = vec3.z;
+            double dx = vec3.x;
+            double dy = vec3.y;
+            double dz = vec3.z;
 
-            double d7 = this.getX() + d5;
-            double d2 = this.getY() + d6;
-            double d3 = this.getZ() + d1;
             double d4 = vec3.horizontalDistance();
             if (flag) {
-                this.setYRot(FOFUtils.toAngle(Mth.atan2(-d5, -d1)));
+                this.setYRot(FOFUtils.toAngle(Mth.atan2(-dx, -dz)));
             } else {
-                this.setYRot(FOFUtils.toAngle(Mth.atan2(d5, d1)));
+                this.setYRot(FOFUtils.toAngle(Mth.atan2(dx, dz)));
             }
 
-            this.setXRot(FOFUtils.toAngle(Mth.atan2(d6, d4)));
+            this.setXRot(FOFUtils.toAngle(Mth.atan2(dy, d4)));
             this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
             this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
-            float f = 0.99F;
-            if (this.isInWater()) {
-                for (int j = 0; j < 4; ++j) {
-                    this.level().addParticle(ParticleTypes.BUBBLE, d7 - d5 * 0.25, d2 - d6 * 0.25, d3 - d1 * 0.25, d5, d6, d1);
-                }
-
-                f = this.getWaterInertia();
-            }
-
-            this.setDeltaMovement(vec3.scale(f));
-            if (!flag) {
-                this.applyGravity();
-            }
-
-            this.setPos(d7, d2, d3);
-            checkEntityCollision();
-            this.checkInsideBlocks();
         }
+    }
+
+    @Override
+    protected double getDefaultGravity() {
+        return 0.05;
     }
 
     @Override
@@ -185,39 +199,44 @@ public class PokemonSpike extends AbstractPokemonProjectile {
         Vec3 vec3 = result.getLocation().subtract(this.getX(), this.getY(), this.getZ());
         this.setDeltaMovement(vec3);
 
-        Vec3 vec31 = vec3.normalize().scale(0.05000000074505806);
+        Vec3 vec31 = vec3.normalize().scale(0.05);
         this.setPosRaw(this.getX() - vec31.x, this.getY() - vec31.y, this.getZ() - vec31.z);
-        this.inGround = true;
+        inGround = true;
     }
 
     @Override
     public void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putShort("life", life);
-        compound.putBoolean("inGround", inGround);
         compound.putBoolean("activated", activated);
+        compound.putBoolean("inGround", inGround);
     }
 
     @Override
     public void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         life = compound.getShort("life");
-        inGround = compound.getBoolean("inGround");
         activated = compound.getBoolean("activated");
+        inGround = compound.getBoolean("inGround");
+    }
+
+    @Override
+    public void move(MoverType type, Vec3 pos) {
+        super.move(type, pos);
+        if (type != MoverType.SELF && this.shouldFall()) {
+            this.startFalling();
+        }
     }
 
     protected void checkEntityCollision() {
         if (!level().isClientSide && activated) {
-            int t = tickCount % 20;
-            if ((t + 1) % 5 == 0) {
-                List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox());
-                for (LivingEntity livingEntity : list) {
-                    if (livingEntity.xOld != livingEntity.getX() && livingEntity.zOld != livingEntity.getZ()) {
-                        double d = Math.abs(livingEntity.getX() - livingEntity.xOld);
-                        double e = Math.abs(livingEntity.getZ() - livingEntity.zOld);
-                        if (d >= 0.003 || e >= 0.003) {
-                            hurtEntity(livingEntity);
-                        }
+            List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(0.05));
+            for (LivingEntity livingEntity : list) {
+                if (livingEntity.xOld != livingEntity.getX() && livingEntity.zOld != livingEntity.getZ()) {
+                    double d = Math.abs(livingEntity.getX() - livingEntity.xOld);
+                    double e = Math.abs(livingEntity.getZ() - livingEntity.zOld);
+                    if (d >= 0.003 || e >= 0.003) {
+                        hurtEntity(livingEntity);
                     }
                 }
             }
@@ -230,24 +249,33 @@ public class PokemonSpike extends AbstractPokemonProjectile {
                 DamageSource damageSource = this.damageSources().indirectMagic(this, pokemonEntity);
                 if (target.hurt(damageSource, 2f)) {
                     pokemonEntity.setLastHurtMob(target);
-                    /*
-                    if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
-                        applyTypeEffect(pokemonEntity, target);
+                    if (pokemonEntity.getOwner() instanceof Player player) {
+                        target.setLastHurtByPlayer(player);
                     }
-                    if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
-                        Move move = PokemonUtils.getMove(pokemonEntity);
-                        PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move, true);
-                    }*/
                 }
             }
         }
     }
 
-    protected float getWaterInertia() {
-        return 0.6F;
-    }
-
     protected int getMaxLife() {
         return 300;
+    }
+
+    @Override
+    protected boolean shoudlCreateParticle() {
+        return false;
+    }
+
+    public void setInGroundTick(int value) {
+        entityData.set(IN_GROUND_TICK, value);
+    }
+
+    public int getInGroundTick() {
+        return entityData.get(IN_GROUND_TICK);
+    }
+
+    @Override
+    protected boolean canHitEntity(Entity target) {
+        return false;
     }
 }

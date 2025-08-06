@@ -29,7 +29,7 @@ public interface EntityFightOrFlight {
     RegistrySupplier<EntityType<PokemonBullet>> BULLET = registerProjectile("bullet_projectile",
             EntityType.Builder.<PokemonBullet>of(PokemonBullet::new, MobCategory.MISC).sized(0.3125f, 0.3125f));
     RegistrySupplier<EntityType<PokemonSpike>> SPIKE = registerProjectile("spike_projectile",
-            EntityType.Builder.<PokemonSpike>of(PokemonSpike::new, MobCategory.MISC).sized(0.3125f, 0.3125f));
+            EntityType.Builder.<PokemonSpike>of(PokemonSpike::new, MobCategory.MISC).sized(0.5f, 0.5f));
 
     static void bootstrap() {
         ENTITY_TYPES.register();
