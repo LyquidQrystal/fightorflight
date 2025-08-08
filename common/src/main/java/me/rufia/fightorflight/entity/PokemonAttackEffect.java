@@ -17,6 +17,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
@@ -580,28 +581,75 @@ public class PokemonAttackEffect {
         if (pokemonEntity == null || move == null) {
             return;
         }
-        if (move.getName().equals("spikes")) {
-            var rand = pokemonEntity.level().random;
-            int count = rand.nextIntBetweenInclusive(4, 8);
-            double horizontal = 2 + pokemonEntity.getBbWidth() / 2;
-            for (int i = 0; i < count; ++i) {
-                float d;
-                PokemonSpike spike = new PokemonSpike(pokemonEntity.level(), pokemonEntity);
-                float velocity = 0.6f;
-                spike.setElementalType("ground");
-                if (pokemonEntity.getTarget() instanceof LivingEntity target) {
-                    CobblemonFightOrFlight.LOGGER.info("Spreading the spikes to the target");
-                    d = FOFUtils.toRad(30f * (rand.nextFloat() - 0.5));
-                    double x = target.getX() - pokemonEntity.getX();
-                    double z = target.getZ() - pokemonEntity.getZ();
-                    spike.accurateShoot(x * Mth.cos(d) - z * Mth.sin(d), 0, x * Mth.sin(d) + z * Mth.cos(d), velocity, 0.1f);
-                } else {
-                    d = FOFUtils.toRad(360f / count * (i + (rand.nextFloat() - 0.5) / 2));
-                    spike.accurateShoot(horizontal * Mth.cos(d), 0, horizontal * Mth.sin(d), velocity, 0.1f);
-                }
+
+        RandomSource rand = pokemonEntity.level().random;
+        int count = rand.nextIntBetweenInclusive(6, 8);
+        double horizontal = 1 + pokemonEntity.getBbWidth() / 2;
+        float velocity = 0.8f;
+
+        if (pokemonEntity.getTarget() instanceof LivingEntity target) {
+            double x = target.getX() - pokemonEntity.getX();
+            double z = target.getZ() - pokemonEntity.getZ();
+            spreadFanShape(x, z, count, 3, pokemonEntity, move, rand, velocity);
+        } else {
+            spreadAround(horizontal, count, pokemonEntity, move, rand, velocity);
+        }
+
+    }
+
+    protected static void spreadFanShape(double xf, double zf, int count, int level, PokemonEntity pokemonEntity, Move move, RandomSource rand, float velocity) {
+        float length = Mth.sqrt((float) (xf * xf + zf * zf));
+        if (level > count) {
+            level = 1;
+        }
+        List<Integer> lis = new ArrayList<>();
+        int tmp = count;
+        for (int i = 0; i < level - 1; ++i) {
+            int max = count / level;
+            int n = rand.nextIntBetweenInclusive(1, max);
+            lis.add(n);
+            tmp -= n;
+        }
+        lis.add(tmp);
+        for (int n = 0; n < level; ++n) {
+            for (int i = 0; i < lis.get(n); ++i) {
+                float mul = (1f + n) / length;
+                float rad = FOFUtils.toRad(45f * (rand.nextFloat() - 0.5));
+                AbstractPokemonSpike spike = createSpike(pokemonEntity.level(), pokemonEntity, move);
+                CobblemonFightOrFlight.LOGGER.info("{}-{}", spike.getBlockY(), spike.getY());
+                spike.accurateShoot(mul * (xf * Mth.cos(rad) - zf * Mth.sin(rad)), -1, mul * (xf * Mth.sin(rad) + zf * Mth.cos(rad)), velocity, 0.1f);
+
                 pokemonEntity.level().addFreshEntity(spike);
             }
         }
+    }
+
+    protected static void spreadAround(double r, int count, PokemonEntity pokemonEntity, Move move, RandomSource rand, float velocity) {
+        for (int i = 0; i < count; ++i) {
+            AbstractPokemonSpike spike = createSpike(pokemonEntity.level(), pokemonEntity, move);
+            if (spike == null) {
+                return;
+            }
+            float rad = FOFUtils.toRad(360f / count * (i + (rand.nextFloat() - 0.5) / 2));
+            spike.accurateShoot(r * Mth.cos(rad), -1, r * Mth.sin(rad), velocity, 0.1f);
+            pokemonEntity.level().addFreshEntity(spike);
+        }
+    }
+
+    protected static AbstractPokemonSpike createSpike(Level level, LivingEntity shooter, Move move) {
+        if (move == null) {
+            return null;
+        }
+        if (move.getName().equals("spikes")) {
+            PokemonSpike spike = new PokemonSpike(level, shooter);
+            spike.setElementalType("ground");
+            return spike;
+        } else if (move.getName().equals("toxicspikes")) {
+            PokemonSpike spike = new PokemonSpike(level, shooter);
+            spike.setElementalType("poison");
+            return spike;
+        }
+        return null;
     }
 
     public static void pokemonExplode(PokemonEntity entity, Level level) {
@@ -772,20 +820,22 @@ public class PokemonAttackEffect {
         if (pokemonEntity == null || target == null) {
             return true;
         }
+        boolean b = false;
         if (pokemonEntity.getOwner() instanceof Player owner) {
             if (CobblemonFightOrFlight.commonConfig().pvp_immunity) {
-                return !(target instanceof Player);
+                b = target instanceof Player;
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team) {
                 if (target instanceof TamableAnimal tamableAnimal) {
-                    return !Objects.equals(owner, tamableAnimal.getOwner());
+                    b = Objects.equals(owner, tamableAnimal.getOwner());
                 } else {
-                    return !Objects.equals(owner.getTeam(), target.getTeam());
+                    b = b || (Objects.equals(owner.getTeam(), target.getTeam()) && owner.getTeam() != null);
                 }
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner) {
-                return !owner.equals(target);
+                b = b || owner.equals(target);
             }
+            return !b;
         }
         return true;
     }

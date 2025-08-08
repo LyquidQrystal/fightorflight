@@ -80,9 +80,9 @@ public class CobblemonFightOrFlight {
         float fleeSpeed = 1.3f * speedMultiplier;
         float pursuitSpeed = 1.2f * speedMultiplier;
 
-        goalAdder.accept(pokemonEntity, 3, new PokemonGoToPosGoal(pokemonEntity, pursuitSpeed));
+        goalAdder.accept(pokemonEntity, 2, new PokemonGoToPosGoal(pokemonEntity, pursuitSpeed));
         goalAdder.accept(pokemonEntity, 3, new PokemonAttackGoal(pokemonEntity, pursuitSpeed));
-        goalAdder.accept(pokemonEntity, 3, new PokemonAvoidGoal(pokemonEntity, PokemonUtils.getAttackRadius() * 3, 1.0f, fleeSpeed));
+        goalAdder.accept(pokemonEntity, 4, new PokemonAvoidGoal(pokemonEntity, PokemonUtils.getAttackRadius() * 3, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
     }
 

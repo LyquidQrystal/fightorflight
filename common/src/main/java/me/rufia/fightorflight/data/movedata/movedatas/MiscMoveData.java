@@ -34,5 +34,9 @@ public class MiscMoveData extends MoveData {
             Move move = PokemonUtils.getStatusMove(pokemonEntity);
             PokemonAttackEffect.spreadSpikes(pokemonEntity, move);
         }
+        if (Objects.equals("toxic_spikes", getName())) {
+            Move move = PokemonUtils.getStatusMove(pokemonEntity);
+            PokemonAttackEffect.spreadSpikes(pokemonEntity, move);
+        }
     }
 }

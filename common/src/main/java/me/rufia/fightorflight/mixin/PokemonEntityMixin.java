@@ -124,7 +124,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             if (fightorflight$clientSideCachedAttackTarget != null) {
                 return fightorflight$clientSideCachedAttackTarget;
             } else {
-                Entity entity = this.level().getEntity((Integer) this.entityData.get(DATA_ID_ATTACK_TARGET));
+                Entity entity = this.level().getEntity(this.entityData.get(DATA_ID_ATTACK_TARGET));
                 if (entity instanceof LivingEntity) {
                     fightorflight$clientSideCachedAttackTarget = (LivingEntity) entity;
                     return fightorflight$clientSideCachedAttackTarget;

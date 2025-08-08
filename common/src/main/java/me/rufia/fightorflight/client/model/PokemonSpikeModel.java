@@ -3,6 +3,7 @@ package me.rufia.fightorflight.client.model;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.entity.projectile.AbstractPokemonSpike;
 import net.minecraft.client.model.EntityModel;
 import net.minecraft.client.model.geom.ModelLayerLocation;
 import net.minecraft.client.model.geom.ModelPart;
@@ -16,7 +17,7 @@ import net.minecraft.world.entity.Entity;
 // Paste this class into your mod and generate all required imports
 
 
-public class PokemonSpikeModel<T extends Entity> extends EntityModel<T> {
+public class PokemonSpikeModel<T extends AbstractPokemonSpike> extends EntityModel<T> {
     // This layer location should be baked with EntityRendererProvider.Context in the entity renderer and passed into this model's constructor
     public static final ModelLayerLocation LAYER_LOCATION = new ModelLayerLocation(ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "spike"), "main");
     private final ModelPart Main;
@@ -45,7 +46,7 @@ public class PokemonSpikeModel<T extends Entity> extends EntityModel<T> {
     }
 
     @Override
-    public void setupAnim(Entity entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
+    public void setupAnim(AbstractPokemonSpike entity, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch) {
         this.Main.yRot = netHeadYaw * 0.017453292F;
         this.Main.xRot = headPitch * 0.017453292F;
     }

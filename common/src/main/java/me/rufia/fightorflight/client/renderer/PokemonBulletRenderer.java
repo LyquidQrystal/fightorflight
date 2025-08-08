@@ -54,7 +54,7 @@ public class PokemonBulletRenderer extends EntityRenderer<PokemonBullet> {
         this.model.renderToBuffer(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY);
         poseStack.scale(1.5F, 1.5F, 1.5F);
         VertexConsumer vertexConsumer2 = buffer.getBuffer(RENDER_TYPE);
-        int colorCode = FastColor.ARGB32.colorFromFloat((float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255, 0.75F);
+        int colorCode = FastColor.ARGB32.colorFromFloat(0.75F, (float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255);
         this.model.renderToBuffer(poseStack, vertexConsumer2, packedLight, OverlayTexture.NO_OVERLAY, colorCode);
         poseStack.popPose();
         super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);

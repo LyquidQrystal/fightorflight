@@ -2,6 +2,7 @@ package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.BlockPos;
@@ -125,9 +126,10 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         double horizontalDistance = Math.sqrt(x * x + z * z);
         float g = (float) getGravity();
         double v2 = velocity * velocity;
-        double delta = Math.sqrt(2 * v2 * g * y + v2 * v2 - g * g * horizontalDistance * horizontalDistance);
-        double t = Math.sqrt(2 * (g * y + v2 - delta)) / g;
-        double result = y + 0.5 * g * t * t;
-        this.shoot(x, result, z, velocity, inaccuracy);
+        double sqrtDelta = Math.sqrt(v2 * v2 - 2 * v2 * g * y - g * g * horizontalDistance * horizontalDistance);
+        double t = Math.sqrt(2 * (v2 - g * y - sqrtDelta)) / g;
+        double vy = 0.5 * g * t + y / t;
+        CobblemonFightOrFlight.LOGGER.info("{},{},{},{}", x, vy, z, t);
+        this.shoot(x, vy, z, velocity, inaccuracy);
     }
 }
