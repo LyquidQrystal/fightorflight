@@ -107,7 +107,6 @@ public class PokemonAttackEffect {
         float sheerForceMultiplier = PokemonUtils.canActivateSheerForce(pokemonEntity) ? 1.3f : 1.0f;
         float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack);
         float mobEffectBoost = getMobEffectBoost(pokemonEntity);
-        //CobblemonFightOrFlight.LOGGER.info(Float.toString(multiplier));
         PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
@@ -197,7 +196,6 @@ public class PokemonAttackEffect {
     }
 
     public static float getHeldItemDmgMultiplier(PokemonEntity pokemonEntity, Entity target) {
-        //Variables that might be needed.
         if (!FOFHeldItemManager.canUseHeldItemDamageInfluencing()) {
             return 1f;
         }
@@ -577,8 +575,8 @@ public class PokemonAttackEffect {
         }
     }
 
-    public static void spreadSpikes(PokemonEntity pokemonEntity, Move move) {
-        if (pokemonEntity == null || move == null) {
+    public static void spreadSpikes(PokemonEntity pokemonEntity, String type) {
+        if (pokemonEntity == null || type == null) {
             return;
         }
 
@@ -590,14 +588,13 @@ public class PokemonAttackEffect {
         if (pokemonEntity.getTarget() instanceof LivingEntity target) {
             double x = target.getX() - pokemonEntity.getX();
             double z = target.getZ() - pokemonEntity.getZ();
-            spreadFanShape(x, z, count, 3, pokemonEntity, move, rand, velocity);
+            spreadFanShape(x, z, count, 3, pokemonEntity, type, rand, velocity);
         } else {
-            spreadAround(horizontal, count, pokemonEntity, move, rand, velocity);
+            spreadAround(horizontal, count, pokemonEntity, type, rand, velocity);
         }
-
     }
 
-    protected static void spreadFanShape(double xf, double zf, int count, int level, PokemonEntity pokemonEntity, Move move, RandomSource rand, float velocity) {
+    protected static void spreadFanShape(double xf, double zf, int count, int level, PokemonEntity pokemonEntity, String type, RandomSource rand, float velocity) {
         float length = Mth.sqrt((float) (xf * xf + zf * zf));
         if (level > count) {
             level = 1;
@@ -615,8 +612,8 @@ public class PokemonAttackEffect {
             for (int i = 0; i < lis.get(n); ++i) {
                 float mul = (1f + n) / length;
                 float rad = FOFUtils.toRad(45f * (rand.nextFloat() - 0.5));
-                AbstractPokemonSpike spike = createSpike(pokemonEntity.level(), pokemonEntity, move);
-                CobblemonFightOrFlight.LOGGER.info("{}-{}", spike.getBlockY(), spike.getY());
+                AbstractPokemonSpike spike = createSpike(pokemonEntity.level(), pokemonEntity, type);
+                //CobblemonFightOrFlight.LOGGER.info("{}-{}", spike.getBlockY(), spike.getY());
                 spike.accurateShoot(mul * (xf * Mth.cos(rad) - zf * Mth.sin(rad)), -1, mul * (xf * Mth.sin(rad) + zf * Mth.cos(rad)), velocity, 0.1f);
 
                 pokemonEntity.level().addFreshEntity(spike);
@@ -624,9 +621,9 @@ public class PokemonAttackEffect {
         }
     }
 
-    protected static void spreadAround(double r, int count, PokemonEntity pokemonEntity, Move move, RandomSource rand, float velocity) {
+    protected static void spreadAround(double r, int count, PokemonEntity pokemonEntity, String type, RandomSource rand, float velocity) {
         for (int i = 0; i < count; ++i) {
-            AbstractPokemonSpike spike = createSpike(pokemonEntity.level(), pokemonEntity, move);
+            AbstractPokemonSpike spike = createSpike(pokemonEntity.level(), pokemonEntity, type);
             if (spike == null) {
                 return;
             }
@@ -636,18 +633,31 @@ public class PokemonAttackEffect {
         }
     }
 
-    protected static AbstractPokemonSpike createSpike(Level level, LivingEntity shooter, Move move) {
-        if (move == null) {
+    protected static AbstractPokemonSpike createSpike(Level level, LivingEntity shooter, String type) {
+        if (type == null) {
             return null;
         }
-        if (move.getName().equals("spikes")) {
-            PokemonSpike spike = new PokemonSpike(level, shooter);
-            spike.setElementalType("ground");
-            return spike;
-        } else if (move.getName().equals("toxicspikes")) {
-            PokemonSpike spike = new PokemonSpike(level, shooter);
-            spike.setElementalType("poison");
-            return spike;
+        switch (type) {
+            case "spikes" -> {
+                PokemonSpike spike = new PokemonSpike(level, shooter);
+                spike.setElementalType("ground");
+                return spike;
+            }
+            case "toxic_spikes" -> {
+                PokemonSpike spike = new PokemonSpike(level, shooter);
+                spike.setElementalType("poison");
+                return spike;
+            }
+            case "stealth_rock" -> {
+                PokemonFloatingSpike spike = new PokemonFloatingSpike(level, shooter);
+                spike.setElementalType("rock");
+                return spike;
+            }
+            case "sticky_web" -> {
+                PokemonStickyWeb spike = new PokemonStickyWeb(level, shooter);
+                spike.setElementalType("bug");
+                return spike;
+            }
         }
         return null;
     }

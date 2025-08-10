@@ -1,8 +1,13 @@
 # V0.8.3
 ### New Features:
+* Implemented Spikes and its variation(Toxic Spikes, Stealth Rock and Stick Web)
 * Player's Pokemon can throw the spikes now.
-* Reworked aggression system:
+* Status moves need to be used manually now.(Select them with the Poke Staff and right click/press the hotkey you set again)
+* Reworked aggression system.
+  * It is the sum of 4 values now. The threshold is editable, too. More detailed information is written in the config file.(keywords: aggression_level, aggression_atk_def_dif, aggression_light_level, aggression_nature)
 ### Bug Fixes:
+* Fixed the bug that the cooldown of unselected moves is reducing too fast.
+* Fixed the bug that can_use_held_item is not working correctly.
 * Fixed the bug that the bullet/ball projectiles didn't explode when hitting mobs.
 * Fixed the bug that the color of the bullet/ball projectiles wasn't influenced by the move's type.
 # V0.8.2

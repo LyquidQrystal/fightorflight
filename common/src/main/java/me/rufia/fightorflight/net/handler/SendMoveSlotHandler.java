@@ -12,6 +12,8 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 
+import java.util.Objects;
+
 public class SendMoveSlotHandler extends PokeStaffCmdHandler<SendMoveSlotPacket> {
     private int moveSlot;
 
@@ -33,14 +35,19 @@ public class SendMoveSlotHandler extends PokeStaffCmdHandler<SendMoveSlotPacket>
 
     @Override
     protected void finalProcess(PokemonEntity pokemonEntity, Player player, SendMoveSlotPacket packet) {
-        if (PokemonAttackEffect.canChangeMove(pokemonEntity)) {
-            Move move = pokemonEntity.getPokemon().getMoveSet().get(moveSlot);
-            if (move != null) {
-                ((PokemonInterface) pokemonEntity).switchMove(move);
-                player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemonEntity.getPokemon().getDisplayName(), move.getDisplayName()));
+        Move move = pokemonEntity.getPokemon().getMoveSet().get(moveSlot);
+        String oldMoveName = ((PokemonInterface) pokemonEntity).getCurrentMove();
+        if (move != null) {
+            if (Objects.equals(move.getName(), oldMoveName)) {
+                ((PokemonInterface) pokemonEntity).tryUsingStatusMoves();
+            } else {
+                if (PokemonAttackEffect.canChangeMove(pokemonEntity)) {
+                    ((PokemonInterface) pokemonEntity).switchMove(move);
+                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemonEntity.getPokemon().getDisplayName(), move.getDisplayName()));
+                } else {
+                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed", pokemonEntity.getPokemon().getDisplayName()));
+                }
             }
-        } else {
-            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed", pokemonEntity.getPokemon().getDisplayName()));
         }
     }
 }

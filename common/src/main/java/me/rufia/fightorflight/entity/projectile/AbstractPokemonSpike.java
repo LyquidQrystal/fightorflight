@@ -115,6 +115,9 @@ public abstract class AbstractPokemonSpike extends AbstractPokemonProjectile {
         } else {
             setInGroundTick(-1);
         }
+        if (activated && !this.level().isClientSide) {
+            this.tickDespawn();
+        }
         checkEntityCollision();
         boolean flag = noPhysics;
         Vec3 vec3 = this.getDeltaMovement();
@@ -145,11 +148,10 @@ public abstract class AbstractPokemonSpike extends AbstractPokemonProjectile {
         if (inGround && !flag) {
             if (!activated) {
                 activated = true;
+                onActivated();
             }
             if (this.lastState != blockstate && this.shouldFall()) {
                 this.startFalling();
-            } else if (!this.level().isClientSide) {
-                this.tickDespawn();
             }
 
             ++this.inGroundTime;
@@ -204,6 +206,10 @@ public abstract class AbstractPokemonSpike extends AbstractPokemonProjectile {
             this.setXRot(lerpRotation(this.xRotO, this.getXRot()));
             this.setYRot(lerpRotation(this.yRotO, this.getYRot()));
         }
+    }
+
+    protected void onActivated(){
+
     }
 
     @Override

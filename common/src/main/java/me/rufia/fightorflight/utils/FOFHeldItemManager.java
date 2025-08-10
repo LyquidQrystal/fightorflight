@@ -19,7 +19,7 @@ public class FOFHeldItemManager {
     }
 
     public static boolean canUse(PokemonEntity pokemonEntity, Item item) {
-        if (canUseHeldItemGlobal()) {
+        if (!canUseHeldItemGlobal()) {
             return false;
         }
         if (pokemonEntity != null) {
@@ -29,7 +29,7 @@ public class FOFHeldItemManager {
     }
 
     public static boolean canUse(Pokemon pokemon, Item item) {
-        if (canUseHeldItemGlobal()) {
+        if (!canUseHeldItemGlobal()) {
             return false;
         }
         if (pokemon != null && item != null) {

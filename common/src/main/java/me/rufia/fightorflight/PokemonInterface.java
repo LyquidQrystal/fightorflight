@@ -84,8 +84,9 @@ public interface PokemonInterface {
     default void refreshMovesList() {
     }
 
-    default void switchMove(Move move) {
-    }
+    default void switchMove(Move move) {}
+
+    default void tryUsingStatusMoves(){}
 
     default int getAttackMode() {
         return 0;

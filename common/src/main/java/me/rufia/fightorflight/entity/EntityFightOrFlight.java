@@ -4,10 +4,7 @@ import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.entity.projectile.PokemonArrow;
-import me.rufia.fightorflight.entity.projectile.PokemonBullet;
-import me.rufia.fightorflight.entity.projectile.PokemonSpike;
-import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
+import me.rufia.fightorflight.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.entity.EntityType;
@@ -30,6 +27,10 @@ public interface EntityFightOrFlight {
             EntityType.Builder.<PokemonBullet>of(PokemonBullet::new, MobCategory.MISC).sized(0.3125f, 0.3125f));
     RegistrySupplier<EntityType<PokemonSpike>> SPIKE = registerProjectile("spike_projectile",
             EntityType.Builder.<PokemonSpike>of(PokemonSpike::new, MobCategory.MISC).sized(0.5f, 0.5f));
+    RegistrySupplier<EntityType<PokemonFloatingSpike>> FLOATING_SPIKE = registerProjectile("floating_spike_projectile",
+            EntityType.Builder.<PokemonFloatingSpike>of(PokemonFloatingSpike::new, MobCategory.MISC).sized(0.5f, 0.5f));
+    RegistrySupplier<EntityType<PokemonStickyWeb>> STICKY_WEB = registerProjectile("sticky_web",
+            EntityType.Builder.<PokemonStickyWeb>of(PokemonStickyWeb::new, MobCategory.MISC).sized(0.5f, 0.5f));
 
     static void bootstrap() {
         ENTITY_TYPES.register();

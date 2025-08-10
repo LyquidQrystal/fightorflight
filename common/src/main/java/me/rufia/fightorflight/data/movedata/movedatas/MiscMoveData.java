@@ -31,12 +31,16 @@ public class MiscMoveData extends MoveData {
             finalTarget.heal(0.5f * finalTarget.getMaxHealth());
         }
         if (Objects.equals("spikes", getName())) {
-            Move move = PokemonUtils.getStatusMove(pokemonEntity);
-            PokemonAttackEffect.spreadSpikes(pokemonEntity, move);
+            PokemonAttackEffect.spreadSpikes(pokemonEntity, getName());
         }
         if (Objects.equals("toxic_spikes", getName())) {
-            Move move = PokemonUtils.getStatusMove(pokemonEntity);
-            PokemonAttackEffect.spreadSpikes(pokemonEntity, move);
+            PokemonAttackEffect.spreadSpikes(pokemonEntity, getName());
+        }
+        if (Objects.equals("stealth_rock", getName())) {
+            PokemonAttackEffect.spreadSpikes(pokemonEntity, getName());
+        }
+        if (Objects.equals("sticky_web", getName())) {
+            PokemonAttackEffect.spreadSpikes(pokemonEntity, getName());
         }
     }
 }

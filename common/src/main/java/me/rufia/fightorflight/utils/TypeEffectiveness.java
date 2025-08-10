@@ -7,6 +7,10 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 
 public class TypeEffectiveness {
     public static float getTypeEffectiveness(PokemonEntity offense, PokemonEntity defense) {
+        return getTypeEffectiveness(offense, defense, true);
+    }
+
+    public static float getTypeEffectiveness(PokemonEntity offense, PokemonEntity defense, boolean shouldCheckAbility) {
         if (!CobblemonFightOrFlight.commonConfig().type_effectiveness_between_pokemon) {
             return 1f;
         }
@@ -20,12 +24,9 @@ public class TypeEffectiveness {
             }
         } else {
             ElementalType offenseType = offense.getPokemon().getPrimaryType();
-            result = getTypeEffectiveness(offenseType, defense.getPokemon().getPrimaryType());
-            if (defense.getPokemon().getSecondaryType() != null) {
-                result *= getTypeEffectiveness(offenseType, defense.getPokemon().getSecondaryType());
-            }
+            result = getTypeEffectivenessSimple(offenseType, defense);
         }
-        return abilityCheck(offense, defense, result);
+        return abilityCheck(offense, defense, result, shouldCheckAbility);
     }
 
     public static float getTypeEffectiveness(Move offenseMove, ElementalType defenseType) {
@@ -43,6 +44,22 @@ public class TypeEffectiveness {
 
     public static float getTypeEffectiveness(ElementalType offenseType, ElementalType defenseType) {
         return getTypeEffectiveness(offenseType.getName(), defenseType.getName());
+    }
+
+    public static float getTypeEffectivenessSimple(ElementalType offenseType, PokemonEntity defendingPokemon) {
+        float result = getTypeEffectiveness(offenseType, defendingPokemon.getPokemon().getPrimaryType());
+        if (defendingPokemon.getPokemon().getSecondaryType() != null) {
+            result *= getTypeEffectiveness(offenseType, defendingPokemon.getPokemon().getSecondaryType());
+        }
+        return result;
+    }
+
+    public static float getTypeEffectivenessSimple(String typeName, PokemonEntity defendingPokemon) {
+        float result = getTypeEffectiveness(typeName, defendingPokemon.getPokemon().getPrimaryType().getName());
+        if (defendingPokemon.getPokemon().getSecondaryType() != null) {
+            result *= getTypeEffectiveness(typeName, defendingPokemon.getPokemon().getSecondaryType().getName());
+        }
+        return result;
     }
 
     public static float getTypeEffectiveness(String offenseTypeName, String defenseTypeName) {
@@ -69,8 +86,11 @@ public class TypeEffectiveness {
         };
     }
 
-    private static float abilityCheck(PokemonEntity offense, PokemonEntity defense, float result) {
+    private static float abilityCheck(PokemonEntity offense, PokemonEntity defense, float result, boolean shouldCheck) {
         //I'm not sure if they're in the proper order.
+        if (!shouldCheck) {
+            return result;
+        }
         if (result <= 0.5f && PokemonUtils.abilityIs(offense, "tintedlens")) {
             result *= 2f;
         }

@@ -26,6 +26,7 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.Mob;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -230,6 +231,18 @@ public class PokemonUtils {
         return null;
     }
 
+    public static boolean findMoveEffectData(String effect) {
+        var l = MoveData.moveData.get(effect);
+        if (l != null) {
+            for (MoveData data : l) {
+                if (Objects.equals(data.getName(), effect)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
 
     public static boolean isSpecialMove(Move move) {
         return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getSPECIAL());
@@ -398,6 +411,15 @@ public class PokemonUtils {
         float ratio = amount / getMaxHealth(pokemonEntity);
         int val = pokemon.getCurrentHealth() + (int) Math.floor(ratio * getHPStat(pokemon)) * (isHealing ? 1 : -1);
         pokemon.setCurrentHealth(val);
+    }
+
+    public static void taunt(PokemonEntity pokemonEntity) {
+        if (pokemonEntity.getOwner() instanceof Player player) {
+            var entities = pokemonEntity.level().getEntitiesOfClass(Mob.class, pokemonEntity.getBoundingBox().inflate(10, 2, 10), (mob -> mob.getTarget() == player));
+            for (Mob mob : entities) {
+                mob.setTarget(pokemonEntity);
+            }
+        }
     }
 
     public static boolean isSheerForce(PokemonEntity pokemonEntity) {

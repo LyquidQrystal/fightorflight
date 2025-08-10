@@ -3,10 +3,8 @@ package me.rufia.fightorflight.forge;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
 import me.rufia.fightorflight.client.model.PokemonSpikeModel;
-import me.rufia.fightorflight.client.renderer.PokemonArrowRenderer;
-import me.rufia.fightorflight.client.renderer.PokemonBulletRenderer;
-import me.rufia.fightorflight.client.renderer.PokemonSpikeRenderer;
-import me.rufia.fightorflight.client.renderer.PokemonTracingBulletRenderer;
+import me.rufia.fightorflight.client.model.PokemonTransformingProjectileModel;
+import me.rufia.fightorflight.client.renderer.*;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import net.minecraft.client.renderer.entity.EntityRenderers;
 import net.neoforged.api.distmarker.Dist;
@@ -24,6 +22,8 @@ public final class FOFForgeClient {
         EntityRenderers.register(EntityFightOrFlight.ARROW_PROJECTILE.get(), PokemonArrowRenderer::new);
         EntityRenderers.register(EntityFightOrFlight.BULLET.get(), PokemonBulletRenderer::new);
         EntityRenderers.register(EntityFightOrFlight.SPIKE.get(), PokemonSpikeRenderer::new);
+        EntityRenderers.register(EntityFightOrFlight.FLOATING_SPIKE.get(), PokemonSpikeRenderer::new);
+        EntityRenderers.register(EntityFightOrFlight.STICKY_WEB.get(), PokemonStickyWebRenderer::new);
     }
 
     @SubscribeEvent
@@ -34,5 +34,6 @@ public final class FOFForgeClient {
     @SubscribeEvent
     public static void registerEntityLayer(EntityRenderersEvent.RegisterLayerDefinitions event) {
         event.registerLayerDefinition(PokemonSpikeModel.LAYER_LOCATION, PokemonSpikeModel::createBodyLayer);
+        event.registerLayerDefinition(PokemonTransformingProjectileModel.LAYER_LOCATION, PokemonTransformingProjectileModel::createBodyLayer);
     }
 }
