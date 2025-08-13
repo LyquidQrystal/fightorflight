@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.utils;
 
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -9,6 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -75,5 +77,16 @@ public class FOFUtils {
 
     public static float toRad(double num) {
         return (float) (num / 180 * 3.1415927f);
+    }
+
+    public static void registerMoveData(String moveName, MoveData data) {
+        if (MoveData.moveData.containsKey(moveName)) {
+            if (MoveData.moveData.get(moveName) != null) {
+                MoveData.moveData.get(moveName).add(data);
+            }
+        } else {
+            MoveData.moveData.put(moveName, new ArrayList<>());
+            MoveData.moveData.get(moveName).add(data);
+        }
     }
 }

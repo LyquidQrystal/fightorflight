@@ -8,6 +8,7 @@ import me.rufia.fightorflight.data.movedata.MoveDataContainer;
 import me.rufia.fightorflight.data.movedata.container.MiscMoveDataContainer;
 import me.rufia.fightorflight.data.movedata.container.StatChangeMoveDataContainer;
 import me.rufia.fightorflight.data.movedata.container.StatusEffectMoveDataContainer;
+import me.rufia.fightorflight.utils.FOFUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.server.packs.resources.SimplePreparableReloadListener;
@@ -50,15 +51,7 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
 
     private void register(Map<String, ? extends MoveData> dataMap) {
         for (var mapEntry : dataMap.entrySet()) {
-            if (MoveData.moveData.containsKey(mapEntry.getKey())) {
-                if (MoveData.moveData.get(mapEntry.getKey()) != null) {
-                    MoveData.moveData.get(mapEntry.getKey()).add(mapEntry.getValue());
-                    //CobblemonFightOrFlight.LOGGER.info("Added an effect");
-                }
-            } else {
-                MoveData.moveData.put(mapEntry.getKey(), new ArrayList<>());
-                MoveData.moveData.get(mapEntry.getKey()).add(mapEntry.getValue());
-            }
+            FOFUtils.registerMoveData(mapEntry.getKey(), mapEntry.getValue());
         }
     }
 
@@ -83,5 +76,6 @@ public class MoveDataListener extends SimplePreparableReloadListener<Map<Resourc
             }
         }
         CobblemonFightOrFlight.LOGGER.info("[FOF] {} move data files processed.", fileCount);
+        CobblemonFightOrFlight.fromConfigToMoveData();
     }
 }

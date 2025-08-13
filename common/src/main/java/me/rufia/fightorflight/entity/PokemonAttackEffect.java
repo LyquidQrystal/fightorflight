@@ -576,7 +576,7 @@ public class PokemonAttackEffect {
     }
 
     public static void spreadSpikes(PokemonEntity pokemonEntity, String type) {
-        if (pokemonEntity == null || type == null) {
+        if (pokemonEntity == null || type == null || !CobblemonFightOrFlight.moveConfig().enable_spikes) {
             return;
         }
 
@@ -614,7 +614,7 @@ public class PokemonAttackEffect {
                 float rad = FOFUtils.toRad(45f * (rand.nextFloat() - 0.5));
                 AbstractPokemonSpike spike = createSpike(pokemonEntity.level(), pokemonEntity, type);
                 //CobblemonFightOrFlight.LOGGER.info("{}-{}", spike.getBlockY(), spike.getY());
-                spike.accurateShoot(mul * (xf * Mth.cos(rad) - zf * Mth.sin(rad)), -1, mul * (xf * Mth.sin(rad) + zf * Mth.cos(rad)), velocity, 0.1f);
+                spike.accurateShoot(mul * (xf * Mth.cos(rad) - zf * Mth.sin(rad)), 0, mul * (xf * Mth.sin(rad) + zf * Mth.cos(rad)), velocity, 0.1f);
 
                 pokemonEntity.level().addFreshEntity(spike);
             }
@@ -628,7 +628,7 @@ public class PokemonAttackEffect {
                 return;
             }
             float rad = FOFUtils.toRad(360f / count * (i + (rand.nextFloat() - 0.5) / 2));
-            spike.accurateShoot(r * Mth.cos(rad), -1, r * Mth.sin(rad), velocity, 0.1f);
+            spike.accurateShoot(r * Mth.cos(rad), 0, r * Mth.sin(rad), velocity, 0.1f);
             pokemonEntity.level().addFreshEntity(spike);
         }
     }

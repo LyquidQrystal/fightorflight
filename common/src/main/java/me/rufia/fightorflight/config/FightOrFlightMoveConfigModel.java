@@ -228,6 +228,10 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     };
     //TODO
     @ConfigEntry.Category("Status moves(WIP)")
+    @Comment("Enable the Pokemon to use the spikes.")
+    public boolean enable_spikes = true;
+    @Comment("The base damage of Spikes and Stealth Rock")
+    public float spike_basic_damage = 3f;
     @Comment("Moves that taunt other pokemon")
     public String[] taunting_moves = {
             "taunt",

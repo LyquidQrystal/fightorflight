@@ -42,5 +42,8 @@ public class MiscMoveData extends MoveData {
         if (Objects.equals("sticky_web", getName())) {
             PokemonAttackEffect.spreadSpikes(pokemonEntity, getName());
         }
+        if (Objects.equals("taunt", getName())) {
+            PokemonUtils.taunt(pokemonEntity);
+        }
     }
 }

@@ -67,10 +67,6 @@ public class PokemonBullet extends ExplosivePokemonProjectile{
             }
         }
 
-        if (!this.isNoGravity() && !this.noPhysics) {
-            Vec3 vec34 = this.getDeltaMovement();
-            this.setDeltaMovement(vec34.x, vec34.y - 0.05, vec34.z);
-        }
         HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         if (hitResult.getType() != HitResult.Type.MISS) {
             this.onHit(hitResult);

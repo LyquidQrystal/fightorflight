@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
@@ -34,7 +35,7 @@ public class PokemonSpike extends AbstractPokemonSpike {
                     target.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0), pokemonEntity);
                 } else {
                     DamageSource damageSource = this.damageSources().indirectMagic(this, pokemonEntity);
-                    if (target.hurt(damageSource, 3f)) {
+                    if (target.hurt(damageSource, CobblemonFightOrFlight.moveConfig().spike_basic_damage)) {
                         pokemonEntity.setLastHurtByMob(pokemonEntity);
                         PokemonUtils.setHurtByPlayer(pokemonEntity, target);
                     }

@@ -69,7 +69,7 @@ public abstract class AbstractPokemonSpike extends AbstractPokemonProjectile {
 
     protected void checkEntityCollision() {
         if (!level().isClientSide && activated) {
-            List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(0.05));
+            List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class, getBoundingBox().inflate(0.1));
             for (LivingEntity livingEntity : list) {
                 if (getOwner() != livingEntity && livingEntity.xOld != livingEntity.getX() && livingEntity.zOld != livingEntity.getZ()) {
                     double d = Math.abs(livingEntity.getX() - livingEntity.xOld);

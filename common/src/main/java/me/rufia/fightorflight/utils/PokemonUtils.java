@@ -457,7 +457,7 @@ public class PokemonUtils {
     }
 
     public static String getCommandData(PokemonEntity pokemonEntity) {
-        return ((PokemonInterface) (Object) pokemonEntity).getCommandData();
+        return ((PokemonInterface) pokemonEntity).getCommandData();
     }
 
 

@@ -128,8 +128,8 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         double v2 = velocity * velocity;
         double sqrtDelta = Math.sqrt(v2 * v2 - 2 * v2 * g * y - g * g * horizontalDistance * horizontalDistance);
         double t = Math.sqrt(2 * (v2 - g * y - sqrtDelta)) / g;
-        double vy = 0.5 * g * t + y / t;
+        double vy = 0.5 * g * t + y;
         //CobblemonFightOrFlight.LOGGER.info("{},{},{},{}", x, vy, z, t);
-        this.shoot(x, vy, z, velocity, inaccuracy);
+        this.shoot(x, y, z, velocity, inaccuracy);
     }
 }

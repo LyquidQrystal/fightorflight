@@ -24,7 +24,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The minimum level a Pokemon needs to be to attack unprovoked.")
     public int minimum_attack_unprovoked_level = 10;
     @Comment("If a wild Pokemon's aggro is above this value, it will attack the player proactively")
-    public float aggressive_threshold = 80f;
+    public float aggressive_threshold = 100f;
     @Comment("If a wild Pokemon's aggro is above this value and lower than the aggressive_threshold, it will fight back when attacked,if the Pokemon's aggro is lower than this, it will just run away.")
     public float neutral_threshold = 20f;
     @Comment("The value of the aggression if the Pokemon's level reaches 100.")
@@ -41,6 +41,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float aggression_light_level_base_value = 30f;
     @Comment("The value of the aggression influenced by the Pokemon's nature.")
     public float aggression_nature_base_value = 40f;
+    @Comment("The value of the aggression gained if a Pokemon is intimidated")
+    public float aggression_intimidation_base_value = -30f;
     @Comment("Pokemon below this map height (y) will always be aggressive.")
     public double always_aggro_below = -128;
     @Comment("Pokemon stops running away if the hp is not full.")

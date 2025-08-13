@@ -7,11 +7,14 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
+import me.rufia.fightorflight.data.movedata.MoveData;
+import me.rufia.fightorflight.data.movedata.movedatas.MiscMoveData;
 import me.rufia.fightorflight.goals.PokemonAttackGoal;
 import me.rufia.fightorflight.goals.PokemonAvoidGoal;
 import me.rufia.fightorflight.goals.PokemonGoToPosGoal;
 import me.rufia.fightorflight.goals.PokemonPanicGoal;
 import me.rufia.fightorflight.net.CobblemonFightOrFlightNetwork;
+import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.TargetingWhitelist;
 import me.rufia.fightorflight.utils.listeners.BehaviorDataListener;
@@ -127,7 +130,7 @@ public class CobblemonFightOrFlight {
         var pokemons = pokemonEntity.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(pokemonEntity.position(), 18, 18, 18), (pokemonEntity1) -> pokemonEntity1.getOwner() != null && Arrays.stream(CobblemonFightOrFlight.commonConfig().aggro_reducing_abilities).toList().contains(pokemonEntity1.getPokemon().getAbility().getName()));
 
         if (!pokemons.isEmpty()) {
-            intimidateCoefficient = -30;
+            intimidateCoefficient = CobblemonFightOrFlight.commonConfig().aggression_intimidation_base_value;
         }
         ElementalType typePrimary = pokemon.getPrimaryType();
         ElementalType typeSecondary = pokemon.getSecondaryType();
@@ -178,7 +181,6 @@ public class CobblemonFightOrFlight {
     }
 
     public static boolean SpeciesAlwaysAggro(String speciesName) {
-        //LogUtils.getLogger().info("Are " + speciesName + " always aggro?");
         for (String aggroSpecies : CobblemonFightOrFlight.commonConfig().always_aggro) {
             if (aggroSpecies.equals(speciesName)) {
                 return true;
@@ -202,6 +204,14 @@ public class CobblemonFightOrFlight {
 
     public static float AUTO_AGGRO_THRESHOLD() {
         return commonConfig().aggressive_threshold;
+    }
+
+    public static void fromConfigToMoveData() {
+        for (String moveName : moveConfig().taunting_moves) {
+            MiscMoveData data = new MiscMoveData("self", "on_use", 1f, false, "taunt");
+            //CobblemonFightOrFlight.LOGGER.info(moveName);
+            FOFUtils.registerMoveData(moveName, data);
+        }
     }
 
     public static void PokemonEmoteAngry(Mob mob) {

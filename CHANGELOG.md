@@ -1,15 +1,20 @@
 # V0.8.3
+#### Attention:
+The way we calculate the aggression is changed greatly. If you're enabling Pokemon's proactive attack, the Pokemon might be more/less aggressive than before. I'm sorry for any possible inconvenience I may cause, but it's an important change I have to made to make the config edit easier to understand.
 ### New Features:
-* Implemented Spikes and its variation(Toxic Spikes, Stealth Rock and Stick Web)
+* Implemented Spikes and its variations(Toxic Spikes, Stealth Rock and Sticky Web)
 * Player's Pokemon can throw the spikes now.
+  * Stone Axe and Ceaseless Edge can create stealth rock/spikes, too.
 * Status moves need to be used manually now.(Select them with the Poke Staff and right click/press the hotkey you set again)
-* Reworked aggression system.
-  * It is the sum of 4 values now. The threshold is editable, too. More detailed information is written in the config file.(keywords: aggression_level, aggression_atk_def_dif, aggression_light_level, aggression_nature)
+* Using the taunt moves(Taunt, Torment, Rage Powder, Follow Me) will force the mobs targeting the owner to attack the Pokemon.
+* * Reworked aggression system.
+  * It is the sum of 5 values now. Most of them have an editable base value and multiplier to allow you have a deeper customization. The threshold is editable, too. More detailed information is written in the config file.(keywords that you might use when searching through the config file: aggression_level, aggression_atk_def_dif, aggression_light_level, aggression_nature, aggression_intimidation)
 ### Bug Fixes:
-* Fixed the bug that the cooldown of unselected moves is reducing too fast.
+* Fixed the bug that the cooldown of unselected moves is unusually fast.
 * Fixed the bug that can_use_held_item is not working correctly.
 * Fixed the bug that the bullet/ball projectiles didn't explode when hitting mobs.
 * Fixed the bug that the color of the bullet/ball projectiles wasn't influenced by the move's type.
+* Fixed the bug that friendly fire related configs are not working as expected.
 # V0.8.2
 ### New Features:
 * If you installed LivelierPokemon, the cat Pokemon will attack Creeper proactively.(can be disabled in the config, the cat pokemon category is in livelierpokemon-categories.json5 if you installed that mod.)

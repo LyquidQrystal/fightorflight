@@ -406,16 +406,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         PokemonEntity self = (PokemonEntity) (Object) this;
         if (self.getOwner() instanceof Player && !FOFHeldItemManager.canUse(self, CobblemonItems.ASSAULT_VEST)) {
             Move move = PokemonUtils.getStatusMove(self);
-            if (move != null) {
-                if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
-                    for (MoveData data : MoveData.moveData.get(move.getName())) {
-                        data.invoke(self, null);
-                    }
-                    PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
-                    PokemonUtils.sendAnimationPacket(self, "status");
-                    setAttackTime(300);
-                    setMaxAttackTime(300);
+            if (move != null && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+                for (MoveData data : MoveData.moveData.get(move.getName())) {
+                    data.invoke(self, null);
                 }
+                PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
+                PokemonUtils.sendAnimationPacket(self, "status");
+                setAttackTime(300);
+                setMaxAttackTime(300);
             }
         }
     }
