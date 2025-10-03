@@ -531,13 +531,12 @@ public class PokemonUtils {
         }
         if (hurtTarget instanceof PokemonEntity defendingPokemon) {
             if (attackingPokemon.getPokemon().isPlayerOwned()) {
-                if (defendingPokemon.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().force_player_battle_on_pokemon_hurt) {
-                    return pokemonForceEncounterPvP(attackingPokemon, defendingPokemon);
+                if (defendingPokemon.getPokemon().isPlayerOwned()) {
+                    return CobblemonFightOrFlight.commonConfig().force_player_battle_on_pokemon_hurt && pokemonForceEncounterPvP(attackingPokemon, defendingPokemon);
                 } else {
-                    if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
-                        return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
-                    }
+                    return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
                 }
+
             } else if (defendingPokemon.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
                 return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
             }

@@ -108,7 +108,6 @@ public class CobblemonFightOrFlight {
         }
 
         double levelAggressionCoefficient;
-        //double atkDefRatioCoefficient = (pokemon.getAttack() + pokemon.getSpecialAttack()) - (pokemon.getDefence() + pokemon.getSpecialDefence());//This is not a ratio, obviously.
         double atkDefDifCoefficient = (double) ((pokemon.getAttack() + pokemon.getSpecialAttack()) - (pokemon.getDefence() + pokemon.getSpecialDefence())) / pokemon.getLevel() * commonConfig().aggression_atk_def_dif_base_value;
         double natureAggressionCoefficient;
         double darknessAggressionCoefficient = 0;

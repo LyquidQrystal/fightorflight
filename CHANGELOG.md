@@ -1,3 +1,9 @@
+# V0.8.4:
+### TODO:
+### New Features:
+* More config to make the friendly fire logic work more friendly to the players.
+* Fixed the bug that team support is not working correctly.
+* Fixed the bug that force_wild_battle_on_pokemon_hurt is not working correctly
 # V0.8.3
 #### Attention:
 The way we calculate the aggression is changed greatly. If you're enabling Pokemon's proactive attack, the Pokemon might be more/less aggressive than before. I'm sorry for any possible inconvenience I may cause, but it's an important change I have to made to make the config edit easier to understand.

@@ -35,7 +35,7 @@ repositories {
     maven("https://maven.impactdev.net/repository/development/")
     maven("https://hub.spigotmc.org/nexus/content/groups/public/")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
-    maven("https://maven.neoforged.net/releases/")
+    maven("https://neoforged.forgecdn.net/releases")
 }
 
 dependencies {
