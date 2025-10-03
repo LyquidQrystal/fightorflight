@@ -7,11 +7,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -89,4 +91,21 @@ public class FOFUtils {
             MoveData.moveData.get(moveName).add(data);
         }
     }
+
+    public static boolean teamCheck(LivingEntity entity1, LivingEntity entity2) {
+        if (entity1 instanceof TamableAnimal animal1 && animal1.getOwner() != null) {
+            if (entity2 instanceof TamableAnimal animal2 && animal2.getOwner() != null) {
+                LivingEntity owner1 = animal1.getOwner();
+                LivingEntity owner2 = animal2.getOwner();
+                if (owner1.getTeam() != null || owner2.getTeam() != null) {
+                    return owner1.getTeam() == owner2.getTeam() || owner1.getTeam() == animal2.getTeam() && owner1.getTeam() != null || animal1.getTeam() == owner2.getTeam() && owner2.getTeam() != null;
+                }
+            }
+        }
+        if (entity1.getTeam() != null || entity2.getTeam() != null) {
+            return entity1.getTeam() == entity2.getTeam();
+        }
+        return false;
+    }
+
 }

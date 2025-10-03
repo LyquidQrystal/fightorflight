@@ -836,11 +836,7 @@ public class PokemonAttackEffect {
                 b = target instanceof Player;
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team) {
-                if (target instanceof TamableAnimal tamableAnimal) {
-                    b = Objects.equals(owner, tamableAnimal.getOwner());
-                } else {
-                    b = b || (Objects.equals(owner.getTeam(), target.getTeam()) && owner.getTeam() != null);
-                }
+                b=b||FOFUtils.teamCheck(pokemonEntity,target);
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner) {
                 b = b || owner.equals(target);

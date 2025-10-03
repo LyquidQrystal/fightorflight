@@ -185,8 +185,14 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public int defense_stat_limit = 161;
     @Comment("When a player owned Pokemon hurts or is hurt by a wild pokemon, should a pokemon battle be started?")
     public boolean force_wild_battle_on_pokemon_hurt = false;
-    @Comment("When a player owned Pokemon hurts or is hurt by another player's pokemon, should a pokemon battle be started? (EXPERIMENTAL)")
+    @Comment("When a player owned Pokemon hurts or is hurt by another player's pokemon, should a pokemon battle be started?")
     public boolean force_player_battle_on_pokemon_hurt = false;
+    @Comment("When a player is hurt by a wild pokemon, should a pokemon battle be started?")
+    public boolean force_wild_battle_on_player_hurt = false;
+    @Comment("When a player is hurt by another player's pokemon, should a pokemon battle be started?")
+    public boolean force_player_battle_on_player_hurt = false;
+    @Comment("If this is set to true, only the players of different teams can start a battle")
+    public boolean force_player_battle_check_team = true;
     @ConfigEntry.Category("Pokemon Ranged Attack")
     @Comment("If wild pokemon can use the ranged attack.")
     public boolean wild_pokemon_ranged_attack = false;
