@@ -542,17 +542,29 @@ public class PokemonUtils {
             } else if (defendingPokemon.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
                 return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
             }
-        }else if(hurtTarget instanceof Player player){
-            if (attackingPokemon.getPokemon().isPlayerOwned()) {}else{
-
+        } else if (hurtTarget instanceof ServerPlayer player) {
+            if (attackingPokemon.getPokemon().isPlayerOwned()) {
+                if (CobblemonFightOrFlight.commonConfig().force_player_battle_on_player_hurt) {
+                    return pokemonForceEncounterPvP(player, attackingPokemon);
+                }
+            } else {
+                if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_player_hurt) {
+                    return pokemonForceEncounterPvE(player, attackingPokemon);
+                }
             }
         }
         return false;
     }
 
     public static boolean pokemonForceEncounterPvP(PokemonEntity playerPokemon, PokemonEntity opponentPokemon) {
-        if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer
-                && opponentPokemon.getOwner() instanceof ServerPlayer serverOpponent) {
+        if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer) {
+            return pokemonForceEncounterPvP(serverPlayer, opponentPokemon);
+        }
+        return false;
+    }
+
+    public static boolean pokemonForceEncounterPvP(ServerPlayer serverPlayer, PokemonEntity opponentPokemon) {
+        if (serverPlayer != null && opponentPokemon.getOwner() instanceof ServerPlayer serverOpponent) {
 
             if (serverPlayer == serverOpponent // I don't see why this should ever happen, but probably best to account for it
                     || !canBattlePlayer(serverPlayer)
@@ -571,9 +583,26 @@ public class PokemonUtils {
         return false;
     }
 
+    public static boolean pokemonForceEncounterPvE(ServerPlayer serverPlayer, PokemonEntity wildPokemon) {
+        if (serverPlayer != null) {
+            if (!canBattlePlayer(serverPlayer)) {
+                return false;
+            }
+
+            BattleBuilder.INSTANCE.pve(serverPlayer,
+                    wildPokemon,
+                    null,
+                    BattleFormat.Companion.getGEN_9_SINGLES(),
+                    false,
+                    false,
+                    Cobblemon.config.getDefaultFleeDistance(),
+                    Cobblemon.INSTANCE.getStorage().getParty(serverPlayer));
+        }
+        return false;
+    }
+
     public static boolean pokemonForceEncounterPvE(PokemonEntity playerPokemon, PokemonEntity wildPokemon) {
         if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer) {
-
             if (!canBattlePlayer(serverPlayer)) {
                 return false;
             }
