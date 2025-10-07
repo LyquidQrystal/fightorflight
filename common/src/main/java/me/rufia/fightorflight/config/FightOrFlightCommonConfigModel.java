@@ -19,6 +19,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean failed_capture_counted_as_provocation = true;
     @Comment("Do aggro Pokemon attack their targets even if they're in the middle of a battles?")
     public boolean do_pokemon_attack_in_battle = false;
+    @Comment("If the aggressive pokemon can be caught by Poke Ball.")
+    public boolean aggressive_pokemon_catchable = false;
     @Comment("The minimum level a Pokemon needs to be to fight back when provoked.")
     public int minimum_attack_level = 5;
     @Comment("The minimum level a Pokemon needs to be to attack unprovoked.")
@@ -32,7 +34,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("The multiplier used to calculate the wild Pokemon's aggression,lower value can make the high level Pokemon less aggressive. Editing the base value is enough, This is kept for the old config files. This still works, though")
     public float aggression_level_multiplier = 1.0f;
     @Comment("The value of the aggression if [(Atk + Sp. Atk)-(Def + Sp. Def)]/level = 1. The Pokemon level won't be affected by the multiplier above.")
-    public float aggression_atk_def_dif_base_value=30f;
+    public float aggression_atk_def_dif_base_value = 30f;
     @Comment("Are Dark types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
     public boolean dark_light_level_aggro = true;
     @Comment("Are Ghost types more aggressive at or below light level 7 and less aggressive at or above light level 12?")
@@ -264,5 +266,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean can_use_held_item_damage_influencing = true;
     @Comment("If the pokemon can use hp-restoring/damage-inflicting held item(Life Orb not included)")
     public boolean can_use_held_item_hp_influencing = true;
-
+    @Comment("If the player's pokemon can hurt ender dragon")
+    public boolean player_pokemon_can_hurt_ender_dragon = true;
+    @Comment("If the wild poekmon can hurt ender dragon")
+    public boolean wild_pokemon_can_hurt_ender_dragon = false;
 }

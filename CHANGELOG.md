@@ -1,9 +1,14 @@
 # V0.8.4:
 ### TODO:
-### New Features:
+### New Config:
+* player_pokemon_can_hurt_ender_dragon:If set to true, your pokemon can hurt ender dragon.
+* wild_pokemon_can_hurt_ender_dragon:If set to true, wild pokemon can hurt ender dragon.
+* aggressive_pokemon_catchable: If set to true, aggressive will be not catchable outside the battle.
 * More config to make the friendly fire logic work more friendly to the players.
 * Fixed the bug that team support is not working correctly.
 * Fixed the bug that force_wild_battle_on_pokemon_hurt is not working correctly
+# v0.6.2
+This is just a build using the last commit before I was trying to update to 1.21.1. It should help to solve the problem that the forge version is behaving differently from the fabric version. It's been over 10 months so I can't remember the differences very well.
 # V0.8.3
 #### Attention:
 The way we calculate the aggression is changed greatly. If you're enabling Pokemon's proactive attack, the Pokemon might be more/less aggressive than before. I'm sorry for any possible inconvenience I may cause, but it's an important change I have to made to make the config edit easier to understand.

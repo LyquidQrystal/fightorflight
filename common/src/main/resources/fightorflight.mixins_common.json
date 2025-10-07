@@ -13,7 +13,8 @@
     "PokemonFollowOwnerGoalMixin",
     "EmptyPokeBallEntityMixin",
     "PokemonEntityCompanionMixin",
-    "LivingEntityMixin"
+    "LivingEntityMixin",
+    "EnderDragonMixin"
   ],
   "injectors": {
     "defaultRequire": 1
