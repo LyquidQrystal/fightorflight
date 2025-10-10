@@ -1,11 +1,14 @@
 # V0.8.4:
-### TODO:
+### New Features:
+* Player's Pokemon can hurt the ender dragon now.(Recommended to use with some riding addon.)
 ### New Config:
 * player_pokemon_can_hurt_ender_dragon:If set to true, your pokemon can hurt ender dragon.
 * wild_pokemon_can_hurt_ender_dragon:If set to true, wild pokemon can hurt ender dragon.
 * aggressive_pokemon_catchable: If set to true, aggressive will be not catchable outside the battle.
-* More config to make the friendly fire logic work more friendly to the players.
-* Fixed the bug that team support is not working correctly.
+* force_wild_battle_on_player_hurt: If set to true, a battle will be started when hurt by a wild Pokemon.
+* force_player_battle_on_player_hurt: If set to true, a battle will be started when hurt by a player's Pokemon.
+* force_player_battle_check_team: If this is set to true, only the players of different team can start a battle by using the pokemon to attack the player/the player's pokemon.
+### Bug Fixes:
 * Fixed the bug that force_wild_battle_on_pokemon_hurt is not working correctly
 # v0.6.2
 This is just a build using the last commit before I was trying to update to 1.21.1. It should help to solve the problem that the forge version is behaving differently from the fabric version. It's been over 10 months so I can't remember the differences very well.

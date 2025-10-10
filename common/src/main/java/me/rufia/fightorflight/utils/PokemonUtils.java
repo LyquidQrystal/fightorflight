@@ -536,9 +536,10 @@ public class PokemonUtils {
                         return pokemonForceEncounterPvP(attackingPokemon, defendingPokemon);
                     }
                 } else {
-                    return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
+                    if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
+                        return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
+                    }
                 }
-
             } else if (defendingPokemon.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
                 return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
             }
