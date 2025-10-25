@@ -81,7 +81,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private static final EntityDataAccessor<BlockPos> TARGET_BLOCK_POS;
 
     @Unique
-    private int lastActivatedTick = -1;
+    private static final EntityDataAccessor<Integer> MOVE_DURATION;
 
     @Unique
     private final List<FOFMove> MOVES_FOF = new ArrayList<>();//This should only be accessed in the server side!
@@ -97,6 +97,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         COMMAND_DATA = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
         TARGET_BLOCK_POS = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.BLOCK_POS);
         ATTACK_MODE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);//0 means the pokemon can't attack, 1 for melee, 2 for range attack.
+        MOVE_DURATION = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
     }
 
     protected void createTargetBlockPos() {
@@ -168,6 +169,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         builder.define(COMMAND_DATA, "");
         builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
         builder.define(ATTACK_MODE, 0);
+        builder.define(MOVE_DURATION, 0);
         PokemonEntity.Companion.createAttributes();
     }
 
@@ -301,6 +303,16 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Override
     public void setAttackMode(int attackMode) {
         entityData.set(ATTACK_MODE, attackMode);
+    }
+
+    @Override
+    public int getMoveDuration() {
+        return entityData.get(MOVE_DURATION);
+    }
+
+    @Override
+    public void setMoveDuration(int duration) {
+        entityData.set(MOVE_DURATION, duration);
     }
 
     @ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)

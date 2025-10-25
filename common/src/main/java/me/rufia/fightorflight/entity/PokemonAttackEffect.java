@@ -22,7 +22,6 @@ import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
@@ -836,7 +835,7 @@ public class PokemonAttackEffect {
                 b = target instanceof Player;
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team) {
-                b=b||FOFUtils.teamCheck(pokemonEntity,target);
+                b = b || FOFUtils.teamCheck(pokemonEntity, target);
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner) {
                 b = b || owner.equals(target);

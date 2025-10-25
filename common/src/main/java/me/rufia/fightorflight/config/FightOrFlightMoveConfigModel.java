@@ -302,6 +302,16 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "nastyplot",
             "tailglow"
     };
+    @Comment("Moves that is similar to Quick Attack. Approaching target quickly and attack.")
+    public String[] quick_attack_like_move = {
+            "quickattack",
+            "extremespeed",
+            "feint",
+            "machpunch",
+            "bulletpunch",
+            "accelerock",
+            "jetpunch"
+    };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")
     public boolean pokemon_griefing = false;

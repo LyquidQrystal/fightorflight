@@ -76,8 +76,12 @@ public abstract class MoveData {
         return Objects.equals("on_use", triggerEvent);
     }
 
+    public boolean isBeforeUse() {
+        return Objects.equals("before_use", triggerEvent);
+    }
+
     public int calculateEffectDuration(PokemonEntity pokemonEntity) {
-        return Math.max(pokemonEntity.getPokemon().getLevel() / 20, 1)+7;
+        return Math.max(pokemonEntity.getPokemon().getLevel() / 20, 1) + 7;
     }
 
     public MoveData(String type, String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name) {

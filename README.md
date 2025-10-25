@@ -1,5 +1,5 @@
-This version is no longer server-side only. I added new items and entities to support some features. I heard that someone is developing a server-side version in the Cobblemon discord. Please wait for that if you can't accept adding this to your server. I'm just too busy to solve this problem. Sorry.  
-Though I haven't made contact with them, I don't mind they use my code if necessary.
+This version is no longer server-side only. I added new items and entities to support some features.
+
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
 ### Features included in v0.8.2:
@@ -75,17 +75,17 @@ Though I haven't made contact with them, I don't mind they use my code if necess
       - Confusion -> Confusion
     - Serene Grace can increase the effect to trigger the additional effect
     - Sheer Force works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
+    - Cat Pokemon will attack Creeper proactively now.(LivelierPokemon is required to enable this feature because it has a cat pokemon category in its config. If you don't have this mod, nothing special will happen, all pokemon will follow do_pokemon_defend_creeper_proactive)
+    - The Spike move and its variations can be used to throw spikes. If the pokemon has a target, it will spread the spikes in the target's direction; otherwise, it will spread them around itself.
 
 ### Features/Changes that is not released currently:
-- Cat Pokemon will attack Creeper proactively now.(LivelierPokemon is required to enable this feature because it has a cat pokemon category in its config. If you don't have this mod, nothing special will happen, all pokemon will follow do_pokemon_defend_creeper_proactive)
+
 ## TODO
 - Main Goal For the Following Updates:
   - Status move effect
 - Things that might be done in a short period of time(1~3 big updates):
-  - Special effect for status moves. (Most of the status moves has no effect currently,they can be used as a way to make your pokemon passive.)
-    - I want to encourage the player to use Poke Staff to switch the move they use if they want higher damage / tactical advantages
-    - Example: Pokemon gain strength when using Swords Dance, the duration will be longer than using Power-up Punch, and the cooldown will be longer / Using Telekinesis will levitate the target.
-    - It might take a lot of time to cover most of the status moves so it won't be removed from this section currently.
+  - Porting to Cobblemon 1.7
+  - Add some features from ZA.
 - Things that might not be done in a short period of time:
   - Datapack driven behavior setting(quite complex)
   - Add an item similar to the Sticky Glob(Sounds cool, but we still got many things to do.)
@@ -96,12 +96,18 @@ Though I haven't made contact with them, I don't mind they use my code if necess
   - Give more special effects to different moves.
   - Special effect for abilities like aftermath,bulletproof,soundproof,etc.
   - More config options for fight of flight choices.
-  - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough.)
+  - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough. Besides, ZA doesn't need to consume the pp to use a move, so I guess I won't add it now.)
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
 ### Known issues for 1.21.1 version
 - I'm not sure why the battle does not start when using the key bind I added.
 ## How to use the Poke Staff
+The old way:
 1. Get one Poke Staff by crafting or get it in the creative mode.
 2. Sneak+Right click: Switch the mode of the staff  
 Right click:Send the command to the pokemon(send command mode)/Select the move(select mode)/select the command(select command mode)
+
+The new way:  
+1. Open the Key binds setting, find Cobblemon Fight or Flight: Poke Staff, set the key bind you like
+2. Get one Poke Staff
+3. Hold it in your hand, press the key to use the command. Right click with the staff will repeat the last command you use.

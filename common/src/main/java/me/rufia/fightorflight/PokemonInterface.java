@@ -1,9 +1,7 @@
 package me.rufia.fightorflight;
 
 import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import net.minecraft.core.BlockPos;
-import org.spongepowered.asm.mixin.Mixin;
 
 
 public interface PokemonInterface {
@@ -84,13 +82,23 @@ public interface PokemonInterface {
     default void refreshMovesList() {
     }
 
-    default void switchMove(Move move) {}
+    default void switchMove(Move move) {
+    }
 
-    default void tryUsingStatusMoves(){}
+    default void tryUsingStatusMoves() {
+    }
 
     default int getAttackMode() {
         return 0;
     }
 
-    default void setAttackMode(int attackMode){}
+    default void setAttackMode(int attackMode) {
+    }
+
+    default int getMoveDuration() {
+        return -1;
+    }
+
+    default void setMoveDuration(int duration) {
+    }
 }

@@ -17,8 +17,8 @@ public class RayTrace {
         LivingEntity livingEntity = null;
         float minDistance = -1;
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area, e -> canChooseAsTarget(e, viewer))) {
-            var optional =entity.getBoundingBox().clip(eyePosition,eyePosition.add(extendedViewVector));
-            if(optional.isPresent()){
+            var optional = entity.getBoundingBox().clip(eyePosition, eyePosition.add(extendedViewVector));
+            if (optional.isPresent()) {
                 var dis = entity.distanceTo(viewer);
                 if (minDistance < 0 || minDistance > dis) {
                     livingEntity = entity;

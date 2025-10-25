@@ -7,7 +7,10 @@ import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
@@ -64,36 +67,15 @@ public class PokemonAttackGoal extends Goal {
     public void tick() {
         super.tick();
         LivingEntity owner = pokemonEntity.getOwner();
-        if (owner == null) {
-            if (ticksUntilNewAngerParticle < 1) {
-                CobblemonFightOrFlight.PokemonEmoteAngry(pokemonEntity);
-                ticksUntilNewAngerParticle = 10;
-            } else {
-                ticksUntilNewAngerParticle = ticksUntilNewAngerParticle - 1;
-            }
-
-            if (ticksUntilNewAngerCry < 1) {
-                pokemonEntity.cry();
-                ticksUntilNewAngerCry = 100 + (int) (Math.random() * 200);
-            } else {
-                ticksUntilNewAngerCry = ticksUntilNewAngerCry - 1;
-            }
-        }
+        angerEffectUpdate(owner);
         ticksUntilNextPathFinding = Math.max(ticksUntilNextPathFinding - 1, 0);
-        if (PokemonUtils.shouldMelee(pokemonEntity)) {
-            if (ticksUntilNextPathFinding <= 0) {
-                ticksUntilNextPathFinding = 4 + pokemonEntity.getRandom().nextInt(7);
-                var distance = pokemonEntity.distanceTo(target);
-                if (distance > 256) {
-                    ticksUntilNextPathFinding += 10;
-                }
-                if (!pokemonEntity.getNavigation().moveTo(target, speedModifier)) {
-                    ticksUntilNextPathFinding += 15;
-                }
+        if (!tryToUseAdvancedMechanic()) {
+            if (PokemonUtils.shouldMelee(pokemonEntity)) {
+                meleePathFinding();
+                checkAndPerformAttack(target);
+            } else if (PokemonUtils.shouldShoot(pokemonEntity)) {
+                rangeAttackTick();
             }
-            checkAndPerformAttack(target);
-        } else if (PokemonUtils.shouldShoot(pokemonEntity)) {
-            rangeAttackTick();
         }
         changeMoveSpeed();
     }
@@ -128,6 +110,52 @@ public class PokemonAttackGoal extends Goal {
         pokemonEntity.getNavigation().stop();
     }
 
+    private void angerEffectUpdate(LivingEntity owner) {
+        if (owner == null) {
+            if (ticksUntilNewAngerParticle < 1) {
+                CobblemonFightOrFlight.PokemonEmoteAngry(pokemonEntity);
+                ticksUntilNewAngerParticle = 10;
+            } else {
+                ticksUntilNewAngerParticle -= 1;
+            }
+
+            if (ticksUntilNewAngerCry < 1) {
+                pokemonEntity.cry();
+                ticksUntilNewAngerCry = 100 + (int) (Math.random() * 200);
+            } else {
+                ticksUntilNewAngerCry -= 1;
+            }
+        }
+    }
+
+    //Return true if advanced mechanic is triggered
+    private boolean tryToUseAdvancedMechanic() {
+        int tickCount = pokemonEntity.tickCount;
+        if ((tickCount - 11) % 20 == 0 && target != null) {
+            Move move = PokemonUtils.getMove(pokemonEntity);
+            if (move != null) {
+                //TODO I can predicate that this will be changed in the future.
+                String moveName = move.getName();
+                if (Arrays.stream(CobblemonFightOrFlight.moveConfig().quick_attack_like_move).toList().contains(moveName)) {
+                    float distance = pokemonEntity.distanceTo(target);
+                    if (distance >= 1.5f && distance <= 10f && getAttackTime() == 0) {
+                        BlockPos targetBlockPos = target.blockPosition();
+                        if (FOFUtils.multiSamplingCollisionCheckBlock(pokemonEntity, target, 5, 3)) {
+                            PokemonUtils.makeParticle(4, pokemonEntity, ParticleTypes.WHITE_SMOKE);
+                            pokemonEntity.teleportTo(targetBlockPos.getX(), targetBlockPos.getY(), targetBlockPos.getZ());
+                            PokemonUtils.makeParticle(4, target, ParticleTypes.WHITE_SMOKE);
+                        }
+                    } else {
+                        meleePathFinding();
+                    }
+                }
+            }
+        }
+
+        return false;
+    }
+
+
     private void changeMoveSpeed() {
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle && isTargetInBattle()) {
             pokemonEntity.getNavigation().setSpeedModifier(0);
@@ -141,6 +169,19 @@ public class PokemonAttackGoal extends Goal {
             return BattleRegistry.INSTANCE.getBattleByParticipatingPlayer(targetAsPlayer) != null;
         }
         return false;
+    }
+
+    private void meleePathFinding() {
+        if (ticksUntilNextPathFinding <= 0) {
+            ticksUntilNextPathFinding = 4 + pokemonEntity.getRandom().nextInt(7);
+            var distance = pokemonEntity.distanceTo(target);
+            if (distance > 256) {
+                ticksUntilNextPathFinding += 10;
+            }
+            if (!pokemonEntity.getNavigation().moveTo(target, speedModifier)) {
+                ticksUntilNextPathFinding += 15;
+            }
+        }
     }
 
     protected boolean canPerformAttack(LivingEntity entity) {
@@ -184,14 +225,14 @@ public class PokemonAttackGoal extends Goal {
 
     private void rangeAttackTick() {
         double d = pokemonEntity.distanceToSqr(target.getX(), target.getY(), target.getZ());
-        boolean bl = pokemonEntity.getSensing().hasLineOfSight(target);
-        if (bl) {
+        boolean canSee = pokemonEntity.getSensing().hasLineOfSight(target);
+        if (canSee) {
             ++seeTime;
         } else {
             seeTime = 0;
             resetAttackTime(d);
         }
-        if (!(d > (double) attackRadiusSqr) && seeTime >= 5 && bl) {
+        if (!(d > (double) attackRadiusSqr) && seeTime >= 5 && canSee) {
             pokemonEntity.getNavigation().stop();
             ++strafingTime;
         } else {
@@ -227,7 +268,7 @@ public class PokemonAttackGoal extends Goal {
             PokemonAttackEffect.makeMagicAttackParticle(pokemonEntity, target);
         }
         if (getAttackTime() == 0) {
-            if (!bl) {
+            if (!canSee) {
                 return;
             }
             resetAttackTime(d);

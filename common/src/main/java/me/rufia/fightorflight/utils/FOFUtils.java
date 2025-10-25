@@ -9,11 +9,13 @@ import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.ClipContext;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -108,4 +110,31 @@ public class FOFUtils {
         return false;
     }
 
+    public static boolean multiSamplingCollisionCheckBlock(LivingEntity viewer, LivingEntity target, int verticalSampleCount, int horizontalSampleCount, int allowedHit) {
+        var level = viewer.level();
+        Vec3 viewerPos = viewer.position();
+        Vec3 targetPos = target.position();
+        float viewerHeight = viewer.getBbHeight();
+        float targetHeight = target.getBbHeight();
+        float viewerWidth = viewer.getBbWidth();
+        int hit = 0;
+        for (int i = 0; i < verticalSampleCount; ++i) {
+            for (int j = 0; j < horizontalSampleCount; ++j) {
+                for (int k = 0; k < horizontalSampleCount; ++k) {
+                    Vec3 v = viewerPos.add(-viewerWidth / 2 + viewerWidth * (j + 1) / horizontalSampleCount, viewerHeight * i / verticalSampleCount, -viewerWidth / 2 + viewerWidth * (k + 1) / horizontalSampleCount);
+                    ClipContext context = new ClipContext(v, targetPos.add(0, targetHeight / 2, 0), ClipContext.Block.COLLIDER, ClipContext.Fluid.ANY, viewer);
+                    BlockHitResult result = level.clip(context);
+                    if (!result.getType().equals(HitResult.Type.MISS)) {
+                        ++hit;
+                    }
+                }
+            }
+        }
+
+        return hit <= allowedHit;
+    }
+
+    public static boolean multiSamplingCollisionCheckBlock(LivingEntity viewer, LivingEntity target, int verticalSampleCount, int horizontalSampleCount) {
+        return multiSamplingCollisionCheckBlock(viewer, target, verticalSampleCount, horizontalSampleCount, 0);
+    }
 }

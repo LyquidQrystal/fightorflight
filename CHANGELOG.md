@@ -1,3 +1,6 @@
+# V0.9.0:
+### New Features:
+* Quick Attack and some of the other moves with high priority will approach the target quickly if the pokemon is distant from the target and the pokemon is trying to use the move.
 # V0.8.4:
 ### New Features:
 * Player's Pokemon can hurt the ender dragon now.(Recommended to use with some riding addon.)

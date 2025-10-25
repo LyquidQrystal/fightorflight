@@ -35,8 +35,12 @@ import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class PokemonUtils {
+    private static final Map<String, PokeStaffComponent.CMDMODE> CMDMODE_IDS = Arrays.stream(PokeStaffComponent.CMDMODE.values())
+            .collect(Collectors.toMap($ -> $.name().toLowerCase(), $ -> $));
+
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
         return ((PokemonInterface) pokemonEntity).getAttackMode() == 1;
     }
@@ -445,11 +449,14 @@ public class PokemonUtils {
     }
 
     public static PokeStaffComponent.CMDMODE getCommandMode(PokemonEntity pokemon) {
+        return CMDMODE_IDS.getOrDefault(((PokemonInterface) pokemon).getCommand().toLowerCase(), PokeStaffComponent.CMDMODE.NOCMD);
+        /*
         try {
-            return PokeStaffComponent.CMDMODE.valueOf(((PokemonInterface) (Object) pokemon).getCommand());
+            return PokeStaffComponent.CMDMODE.valueOf(((PokemonInterface) pokemon).getCommand());
         } catch (IllegalArgumentException e) {
             return PokeStaffComponent.CMDMODE.NOCMD;
         }
+        */
     }
 
     public static boolean WildPokemonCanPerformUnprovokedAttack(PokemonEntity pokemonEntity) {//It doesn't include the aggro check.
