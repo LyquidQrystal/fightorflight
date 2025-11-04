@@ -312,6 +312,85 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "accelerock",
             "jetpunch"
     };
+    @Comment("Area of Effect that is created at the target's position and deal the damage after a short period of time.")
+    public String[] delayed_aoe_at_target_position = {
+            "firespin",
+            "whirlpool",
+            "sandtomb",
+            "magmastorm",
+            "thundercage",
+
+            "hurricane",
+            "heatwave",
+            "petalblizzard",
+            "gust",
+            "blizzard",
+            "aeroblast",
+            "twister",
+            "fairywind",
+            "springtidestorm",
+            "bleakwindstorm",
+            "wlidboltstorm",
+            "sandsearstorm",
+
+            "thunder"
+    };
+    @Comment("Area of Effect that can be created in the air")
+    public String[] delayed_aoe_can_float = {
+            "hurricane",
+            "heatwave",
+            "petalblizzard",
+            "gust",
+            "blizzard",
+            "aeroblast",
+            "twister",
+            "fairywind",
+            "springtidestorm",
+            "bleakwindstorm",
+            "wlidboltstorm",
+            "sandsearstorm"
+    };
+    @Comment("Area of Effect that will rise up from the ground and become a small tornado when activated")
+    public String[] delayed_aoe_rise_up_tornado = {
+            "magmastorm",
+
+            "hurricane",
+            "heatwave",
+            "petalblizzard",
+            "gust",
+            "blizzard",
+            "aeroblast",
+            "twister",
+            "fairywind",
+            "springtidestorm",
+            "bleakwindstorm",
+            "wlidboltstorm",
+            "sandsearstorm"
+    };
+    @Comment("Area of Effect that will rise up from the ground and become a small tornado when activated")
+    public String[] delayed_aoe_bounding_whirlpool = {
+            "firespin",
+            "whirlpool",
+            "sandtomb",
+            "thundercage"
+    };
+    @Comment("Area of effect listed here will stop being activated after its activation.")
+    public String[] delayed_aoe_is_instant = {
+            "hurricane",
+            "heatwave",
+            "petalblizzard",
+            "gust",
+            "blizzard",
+            "aeroblast",
+            "twister",
+            "fairywind",
+            "springtidestorm",
+            "bleakwindstorm",
+            "wlidboltstorm",
+            "sandsearstorm",
+
+            "thunder"
+    };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")
     public boolean pokemon_griefing = false;

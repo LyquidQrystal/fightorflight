@@ -6,8 +6,6 @@ import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.event.EntityLoadHandler;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.mixin.MobEntityAccessor;
-import necro.livelier.pokemon.common.config.CategoryCache;
-import necro.livelier.pokemon.common.config.CategoryConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.lifecycle.v1.ServerEntityEvents;
 import net.fabricmc.loader.api.FabricLoader;

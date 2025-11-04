@@ -10,6 +10,8 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.data.movedata.MoveData;
+import me.rufia.fightorflight.entity.areaeffect.AbstractPokemonAreaEffect;
+import me.rufia.fightorflight.entity.areaeffect.PokemonTornado;
 import me.rufia.fightorflight.entity.projectile.*;
 import me.rufia.fightorflight.utils.*;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
@@ -371,6 +373,10 @@ public class PokemonAttackEffect {
             return;
         }
         String moveName = move.getName();
+        applyOnHitVisualEffect(pokemonEntity, hurtTarget, moveName);
+    }
+
+    public static void applyOnHitVisualEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String moveName) {
         int particleAmount = 4;
         boolean b1 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().self_angry_moves).toList().contains(moveName);
         boolean b2 = Arrays.stream(CobblemonFightOrFlight.visualEffectConfig().target_soul_fire_moves).toList().contains(moveName);
@@ -441,12 +447,13 @@ public class PokemonAttackEffect {
         if (move == null || level.isClientSide) {
             return;
         }
+        String moveName = move.getName();
         //These effects might stack, so a chain of ifs might be needed.
-        boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().switch_moves).toList().contains(move.getName());
-        boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().explosive_moves).toList().contains(move.getName());
-        boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().recoil_moves_allHP).toList().contains(move.getName());
-        boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(move.getName());
-        boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(move.getName());
+        boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().switch_moves).toList().contains(moveName);
+        boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().explosive_moves).toList().contains(moveName);
+        boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().recoil_moves_allHP).toList().contains(moveName);
+        boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(moveName);
+        boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(moveName);
         boolean b6 = FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.LIFE_ORB);
         float dmg = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
         if (b1) {
@@ -538,6 +545,7 @@ public class PokemonAttackEffect {
             boolean b6 = PokemonUtils.isExplosiveMove(moveName);
             boolean b7 = Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(moveName);
             boolean b8 = Arrays.stream(CobblemonFightOrFlight.moveConfig().magic_attack_moves).toList().contains(moveName);
+            boolean b9 = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName);
             if (b3 || b4) {
                 for (int i = 0; i < (b3 ? 1 : rand.nextInt(3) + 1); ++i) {
                     bullet = new PokemonTracingBullet(pokemonEntity.level(), pokemonEntity, target, pokemonEntity.getDirection().getAxis());
@@ -559,6 +567,8 @@ public class PokemonAttackEffect {
                 //applyTypeEffect(pokemonEntity, target);
             } else if (b6) {
                 //Should not be processed here.
+            } else if (b9) {
+                createAOE(pokemonEntity, target, move);
             } else {
                 bullet = new PokemonArrow(pokemonEntity.level(), pokemonEntity, target);
                 shootProjectileEntity(pokemonEntity, target, bullet);
@@ -571,6 +581,17 @@ public class PokemonAttackEffect {
             bullet = new PokemonArrow(pokemonEntity.level(), pokemonEntity, target);
             shootProjectileEntity(pokemonEntity, target, bullet);
             addProjectileEntity(pokemonEntity, target, bullet);
+        }
+    }
+
+    public static void createAOE(PokemonEntity pokemonEntity, LivingEntity target, Move move) {
+        if (move == null) {
+            return;
+        }
+        var aoe = AbstractPokemonAreaEffect.tryToCreate(pokemonEntity, target, move);
+        if (aoe != null) {
+            aoe.setElementalType(move.getType().getName());
+            pokemonEntity.level().addFreshEntity(aoe);
         }
     }
 

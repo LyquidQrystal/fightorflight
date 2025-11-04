@@ -7,7 +7,6 @@ import dev.architectury.registry.ReloadListenerRegistry;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
-import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.data.movedata.movedatas.MiscMoveData;
 import me.rufia.fightorflight.goals.PokemonAttackGoal;
 import me.rufia.fightorflight.goals.PokemonAvoidGoal;
@@ -41,7 +40,6 @@ public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
     public static final String COBBLEMON_MOD_ID = "cobblemon";
     public static final Logger LOGGER = LoggerFactory.getLogger(MODID);
-    //public static final float AUTO_AGGRO_THRESHOLD = 50.0f;
     private static FightOrFlightCommonConfigModel commonConfig;
     private static FightOrFlightMoveConfigModel moveConfig;
     private static FightOrFlightVisualEffectConfigModel visualEffectConfig;

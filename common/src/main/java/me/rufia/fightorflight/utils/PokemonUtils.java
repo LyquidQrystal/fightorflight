@@ -134,6 +134,17 @@ public class PokemonUtils {
             moveName = firstMove.getName();
         }
 
+        Move move = findMove(pokemonEntity, moveName);
+
+        if (move == null) {
+            if (!pokemonEntity.level().isClientSide) {
+                CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);//Will appear in the log when you send a pokemon out for a short period of time in the client environment, so I remove it from the client environment.
+            }
+        }
+        return move;
+    }
+
+    public static Move findMove(PokemonEntity pokemonEntity, String moveName) {
         Move move = null;
         boolean flag = false;
         if (!moveName.isEmpty()) {
@@ -148,29 +159,7 @@ public class PokemonUtils {
         if (!flag) {
             move = pokemonEntity.getPokemon().getMoveSet().get(0);
         }
-
-        if (move == null) {
-            if (!pokemonEntity.level().isClientSide) {
-                CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);//Will appear in the log when you send a pokemon out for a short period of time in the client environment, so I remove it from the client environment.
-            }
-        }
         return move;
-    }
-
-    @Deprecated
-    public static Move getMove(PokemonEntity pokemonEntity, boolean getSpecial) {
-        Move move = getMove(pokemonEntity);
-        if (move == null) {
-            return null;
-        }
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
-
-        if ((isSpecial && getSpecial) || (isPhysical && !getSpecial)) {
-            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
-            return move;
-        }
-        return null;
     }
 
     public static boolean isMeleeAttackMove(Move move) {

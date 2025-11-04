@@ -131,14 +131,14 @@ public class PokemonAttackGoal extends Goal {
     //Return true if advanced mechanic is triggered
     private boolean tryToUseAdvancedMechanic() {
         int tickCount = pokemonEntity.tickCount;
-        if ((tickCount - 11) % 20 == 0 && target != null) {
+        if ((tickCount - 11) % 20 == 0 && target != null && getAttackTime() == 0) {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
                 //TODO I can predicate that this will be changed in the future.
                 String moveName = move.getName();
                 if (Arrays.stream(CobblemonFightOrFlight.moveConfig().quick_attack_like_move).toList().contains(moveName)) {
                     float distance = pokemonEntity.distanceTo(target);
-                    if (distance >= 1.5f && distance <= 10f && getAttackTime() == 0) {
+                    if (distance >= 1.5f && distance <= 10f) {
                         BlockPos targetBlockPos = target.blockPosition();
                         if (FOFUtils.multiSamplingCollisionCheckBlock(pokemonEntity, target, 5, 3)) {
                             PokemonUtils.makeParticle(4, pokemonEntity, ParticleTypes.WHITE_SMOKE);
@@ -182,6 +182,38 @@ public class PokemonAttackGoal extends Goal {
                 ticksUntilNextPathFinding += 15;
             }
         }
+    }
+
+    private void rangeAttackPathFinding(boolean canSee, double distance) {
+        if (!(distance > (double) attackRadiusSqr) && seeTime >= 5 && canSee) {
+            pokemonEntity.getNavigation().stop();
+            ++strafingTime;
+        } else {
+            pokemonEntity.getNavigation().moveTo(target, speedModifier);
+            strafingTime = -1;
+        }
+        if (strafingTime >= 10) {
+            if ((double) pokemonEntity.getRandom().nextFloat() < 0.3) {
+                strafingClockwise = !strafingClockwise;
+            }
+            if ((double) pokemonEntity.getRandom().nextFloat() < 0.3) {
+                strafingBackwards = !strafingBackwards;
+            }
+            strafingTime = 0;
+        }
+        if (strafingTime > -1) {
+            if (distance > (double) (attackRadiusSqr * 0.8F)) {
+                strafingBackwards = false;
+            } else if (distance < (double) (attackRadiusSqr * 0.2F)) {
+                strafingBackwards = true;
+            }
+            pokemonEntity.getMoveControl().strafe(strafingBackwards ? -0.5F : 0.5F, strafingClockwise ? 0.5F : -0.5F);
+            Entity vehicle = pokemonEntity.getControlledVehicle();
+            if (vehicle instanceof Mob mob) {
+                mob.lookAt(pokemonEntity, 30.0F, 30.0F);
+            }
+        }
+        pokemonEntity.getLookControl().setLookAt(target);
     }
 
     protected boolean canPerformAttack(LivingEntity entity) {
@@ -232,35 +264,7 @@ public class PokemonAttackGoal extends Goal {
             seeTime = 0;
             resetAttackTime(d);
         }
-        if (!(d > (double) attackRadiusSqr) && seeTime >= 5 && canSee) {
-            pokemonEntity.getNavigation().stop();
-            ++strafingTime;
-        } else {
-            pokemonEntity.getNavigation().moveTo(target, speedModifier);
-            strafingTime = -1;
-        }
-        if (strafingTime >= 10) {
-            if ((double) pokemonEntity.getRandom().nextFloat() < 0.3) {
-                strafingClockwise = !strafingClockwise;
-            }
-            if ((double) pokemonEntity.getRandom().nextFloat() < 0.3) {
-                strafingBackwards = !strafingBackwards;
-            }
-            strafingTime = 0;
-        }
-        if (strafingTime > -1) {
-            if (d > (double) (attackRadiusSqr * 0.8F)) {
-                strafingBackwards = false;
-            } else if (d < (double) (attackRadiusSqr * 0.2F)) {
-                strafingBackwards = true;
-            }
-            pokemonEntity.getMoveControl().strafe(strafingBackwards ? -0.5F : 0.5F, strafingClockwise ? 0.5F : -0.5F);
-            Entity vehicle = pokemonEntity.getControlledVehicle();
-            if (vehicle instanceof Mob mob) {
-                mob.lookAt(pokemonEntity, 30.0F, 30.0F);
-            }
-        }
-        pokemonEntity.getLookControl().setLookAt(target);
+        rangeAttackPathFinding(canSee, d);
         if (getAttackTime() == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
             PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
         }
