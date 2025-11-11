@@ -26,13 +26,13 @@ import java.util.UUID;
 
 public abstract class AbstractPokemonAreaEffect extends Entity implements IPokemonAttack {
     private static final EntityDataAccessor<Float> DATA_RADIUS;
+    private static final EntityDataAccessor<Float> DATA_HEIGHT;
     private static final EntityDataAccessor<String> DATA_TYPE;
     private static final EntityDataAccessor<Boolean> DATA_WAITING;
     private static final EntityDataAccessor<String> DATA_MOVE_NAME;
     protected int duration;
     protected int waitTime;
     protected boolean isInstant;
-    protected float height;
     protected boolean activated;
     @Nullable
     protected LivingEntity owner;
@@ -47,7 +47,6 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         this.noPhysics = true;
         this.isInstant = false;
         this.activated = false;
-        this.height = 3f;
     }
 
     public static AbstractPokemonAreaEffect tryToCreate(PokemonEntity owner, LivingEntity target, Move move) {
@@ -59,15 +58,18 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         boolean canFloat = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_can_float).toList().contains(moveName);
         boolean isInstant = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_is_instant).toList().contains(moveName);
         boolean isTornado = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_rise_up_tornado).toList().contains(moveName);
+        boolean isWhirlpool = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_bounding_whirlpool).toList().contains(moveName);
+        float r = Mth.clamp(owner.getBbWidth(), 1f, 3f) * 1.5f;
         if (isTornado) {
             aoe = new PokemonTornado(owner);
+        } else if (isWhirlpool) {
+            aoe = new PokemonWhirlPool(owner);
         }
         if (aoe != null) {
             aoe.setMoveName(moveName);
             aoe.setOwner(owner);
             aoe.init(target, 30, 10, canFloat, isInstant);
-            float r = Mth.clamp(owner.getBbWidth(), 1f, 3f) * 1.5f;
-            aoe.setHeight(r * 2f);
+            aoe.refreshHeight();
             aoe.setRadius(r);
         }
         return aoe;
@@ -96,11 +98,20 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
                 }
             }
             if (yFound) {
-                setPos(target.getX(), y, target.getZ());
+                setPos(target.getX(), y + 1, target.getZ());
             }
         }
     }
 
+    public void refreshHeight() {
+        float r = getRadius();
+        if (this instanceof PokemonTornado) {
+            setHeight(r);
+        } else if (this instanceof PokemonWhirlPool) {
+            setHeight(0.5f);
+        }
+        //CobblemonFightOrFlight.LOGGER.info("AOE Height:{}", getHeight());
+    }
 
     @Override
     public void tick() {
@@ -123,8 +134,8 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
                 return;
             }
 
-            if ((tickCount + 1) % 5 == 0) {
-                if (!activated && isInstant) {
+            if ((tickCount + 1) % getApplicationTime() == 0) {
+                if (!activated || !isInstant) {
                     activate();
                 }
             }
@@ -137,7 +148,7 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         activated = true;
     }
 
-    protected void dealDamageInTheArea(){
+    protected void dealDamageInTheArea() {
         if (owner instanceof PokemonEntity pokemonEntity && pokemonEntity.isAlive()) {
             List<LivingEntity> list = level().getEntitiesOfClass(LivingEntity.class, this.getBoundingBox());
             for (LivingEntity target : list) {
@@ -148,10 +159,15 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
                         PokemonUtils.setHurtByPlayer(pokemonEntity, target);
                         PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, getMoveName());
                         PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move, success);
+                        applyExtraEffect(target);
                     }
                 }
             }
         }
+    }
+
+    protected void applyExtraEffect(LivingEntity target) {
+
     }
 
     public int getApplicationTime() {
@@ -167,17 +183,16 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
     }
 
     public float getHeight() {
-        return height;
+        return entityData.get(DATA_HEIGHT);
     }
 
-    public void setHeight(float height) {
-        this.height = height;
+    public void setHeight(float h) {
+        entityData.set(DATA_HEIGHT, h);
     }
 
     public boolean isActivated() {
         return activated;
     }
-
 
     @Override
     public @NotNull PushReaction getPistonPushReaction() {
@@ -186,7 +201,8 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
 
     @Override
     public @NotNull EntityDimensions getDimensions(Pose pose) {
-        return EntityDimensions.scalable(this.getRadius() * 2.0F, getHeight());
+        //CobblemonFightOrFlight.LOGGER.info("AOE Height before refreshing dimensions:{}", height);
+        return EntityDimensions.scalable(getRadius() * 2.0F, getHeight());
     }
 
     @Override
@@ -201,6 +217,7 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
     @Override
     protected void defineSynchedData(SynchedEntityData.Builder builder) {
         builder.define(DATA_RADIUS, 3f);
+        builder.define(DATA_HEIGHT, 0.5f);
         builder.define(DATA_TYPE, "normal");
         builder.define(DATA_WAITING, true);
         builder.define(DATA_MOVE_NAME, "");
@@ -220,7 +237,7 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         tickCount = compound.getInt("Age");
         duration = compound.getInt("Duration");
         waitTime = compound.getInt("WaitTime");
-        height = compound.getFloat("Height");
+        setHeight(compound.getFloat("Height"));
         setRadius(compound.getFloat("Radius"));
         if (compound.hasUUID("Owner")) {
             this.ownerUUID = compound.getUUID("Owner");
@@ -233,7 +250,7 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         compound.putInt("Duration", duration);
         compound.putInt("WaitTime", waitTime);
         compound.putFloat("Radius", getRadius());
-        compound.putFloat("Height", height);
+        compound.putFloat("Height", getHeight());
         if (ownerUUID != null) {
             compound.putUUID("Owner", this.ownerUUID);
         }
@@ -288,6 +305,7 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
 
     static {
         DATA_RADIUS = SynchedEntityData.defineId(AbstractPokemonAreaEffect.class, EntityDataSerializers.FLOAT);
+        DATA_HEIGHT = SynchedEntityData.defineId(AbstractPokemonAreaEffect.class, EntityDataSerializers.FLOAT);
         DATA_TYPE = SynchedEntityData.defineId(AbstractPokemonAreaEffect.class, EntityDataSerializers.STRING);
         DATA_WAITING = SynchedEntityData.defineId(AbstractPokemonAreaEffect.class, EntityDataSerializers.BOOLEAN);
         DATA_MOVE_NAME = SynchedEntityData.defineId(AbstractPokemonAreaEffect.class, EntityDataSerializers.STRING);

@@ -5,6 +5,7 @@ import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import me.rufia.fightorflight.client.hud.moveslots.MoveSlotsRender;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
 import me.rufia.fightorflight.client.model.PokemonAreaEffectTornadoModel;
+import me.rufia.fightorflight.client.model.PokemonAreaEffectWhirlpoolModel;
 import me.rufia.fightorflight.client.model.PokemonSpikeModel;
 import me.rufia.fightorflight.client.model.PokemonTransformingProjectileModel;
 import me.rufia.fightorflight.client.renderer.*;
@@ -26,6 +27,7 @@ public final class FabricClient implements ClientModInitializer {
         EntityRendererRegistry.register(EntityFightOrFlight.FLOATING_SPIKE.get(), PokemonSpikeRenderer::new);
         EntityRendererRegistry.register(EntityFightOrFlight.STICKY_WEB.get(), PokemonStickyWebRenderer::new);
         EntityRendererRegistry.register(EntityFightOrFlight.TORNADO.get(), PokemonAreaEffectTornadoRenderer::new);
+        EntityRendererRegistry.register(EntityFightOrFlight.WHIRLPOOL.get(), PokemonAreaEffectWhirlpoolRenderer::new);
         registerModelLayerLocation();
         for (KeyMapping keyMapping : KeybindFightOrFlight.bindings) {
             KeyBindingHelper.registerKeyBinding(keyMapping);
@@ -46,5 +48,6 @@ public final class FabricClient implements ClientModInitializer {
         EntityModelLayerRegistry.register(PokemonSpikeModel.LAYER_LOCATION, PokemonSpikeModel::createBodyLayer);
         EntityModelLayerRegistry.register(PokemonTransformingProjectileModel.LAYER_LOCATION, PokemonTransformingProjectileModel::createBodyLayer);
         EntityModelLayerRegistry.register(PokemonAreaEffectTornadoModel.LAYER_LOCATION, PokemonAreaEffectTornadoModel::createBodyLayer);
+        EntityModelLayerRegistry.register(PokemonAreaEffectWhirlpoolModel.LAYER_LOCATION, PokemonAreaEffectWhirlpoolModel::createBodyLayer);
     }
 }

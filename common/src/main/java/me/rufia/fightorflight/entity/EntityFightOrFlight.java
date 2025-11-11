@@ -5,6 +5,7 @@ import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.areaeffect.PokemonTornado;
+import me.rufia.fightorflight.entity.areaeffect.PokemonWhirlPool;
 import me.rufia.fightorflight.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
@@ -35,6 +36,8 @@ public interface EntityFightOrFlight {
             EntityType.Builder.<PokemonStickyWeb>of(PokemonStickyWeb::new, MobCategory.MISC).sized(0.5f, 0.5f));
     RegistrySupplier<EntityType<PokemonTornado>> TORNADO = registerMiscEntity("tornado",
             EntityType.Builder.<PokemonTornado>of(PokemonTornado::new, MobCategory.MISC).sized(0.1f, 0.1f));
+    RegistrySupplier<EntityType<PokemonWhirlPool>> WHIRLPOOL = registerMiscEntity("whirlpool",
+            EntityType.Builder.<PokemonWhirlPool>of(PokemonWhirlPool::new, MobCategory.MISC).sized(0.1f, 0.1f));
 
     static void bootstrap() {
         ENTITY_TYPES.register();

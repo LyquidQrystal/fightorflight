@@ -2,19 +2,20 @@ package me.rufia.fightorflight.entity.areaeffect;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
-import me.rufia.fightorflight.utils.PokemonUtils;
-import net.minecraft.core.particles.ParticleTypes;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.level.Level;
 
-public class PokemonTornado extends AbstractPokemonAreaEffect {
-    public PokemonTornado(EntityType<? extends AbstractPokemonAreaEffect> entityType, Level level) {
+public class PokemonWhirlPool extends AbstractPokemonAreaEffect {
+    public PokemonWhirlPool(EntityType<? extends AbstractPokemonAreaEffect> entityType, Level level) {
         super(entityType, level);
     }
 
-    public PokemonTornado(LivingEntity owner) {
-        super(EntityFightOrFlight.TORNADO.get(), owner.level());
+    public PokemonWhirlPool(LivingEntity owner) {
+        super(EntityFightOrFlight.WHIRLPOOL.get(), owner.level());
         setOwner(owner);
     }
 
@@ -22,8 +23,7 @@ public class PokemonTornado extends AbstractPokemonAreaEffect {
     protected void visualEffect() {
         if (owner instanceof PokemonEntity) {
             if (isWaiting()) {
-                PokemonUtils.makeParticle(10, this, ParticleTypes.ASH);
-                PokemonUtils.makeParticle(2, this, ParticleTypes.SWEEP_ATTACK);
+                PokemonAttackEffect.makeTypeEffectParticle(6, this, getElementalType());
             }
         }
     }
@@ -36,5 +36,11 @@ public class PokemonTornado extends AbstractPokemonAreaEffect {
         } else {
             discard();
         }
+    }
+
+    @Override
+    protected void applyExtraEffect(LivingEntity target) {
+        var instance = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 0);
+        target.addEffect(instance, owner);
     }
 }

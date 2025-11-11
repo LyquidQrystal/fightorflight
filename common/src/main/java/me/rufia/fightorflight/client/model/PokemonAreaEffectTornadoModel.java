@@ -51,11 +51,11 @@ public class PokemonAreaEffectTornadoModel<T extends AbstractPokemonAreaEffect> 
         pre.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 
-    public void renderPreEffect(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color){
+    public void renderPreEffect(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
         pre.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 
-    public void renderTornado(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color){
+    public void renderTornado(PoseStack poseStack, VertexConsumer vertexConsumer, int packedLight, int packedOverlay, int color) {
         tornado.render(poseStack, vertexConsumer, packedLight, packedOverlay, color);
     }
 }
