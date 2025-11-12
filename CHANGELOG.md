@@ -1,6 +1,16 @@
 # V0.9.0:
 ### New Features:
 * Quick Attack and some of the other moves with high priority will approach the target quickly if the pokemon is distant from the target and the pokemon is trying to use the move.
+* Some moves can create a storm at the target position. The storm will be started after a short period of time after being created.
+* Some moves can create a whirlpool at the target position. It will try to hurt the targets within the range and slow them. 
+* The size of the pokemon(More accurately, the width of the bounding box of a pokemon) will influence the radius of the area of effect.
+### New Config:
+* quick_attack_like_move: Moves that is similar to Quick Attack, the Pokemon will approach the target quickly if it is distant from the target when the pokemon is trying to use the move.
+* delayed_aoe_at_target_position: Moves that will create an area that will deal the damage to the targets after a short period of time.
+* delayed_aoe_can_float: Moves that can create the area of effect in the air, if a move is included in delayed_aoe_at_target_position but it is not included in this list, the area of effect will be created on the ground below the target if the target is in the air.
+* delayed_aoe_rise_up_tornado: Moves that will create a tornado after a short period of time. The storm has a much higher bounding box height compared to the whirlpool.
+* delayed_aoe_bounding_whirlpool: Moves that will create a whirlpool at the target position, this whirlpool will be activated after a short period of time. Dealing damage to the targets and slowing them down.
+* delayed_aoe_is_instant: Moves that will trigger its effect only on its activation.
 # V0.8.4:
 ### New Features:
 * Player's Pokemon can hurt the ender dragon now.(Recommended to use with some riding addon.)

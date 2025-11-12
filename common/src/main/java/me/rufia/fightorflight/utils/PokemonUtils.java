@@ -169,7 +169,7 @@ public class PokemonUtils {
         String moveName = move.getName();
         boolean isSpecial = isSpecialMove(move);
         boolean isPhysical = isPhysicalMove(move);
-        boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
+        boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName));
         boolean b2 = isSpecial && (Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
         return b1 || b2;
     }
@@ -181,7 +181,7 @@ public class PokemonUtils {
         String moveName = move.getName();
         boolean isSpecial = isSpecialMove(move);
         boolean isPhysical = isPhysicalMove(move);
-        boolean b1 = isPhysical && (Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
+        boolean b1 = isPhysical && (Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName));
         boolean b2 = isSpecial && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
         return b1 || b2;
     }

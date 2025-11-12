@@ -46,7 +46,6 @@ public class PokemonAreaEffectTornadoRenderer extends EntityRenderer<AbstractPok
             model.renderTornado(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, colorCode);
         }
         poseStack.popPose();
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
     }
 
     @Override

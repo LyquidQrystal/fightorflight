@@ -40,7 +40,7 @@ public class PokemonWhirlPool extends AbstractPokemonAreaEffect {
 
     @Override
     protected void applyExtraEffect(LivingEntity target) {
-        var instance = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 10, 0);
+        var instance = new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, 200, 0);
         target.addEffect(instance, owner);
     }
 }

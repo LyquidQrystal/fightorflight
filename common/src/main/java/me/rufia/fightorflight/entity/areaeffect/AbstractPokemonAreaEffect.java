@@ -84,17 +84,16 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         if (canFloat) {
             setPos(target.position());
         } else {
-            BlockPos startBlockPos = target.getOnPos();
-            int y = startBlockPos.getY();
+            BlockPos blockPos = target.getOnPos();
+            int y = blockPos.getY();
             boolean yFound = false;
             while (!yFound && y > level().getMinBuildHeight()) {
-                BlockPos blockPos = startBlockPos.below();
                 BlockState blockState = target.level().getBlockState(blockPos);
                 if (blockState.blocksMotion()) {
                     yFound = true;
                 } else {
                     --y;
-                    startBlockPos = blockPos;
+                    blockPos = blockPos.below();
                 }
             }
             if (yFound) {
@@ -155,11 +154,13 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
                 if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, target)) {
                     Move move = PokemonUtils.findMove(pokemonEntity, getMoveName());
                     if (move != null) {
-                        boolean success = target.hurt(pokemonEntity.damageSources().indirectMagic(pokemonEntity, pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
-                        PokemonUtils.setHurtByPlayer(pokemonEntity, target);
-                        PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, getMoveName());
-                        PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move, success);
-                        applyExtraEffect(target);
+                        if (PokemonAttackEffect.shouldHurtAllyMob(pokemonEntity, target)) {
+                            boolean success = target.hurt(pokemonEntity.damageSources().indirectMagic(pokemonEntity, pokemonEntity), PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move));
+                            PokemonUtils.setHurtByPlayer(pokemonEntity, target);
+                            PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, getMoveName());
+                            PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move, success);
+                            applyExtraEffect(target);
+                        }
                     }
                 }
             }

@@ -16,6 +16,7 @@ import net.minecraft.util.FastColor;
 import net.minecraft.util.Mth;
 
 import java.awt.*;
+import java.util.Objects;
 
 public class PokemonAreaEffectWhirlpoolRenderer extends EntityRenderer<AbstractPokemonAreaEffect> {
     private static final ResourceLocation TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "textures/entity/whirlpool.png");
@@ -24,30 +25,42 @@ public class PokemonAreaEffectWhirlpoolRenderer extends EntityRenderer<AbstractP
     public PokemonAreaEffectWhirlpoolRenderer(EntityRendererProvider.Context context) {
         super(context);
         model = new PokemonAreaEffectWhirlpoolModel<>(context.bakeLayer(PokemonAreaEffectWhirlpoolModel.LAYER_LOCATION));
+
     }
 
     @Override
     public void render(AbstractPokemonAreaEffect entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         boolean isWaiting = entity.isWaiting();
+        String typeName = entity.getElementalType();
         poseStack.pushPose();
         float tick = entity.tickCount + partialTicks;
         float d = entity.getRadius() * 2;
         float rotSpeed = isWaiting ? 0.2f : (entity.isActivated() ? 0.1f : 0.3f);
         poseStack.scale(d, d, d);
         poseStack.mulPose(Axis.YP.rotationDegrees(Mth.cos(tick * rotSpeed) * 180f));
-        poseStack.translate(0, 0.05, 0);
+        poseStack.mulPose(Axis.XP.rotationDegrees(180f));
+        poseStack.translate(0, -1.5, 0);
         VertexConsumer vertexConsumer = buffer.getBuffer(this.model.renderType(TEXTURE_LOCATION));
         Color color = PokemonAttackEffect.getColorFromType(entity.getElementalType());
-        int colorCode = FastColor.ARGB32.colorFromFloat(0.4F, (float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255);
+        int colorCode = FastColor.ARGB32.colorFromFloat(0.4f, (float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255);
+        int secColorCode = getSecondaryColorCode(typeName);
         model.renderPane(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, colorCode);
+        model.renderSecondaryPane(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, secColorCode);
+        poseStack.translate(0, -0.05, 0);
         poseStack.mulPose(Axis.YP.rotationDegrees(Mth.cos(tick * rotSpeed * 0.3f) * 180f));
-        poseStack.mulPose(Axis.XP.rotationDegrees(180f));
         if (!isWaiting) {
-            model.renderEffect(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, colorCode);
+            model.renderEffect(poseStack, vertexConsumer, packedLight, OverlayTexture.NO_OVERLAY, colorCode, secColorCode);
         }
-        poseStack.popPose();
 
-        super.render(entity, entityYaw, partialTicks, poseStack, buffer, packedLight);
+        poseStack.popPose();
+    }
+
+    public int getSecondaryColorCode(String typeName) {
+        Color color = Color.WHITE;
+        if (Objects.equals(typeName, "fire")) {
+            color = Color.ORANGE;
+        }
+        return FastColor.ARGB32.colorFromFloat(0.4f, (float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255);
     }
 
     @Override
