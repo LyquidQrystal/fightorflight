@@ -2,10 +2,7 @@ package me.rufia.fightorflight.forge;
 
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
-import me.rufia.fightorflight.client.model.PokemonAreaEffectTornadoModel;
-import me.rufia.fightorflight.client.model.PokemonAreaEffectWhirlpoolModel;
-import me.rufia.fightorflight.client.model.PokemonSpikeModel;
-import me.rufia.fightorflight.client.model.PokemonTransformingProjectileModel;
+import me.rufia.fightorflight.client.model.*;
 import me.rufia.fightorflight.client.renderer.*;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import net.minecraft.client.renderer.entity.EntityRenderers;
@@ -28,6 +25,7 @@ public final class FOFForgeClient {
         EntityRenderers.register(EntityFightOrFlight.STICKY_WEB.get(), PokemonStickyWebRenderer::new);
         EntityRenderers.register(EntityFightOrFlight.TORNADO.get(), PokemonAreaEffectTornadoRenderer::new);
         EntityRenderers.register(EntityFightOrFlight.WHIRLPOOL.get(), PokemonAreaEffectWhirlpoolRenderer::new);
+        EntityRenderers.register(EntityFightOrFlight.MAGIC_EFFECT.get(), PokemonAreaEffectMagicRenderer::new);
     }
 
     @SubscribeEvent
@@ -41,5 +39,6 @@ public final class FOFForgeClient {
         event.registerLayerDefinition(PokemonTransformingProjectileModel.LAYER_LOCATION, PokemonTransformingProjectileModel::createBodyLayer);
         event.registerLayerDefinition(PokemonAreaEffectTornadoModel.LAYER_LOCATION, PokemonAreaEffectTornadoModel::createBodyLayer);
         event.registerLayerDefinition(PokemonAreaEffectWhirlpoolModel.LAYER_LOCATION, PokemonAreaEffectWhirlpoolModel::createBodyLayer);
+        event.registerLayerDefinition(PokemonAreaEffectMagicModel.LAYER_LOCATION, PokemonAreaEffectMagicModel::createBodyLayer);
     }
 }

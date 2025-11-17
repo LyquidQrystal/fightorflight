@@ -4,6 +4,8 @@ import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.client.model.PokemonAreaEffectMagicModel;
+import me.rufia.fightorflight.entity.areaeffect.PokemonAreaEffectMagic;
 import me.rufia.fightorflight.entity.areaeffect.PokemonTornado;
 import me.rufia.fightorflight.entity.areaeffect.PokemonWhirlPool;
 import me.rufia.fightorflight.entity.projectile.*;
@@ -38,6 +40,8 @@ public interface EntityFightOrFlight {
             EntityType.Builder.<PokemonTornado>of(PokemonTornado::new, MobCategory.MISC).sized(0.1f, 0.1f));
     RegistrySupplier<EntityType<PokemonWhirlPool>> WHIRLPOOL = registerMiscEntity("whirlpool",
             EntityType.Builder.<PokemonWhirlPool>of(PokemonWhirlPool::new, MobCategory.MISC).sized(0.1f, 0.1f));
+    RegistrySupplier<EntityType<PokemonAreaEffectMagic>> MAGIC_EFFECT = registerMiscEntity("magic_effect",
+            EntityType.Builder.<PokemonAreaEffectMagic>of(PokemonAreaEffectMagic::new, MobCategory.MISC).sized(0.1f, 0.1f));
 
     static void bootstrap() {
         ENTITY_TYPES.register();

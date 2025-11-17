@@ -128,7 +128,6 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "confusion",
             "psychic",
             "freezedry",
-            "earthpower",
             "nightdaze",
             "iceburn",
             "luminacrash",
@@ -335,7 +334,8 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "wlidboltstorm",
             "sandsearstorm",
 
-            "thunder"
+            "thunder",
+            "earthpower"
     };
     @Comment("Area of Effect that can be created in the air")
     public String[] delayed_aoe_can_float = {
@@ -397,7 +397,8 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "wlidboltstorm",
             "sandsearstorm",
 
-            "thunder"
+            "thunder",
+            "earthpower"
     };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")

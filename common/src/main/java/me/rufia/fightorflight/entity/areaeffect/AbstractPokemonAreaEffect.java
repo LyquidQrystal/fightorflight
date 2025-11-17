@@ -12,6 +12,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.sounds.SoundEvents;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.*;
 import net.minecraft.world.level.Level;
@@ -54,24 +55,26 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
             return null;
         }
         String moveName = move.getName();
-        AbstractPokemonAreaEffect aoe = null;
         boolean canFloat = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_can_float).toList().contains(moveName);
         boolean isInstant = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_is_instant).toList().contains(moveName);
         boolean isTornado = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_rise_up_tornado).toList().contains(moveName);
         boolean isWhirlpool = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_bounding_whirlpool).toList().contains(moveName);
         float r = Mth.clamp(owner.getBbWidth(), 1f, 3f) * 1.5f;
+        AbstractPokemonAreaEffect aoe;
         if (isTornado) {
             aoe = new PokemonTornado(owner);
         } else if (isWhirlpool) {
             aoe = new PokemonWhirlPool(owner);
+        } else {
+            aoe = new PokemonAreaEffectMagic(owner);
         }
-        if (aoe != null) {
-            aoe.setMoveName(moveName);
-            aoe.setOwner(owner);
-            aoe.init(target, 30, 10, canFloat, isInstant);
-            aoe.refreshHeight();
-            aoe.setRadius(r);
-        }
+
+        aoe.setMoveName(moveName);
+        aoe.setOwner(owner);
+        aoe.init(target, 30, 10, canFloat, isInstant);
+        aoe.refreshHeight();
+        aoe.setRadius(r);
+
         return aoe;
     }
 
@@ -106,7 +109,7 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         float r = getRadius();
         if (this instanceof PokemonTornado) {
             setHeight(r);
-        } else if (this instanceof PokemonWhirlPool) {
+        } else {
             setHeight(0.5f);
         }
         //CobblemonFightOrFlight.LOGGER.info("AOE Height:{}", getHeight());
@@ -144,7 +147,31 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
     protected abstract void visualEffect();
 
     protected void activate() {
+        if (!activated) {
+            onActivated();
+        }
         activated = true;
+    }
+
+    protected void onActivated() {
+        playActivateSound();
+    }
+
+    protected void playActivateSound() {
+        String typeName = getElementalType();
+        if (typeName.equals("electric")) {
+            playSound(SoundEvents.LIGHTNING_BOLT_THUNDER, 4f, (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
+        } else if (typeName.equals("fire")) {
+            playSound(SoundEvents.GENERIC_BURN, 4f, (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
+        } else if (typeName.equals("water")) {
+            playSound(SoundEvents.GENERIC_SPLASH, 4f, (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
+        } else {
+            playDefaultSound();
+        }
+    }
+
+    protected void playDefaultSound() {
+        playSound(SoundEvents.GENERIC_EXPLODE.value(), 3f, (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
     }
 
     protected void dealDamageInTheArea() {

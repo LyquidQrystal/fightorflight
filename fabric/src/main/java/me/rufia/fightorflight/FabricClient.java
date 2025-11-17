@@ -4,10 +4,7 @@ import com.cobblemon.mod.common.client.CobblemonClient;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
 import me.rufia.fightorflight.client.hud.moveslots.MoveSlotsRender;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
-import me.rufia.fightorflight.client.model.PokemonAreaEffectTornadoModel;
-import me.rufia.fightorflight.client.model.PokemonAreaEffectWhirlpoolModel;
-import me.rufia.fightorflight.client.model.PokemonSpikeModel;
-import me.rufia.fightorflight.client.model.PokemonTransformingProjectileModel;
+import me.rufia.fightorflight.client.model.*;
 import me.rufia.fightorflight.client.renderer.*;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import net.fabricmc.api.ClientModInitializer;
@@ -28,6 +25,8 @@ public final class FabricClient implements ClientModInitializer {
         EntityRendererRegistry.register(EntityFightOrFlight.STICKY_WEB.get(), PokemonStickyWebRenderer::new);
         EntityRendererRegistry.register(EntityFightOrFlight.TORNADO.get(), PokemonAreaEffectTornadoRenderer::new);
         EntityRendererRegistry.register(EntityFightOrFlight.WHIRLPOOL.get(), PokemonAreaEffectWhirlpoolRenderer::new);
+        EntityRendererRegistry.register(EntityFightOrFlight.MAGIC_EFFECT.get(), PokemonAreaEffectMagicRenderer::new);
+
         registerModelLayerLocation();
         for (KeyMapping keyMapping : KeybindFightOrFlight.bindings) {
             KeyBindingHelper.registerKeyBinding(keyMapping);
@@ -49,5 +48,6 @@ public final class FabricClient implements ClientModInitializer {
         EntityModelLayerRegistry.register(PokemonTransformingProjectileModel.LAYER_LOCATION, PokemonTransformingProjectileModel::createBodyLayer);
         EntityModelLayerRegistry.register(PokemonAreaEffectTornadoModel.LAYER_LOCATION, PokemonAreaEffectTornadoModel::createBodyLayer);
         EntityModelLayerRegistry.register(PokemonAreaEffectWhirlpoolModel.LAYER_LOCATION, PokemonAreaEffectWhirlpoolModel::createBodyLayer);
+        EntityModelLayerRegistry.register(PokemonAreaEffectMagicModel.LAYER_LOCATION, PokemonAreaEffectMagicModel::createBodyLayer);
     }
 }
