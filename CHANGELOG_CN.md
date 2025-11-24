@@ -1,19 +1,20 @@
 # V0.9.0:
-This version is for Cobblemon 1.6 and 1.6.1! The new version for Cobblemon 1.7 will be released in a few days.  
-Since Cobblemon 1.7 is released. 0.9.0 will be the last version that adds new features and supports Cobblemon 1.6.1. However, I will still fix the bugs reported before 2026.1.1 for Cobblemon 1.6.1.
-### New Features:
-* Quick Attack and some of the other moves with high priority will approach the target quickly if the pokemon is distant from the target and the pokemon is trying to use the move.
-* Some moves can create a storm at the target position. The storm will be started after a short period of time after being created.
-* Some moves can create a whirlpool at the target position. It will try to hurt the targets within the range and slow them. 
-* The size of the pokemon(More accurately, the width of the bounding box of a pokemon) will influence the radius of the area of effect.
-### New Config:
-* quick_attack_like_move: Moves that is similar to Quick Attack, the Pokemon will approach the target quickly if it is distant from the target when the pokemon is trying to use the move.
-* delayed_aoe_at_target_position: Moves that will create an area that will deal the damage to the targets after a short period of time.
-* delayed_aoe_can_float: Moves that can create the area of effect in the air, if a move is included in delayed_aoe_at_target_position but it is not included in this list, the area of effect will be created on the ground below the target if the target is in the air.
-* delayed_aoe_rise_up_tornado: Moves that will create a tornado after a short period of time. The storm has a much higher bounding box height compared to the whirlpool.
-* delayed_aoe_bounding_whirlpool: Moves that will create a whirlpool at the target position, this whirlpool will be activated after a short period of time. Dealing damage to the targets and slowing them down.
-* delayed_aoe_is_instant: Moves that will trigger its effect only on its activation.
+这个版本只支持方块宝可梦1.6和1.6.1！支持方块宝可梦1.7的新版本将在几天后发布。  
+Cobblemon 1.7已经发布了，0.9.0将成为最后一个支持方块宝可梦1.6.1且增加了新特性的版本。但是我仍然会修复2026.1.1之前提交的bug。
+### 新特性：
+* 与电光一闪类似的有先制度的近战技能会在宝可梦与目标有一定距离且宝可梦正在尝试使用这一类技能的时候快速接近目标（其实是传送）
+* 部分技能会在目标脚底创造一个风暴。这个风暴会在被创建一段时间后触发。
+* 部分技能会在目标脚底创造一个漩涡。它在激活后会伤害范围内的敌人并减缓它们的行动
+* 宝可梦的体型（更准确的说是碰撞箱的半径）会影响上述范围技能的作用半径
+### 新的config:
+* quick_attack_like_move: 机制和电光一闪类似的技能
+* delayed_aoe_at_target_position: 通过创建范围伤害区域造成伤害的技能
+* delayed_aoe_can_float: 可以在空中使用的AOE技能，如果一个技能被包括在上面但不包括在这个列表，则这些技能在攻击空中的目标时只能在它们下方的地面上使用。与之相反，如果技能在这个列表的话则可以在空中目标的位置上使用。
+* delayed_aoe_rise_up_tornado: 暴风类技能。这类技能的碰撞箱的高度高于漩涡类，意味着这类技能可以更有效的攻击空中目标
+* delayed_aoe_bounding_whirlpool: 漩涡类技能。伤害目标并减速。
+* delayed_aoe_is_instant: 技能效果和伤害只进行一次判定的技能。可以比较漩涡类技能和暴风类技能
 
+### 旧的懒得翻了直接看我b站动态写好的吧。关注bilibili LyquidQrystal喵，关注LyquidQrystal谢谢喵
 # V0.8.4:
 ### New Features:
 * Player's Pokemon can hurt the ender dragon now.(Recommended to use with some riding addon.)
