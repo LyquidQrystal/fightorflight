@@ -331,6 +331,10 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         return duration;
     }
 
+    public int getWaitTime() {
+        return waitTime;
+    }
+
     static {
         DATA_RADIUS = SynchedEntityData.defineId(AbstractPokemonAreaEffect.class, EntityDataSerializers.FLOAT);
         DATA_HEIGHT = SynchedEntityData.defineId(AbstractPokemonAreaEffect.class, EntityDataSerializers.FLOAT);
