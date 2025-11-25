@@ -4,7 +4,7 @@ license = "MIT License"
 
 [[mods]]
 modId = "fightorflight"
-version = "0.9.0"
+version = "0.10.0"
 displayName = "Cobblemon Fight or Flight"
 authors = "rufia,LyquidQrystal"
 description = '''
@@ -28,7 +28,7 @@ side = "BOTH"
 [[dependencies.fightorflight]]
 modId = "cobblemon"
 type = "required"
-versionRange = "[1.6.0,)"
+versionRange = "[1.7.0,)"
 ordering = "AFTER"
 side = "BOTH"
 

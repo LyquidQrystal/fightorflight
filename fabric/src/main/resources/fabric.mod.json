@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "fightorflight",
-  "version": "0.9.0",
+  "version": "0.10.0",
   "name": "Cobblemon Fight or Flight Fabric",
   "description": "Makes Cobblemon run away or fight back in response to a player attack or failed capture.",
   "authors": [
@@ -31,7 +31,7 @@
     "minecraft": ">=1.21.1",
     "fabricloader": ">=0.16.9",
     "fabric": "*",
-    "cobblemon": ">=1.6.0",
+    "cobblemon": ">=1.7.0",
     "architectury": ">=13.0.8",
     "cloth-config": ">=15.0.140"
   }

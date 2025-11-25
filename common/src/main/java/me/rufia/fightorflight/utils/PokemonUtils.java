@@ -438,14 +438,10 @@ public class PokemonUtils {
     }
 
     public static PokeStaffComponent.CMDMODE getCommandMode(PokemonEntity pokemon) {
-        return CMDMODE_IDS.getOrDefault(((PokemonInterface) pokemon).getCommand().toLowerCase(), PokeStaffComponent.CMDMODE.NOCMD);
-        /*
-        try {
-            return PokeStaffComponent.CMDMODE.valueOf(((PokemonInterface) pokemon).getCommand());
-        } catch (IllegalArgumentException e) {
+        if (!CobblemonFightOrFlight.commonConfig().can_use_poke_staff) {
             return PokeStaffComponent.CMDMODE.NOCMD;
         }
-        */
+        return CMDMODE_IDS.getOrDefault(((PokemonInterface) pokemon).getCommand().toLowerCase(), PokeStaffComponent.CMDMODE.NOCMD);
     }
 
     public static boolean WildPokemonCanPerformUnprovokedAttack(PokemonEntity pokemonEntity) {//It doesn't include the aggro check.
@@ -640,6 +636,6 @@ public class PokemonUtils {
     }
 
     public static boolean shouldCheckPokeStaff() {
-        return CobblemonFightOrFlight.commonConfig().should_check_poke_staff;//TODO replace it with the config.
+        return CobblemonFightOrFlight.commonConfig().should_check_poke_staff;
     }
 }

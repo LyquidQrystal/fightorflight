@@ -240,6 +240,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Health Calculation & Synchronization")
     @Comment("If the original updateMaxHealth() will be replaced by my version. Pokemons outside of battle will use the hp stat instead of the base hp stat. The following configurations needs this one to work.")
     public boolean shouldOverrideUpdateMaxHealth = true;
+    @Comment("If you want to use the FOF style hp calculation.")
+    public boolean use_fof_style_hp_calculation = false;
     @Comment("If health sync will work on the wild pokemon, set to false will heal them on standard pokemon battle start if they were damaged before.")
     public boolean enable_health_sync_for_wild_pokemon = false;
     @Comment("The minimum hp of a pokemon outside standard pokemon battle,shedinja is set to 1.0 and can't be changed.")
@@ -255,6 +257,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("HP stat needed to get maximum HP outside standard pokemon battle. The max hp of a Blissey is 714.")
     public int max_HP_required_stat = 500;
     @ConfigEntry.Category("Poke Staff")
+    @Comment("If Poke Staff can be used.")
+    public boolean can_use_poke_staff = true;
     @Comment("The Pokemon stays still after finishing the move command.")
     public boolean stay_after_move_command = true;
     @Comment("If the player need to hold a Poke Staff to use the command keybind")

@@ -99,7 +99,7 @@ public abstract class MinecraftClientInject {
             return;
         }
 
-        Pokemon pokemon = CobblemonClient.INSTANCE.getStorage().getMyParty().get(CobblemonClient.INSTANCE.getStorage().getSelectedSlot());
+        Pokemon pokemon = CobblemonClient.INSTANCE.getStorage().getParty().get(CobblemonClient.INSTANCE.getStorage().getSelectedSlot());
         if (pokemon != null && pokemon.getCurrentHealth() > 0) {
             var entities = player.clientLevel.getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.getPosition(player.tickCount), 16, 16, 16),
                     (pokemonEntity) -> pokemonEntity.getTarget() == player

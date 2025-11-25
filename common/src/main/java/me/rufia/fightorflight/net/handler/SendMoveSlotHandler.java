@@ -43,9 +43,9 @@ public class SendMoveSlotHandler extends PokeStaffCmdHandler<SendMoveSlotPacket>
             } else {
                 if (PokemonAttackEffect.canChangeMove(pokemonEntity)) {
                     ((PokemonInterface) pokemonEntity).switchMove(move);
-                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemonEntity.getPokemon().getDisplayName(), move.getDisplayName()));
+                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move", pokemonEntity.getPokemon().getDisplayName(false), move.getDisplayName()));
                 } else {
-                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed", pokemonEntity.getPokemon().getDisplayName()));
+                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed", pokemonEntity.getPokemon().getDisplayName(false)));
                 }
             }
         }

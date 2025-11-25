@@ -35,7 +35,7 @@ public final class FabricClient implements ClientModInitializer {
             if (!Minecraft.getInstance().options.hideGui) {
                 var storage = CobblemonClient.INSTANCE.getStorage();
                 int slot = storage.getSelectedSlot();
-                var pokemon = storage.getMyParty().get(slot);
+                var pokemon = storage.getParty().get(slot);
                 if (pokemon != null) {
                     MoveSlotsRender.render(drawContext, tickCounter.getGameTimeDeltaPartialTick(true), pokemon);
                 }

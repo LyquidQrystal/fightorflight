@@ -16,7 +16,7 @@ public class ClientBusEvent {
         if (!Minecraft.getInstance().options.hideGui) {
             var storage = CobblemonClient.INSTANCE.getStorage();
             int slot = storage.getSelectedSlot();
-            var pokemon = storage.getMyParty().get(slot);
+            var pokemon = storage.getParty().get(slot);
             if (pokemon != null) {
                 MoveSlotsRender.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true), pokemon);
             }

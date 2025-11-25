@@ -3,7 +3,7 @@ package me.rufia.fightorflight.utils;
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.tags.CobblemonItemTags;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.cobblemon.mod.common.pokemon.evolution.requirements.LevelRequirement;
+import com.cobblemon.mod.common.pokemon.evolution.variants.LevelUpEvolution;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 
@@ -27,7 +27,7 @@ public class FOFExpCalculator {
         float luckyEggMultiplier = hasLuckyEgg ? (float) Cobblemon.config.getLuckyEggMultiplier() : 1.0f;
         float evolutionMultiplier = battlePokemon.getEvolutionProxy().server().stream().anyMatch(evolution -> {
             var requirements = evolution.getRequirements();
-            return requirements.stream().anyMatch(evolutionRequirement -> evolutionRequirement instanceof LevelRequirement) && requirements.stream().allMatch(evolutionRequirement -> evolutionRequirement.check(battlePokemon));
+            return requirements.stream().anyMatch(evolutionRequirement -> evolutionRequirement instanceof LevelUpEvolution) && requirements.stream().allMatch(evolutionRequirement -> evolutionRequirement.check(battlePokemon));
         }) ? 1.2f : 1.0f;
         float affectionMultiplier = battlePokemon.getFriendship() >= 220 ? 1.2f : 1.0f;
         float gimmickBoost = Cobblemon.config.getExperienceMultiplier();

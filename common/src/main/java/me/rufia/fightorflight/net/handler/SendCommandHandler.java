@@ -35,6 +35,6 @@ public class SendCommandHandler extends PokeStaffCmdHandler<SendCommandPacket> {
     protected void finalProcess(PokemonEntity pokemonEntity, Player player, SendCommandPacket packet) {
         ((PokemonInterface) pokemonEntity).setCommand(cmdMode);
         ((PokemonInterface) pokemonEntity).setCommandData(cmdData);
-        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.command", pokemonEntity.getPokemon().getDisplayName(), PokeStaff.getTranslatedCmdModeName(cmdMode)));
+        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.command", pokemonEntity.getPokemon().getDisplayName(false), PokeStaff.getTranslatedCmdModeName(cmdMode)));
     }
 }

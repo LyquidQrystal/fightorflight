@@ -1,29 +1,22 @@
 package me.rufia.fightorflight.item;
 
-import com.cobblemon.mod.common.CobblemonItems;
-import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.client.CobblemonClient;
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import dev.architectury.networking.NetworkManager;
-import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.item.component.ItemComponentFOF;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.net.packet.SendCommandPacket;
 import me.rufia.fightorflight.net.packet.SendMoveSlotPacket;
 import me.rufia.fightorflight.utils.FOFUtils;
-import me.rufia.fightorflight.utils.RayTrace;
-import net.minecraft.core.BlockPos;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.List;
 import java.util.Objects;
@@ -57,6 +50,9 @@ public class PokeStaff extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        if(!CobblemonFightOrFlight.commonConfig().can_use_poke_staff){
+            return InteractionResultHolder.pass(player.getItemInHand(usedHand));
+        }
         ItemStack stack = player.getItemInHand(usedHand);
 
         if (player.isSecondaryUseActive()) {

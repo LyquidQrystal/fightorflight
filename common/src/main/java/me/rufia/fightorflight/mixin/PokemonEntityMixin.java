@@ -136,6 +136,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         return super.getTarget();
     }
 
+    /*
+    //No more goals now, bye.
     @Inject(method = "registerGoals", at = @At("TAIL"))
     protected void registerFOFGoals(CallbackInfo ci) {
         PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
@@ -148,7 +150,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         targetSelector.addGoal(4, new CaughtByTargetGoal(pokemonEntity));
         targetSelector.addGoal(5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
         targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, proactiveRadiusSqr, 5, false, false, PokemonUtils::canAttackTargetProactively));
-    }
+    }*/
 
     @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
     public void onSyncedDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {
