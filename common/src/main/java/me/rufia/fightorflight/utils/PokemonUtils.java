@@ -388,12 +388,10 @@ public class PokemonUtils {
         int minHealth = CobblemonFightOrFlight.commonConfig().min_HP;
         int midHealth = CobblemonFightOrFlight.commonConfig().mid_HP;
         int maxHealth = CobblemonFightOrFlight.commonConfig().max_HP;
-        int health = minHealth;
-        health = Math.round(
+        return Math.round(
                 stat < midStat ?
                         Mth.lerp((float) (stat - minStat) / (midStat - minStat), minHealth, midHealth) :
-                        Mth.lerp((float) (stat - midStat) / (maxStat - midStat), midHealth, maxHealth));
-        return health;//The return value is a mathematical integer,but some calculation needs a float.
+                        Mth.lerp((float) (stat - midStat) / (maxStat - midStat), midHealth, maxHealth));//The return value is a mathematical integer,but some calculation needs a float.
     }
 
     public static void entityHpToPokemonHp(PokemonEntity pokemonEntity, float amount, boolean isHealing) {

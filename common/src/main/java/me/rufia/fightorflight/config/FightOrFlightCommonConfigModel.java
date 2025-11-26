@@ -274,4 +274,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean player_pokemon_can_hurt_ender_dragon = true;
     @Comment("If the wild poekmon can hurt ender dragon")
     public boolean wild_pokemon_can_hurt_ender_dragon = false;
+    @Comment("If you want to use the fof style melee attack?")
+    public boolean use_fof_style_melee = true;
 }

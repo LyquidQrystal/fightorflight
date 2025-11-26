@@ -20,6 +20,7 @@ import net.minecraft.world.entity.ai.goal.Goal;
 import java.util.Arrays;
 import java.util.EnumSet;
 
+@Deprecated
 public class PokemonAttackGoal extends Goal {
     private int ticksUntilNewAngerParticle = 0;
     private int ticksUntilNewAngerCry = 0;
@@ -54,8 +55,8 @@ public class PokemonAttackGoal extends Goal {
         return ((PokemonInterface) pokemonEntity).getAttackTime();
     }
 
-    protected void resetAttackTime(double d) {
-        PokemonAttackEffect.resetAttackTime(pokemonEntity, d);
+    protected void resetAttackTime(double dis) {
+        PokemonAttackEffect.resetAttackTime(pokemonEntity, dis);
     }
 
     @Override
@@ -134,7 +135,6 @@ public class PokemonAttackGoal extends Goal {
         if ((tickCount - 11) % 20 == 0 && target != null && getAttackTime() == 0) {
             Move move = PokemonUtils.getMove(pokemonEntity);
             if (move != null) {
-                //TODO I can predicate that this will be changed in the future.
                 String moveName = move.getName();
                 if (Arrays.stream(CobblemonFightOrFlight.moveConfig().quick_attack_like_move).toList().contains(moveName)) {
                     float distance = pokemonEntity.distanceTo(target);
@@ -166,7 +166,7 @@ public class PokemonAttackGoal extends Goal {
 
     public boolean isTargetInBattle() {
         if (pokemonEntity.getTarget() instanceof ServerPlayer targetAsPlayer) {
-            return BattleRegistry.INSTANCE.getBattleByParticipatingPlayer(targetAsPlayer) != null;
+            return BattleRegistry.getBattleByParticipatingPlayer(targetAsPlayer) != null;
         }
         return false;
     }
@@ -223,7 +223,7 @@ public class PokemonAttackGoal extends Goal {
     protected void checkAndPerformAttack(LivingEntity target) {
         if (canPerformAttack(target)) {
             resetAttackTime(0);
-            PokemonAttackEffect.resetAttackTime(pokemonEntity, 1);
+            //PokemonAttackEffect.resetAttackTime(pokemonEntity, 1);//Why did I refresh twice?
             pokemonDoHurtTarget(target);
         }
     }

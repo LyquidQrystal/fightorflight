@@ -23,7 +23,7 @@ public abstract class EmptyPokeBallEntityMixin extends ThrowableProjectile {
     @Shadow(remap = false)
     public abstract EmptyPokeBallEntity.CaptureState getCaptureState();
 
-    @Shadow
+    @Shadow(remap = false)
     protected abstract void drop();
 
     protected EmptyPokeBallEntityMixin(EntityType<? extends ThrowableProjectile> entityType, Level level) {

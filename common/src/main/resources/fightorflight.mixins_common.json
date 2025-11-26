@@ -9,12 +9,14 @@
   ],
   "mixins": [
     "PokemonEntityMixin",
-    "PokemonServerDelegateMixin",
-    "PokemonFollowOwnerGoalMixin",
     "EmptyPokeBallEntityMixin",
-    "PokemonEntityCompanionMixin",
     "LivingEntityMixin",
-    "EnderDragonMixin"
+    "EnderDragonMixin",
+    "PokemonBrainMixin",
+    "PokemonMeleeTaskMixin"
+  ],
+  "server": [
+    "PokemonServerDelegateMixin"
   ],
   "injectors": {
     "defaultRequire": 1

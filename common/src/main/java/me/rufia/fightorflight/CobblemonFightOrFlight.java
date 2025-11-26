@@ -71,6 +71,7 @@ public class CobblemonFightOrFlight {
         TargetingWhitelist.init();
     }
 
+    @Deprecated
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {
         float minimum_movement_speed = CobblemonFightOrFlight.commonConfig().minimum_movement_speed;
         float maximum_movement_speed = CobblemonFightOrFlight.commonConfig().maximum_movement_speed;

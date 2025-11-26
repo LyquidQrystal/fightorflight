@@ -25,6 +25,7 @@ subprojects {
         })
 
         compileOnly("org.jetbrains:annotations:24.0.1")
+        implementation("com.bedrockk:molang:1.1.20")
     }
     //loom.silentMojangMappingsLicense()
 }
@@ -46,6 +47,7 @@ allprojects {
         maven("https://jitpack.io")
         maven("https://maven.impactdev.net/repository/development/")
         maven("https://maven.parchmentmc.org")
+        maven("https://maven.pkg.github.com/bedrockk/MoLang")
         exclusiveContent {
             forRepository {
                 maven("https://api.modrinth.com/maven")

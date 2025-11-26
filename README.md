@@ -1,5 +1,12 @@
 This version is no longer server-side only. I added new items and entities to support some features.
-
+# Cobblemon 1.7 support progress:
+## Finished:
+* This mod won't crash your game now. But it has no uses except for adding the items currently.(Oran Lucky Egg should be functioning?)
+## Unfinished:
+* Melee attack(Cobblemon already implemented a simple melee attack, but we got more special effects for the moves.)
+* Range attack
+* Some effects added in 0.9.0 used a special way to implement. They might need to be rebuilt?
+* Poke Staff
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
 ### Features included in v0.8.2:
