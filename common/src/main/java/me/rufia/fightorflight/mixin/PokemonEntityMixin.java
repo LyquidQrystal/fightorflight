@@ -35,6 +35,7 @@ import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -46,6 +47,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
+@Debug(export = true)
 @Mixin(PokemonEntity.class)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
     @Shadow(remap = false)
@@ -432,6 +434,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Unique
     private void slowTick(int ticks, int sec) {
+        //CobblemonFightOrFlight.LOGGER.info("slowTick...");//It works
         if (ticks == 11) {
             updateAttackMode();
             backendMoveCooldown();

@@ -36,9 +36,9 @@ dependencies {
     include(modApi("me.shedaniel.cloth:cloth-config-fabric:${project.properties["cloth_config_version"]}")!!)
 
     //Cobblemon
-    modApi("com.cobblemon:fabric:${project.properties["cobblemon_version"]}")
+    modImplementation("com.cobblemon:fabric:${project.properties["cobblemon_version"]}")
 
-    modImplementation("maven.modrinth:livelierpokemon:2.0.4+1.21.1-fabric")
+    //modImplementation("maven.modrinth:livelierpokemon:2.0.4+1.21.1-fabric")
 }
 
 tasks {

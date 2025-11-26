@@ -2,14 +2,12 @@ package me.rufia.fightorflight.forge;
 
 
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.compat.LivelierPokemonCompat;
 import me.rufia.fightorflight.effects.FOFEffects;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
 import me.rufia.fightorflight.platform.neoforge.EffectRegisterImpl;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
 import net.neoforged.neoforge.common.NeoForge;
 
@@ -24,8 +22,6 @@ public final class CobblemonFightOrFlightForge {
         EffectRegisterImpl.MOB_EFFECTS.register(modEventBus);
         CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> pokemonEntity.goalSelector.addGoal(priority, goal));
         NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onEntityJoined);
-        if (ModList.get().isLoaded(LivelierPokemonCompat.getModID())) {
-            LivelierPokemonCompat.load(true);
-        }
+
     }
 }

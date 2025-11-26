@@ -3,7 +3,6 @@ package me.rufia.fightorflight.goals.targeting;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.compat.LivelierPokemonCompat;
 import me.rufia.fightorflight.utils.TargetingWhitelist;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
@@ -50,7 +49,7 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
                 this.target = null;
             } else if (TargetingWhitelist.getWhitelist(pokemonEntity).contains(target.getEncodeId())) {
                 this.target = null;
-            } else if (target instanceof Creeper && !(CobblemonFightOrFlight.commonConfig().do_pokemon_defend_creeper_proactive || (CobblemonFightOrFlight.commonConfig().do_cat_pokemon_defend_creeper_proactive && LivelierPokemonCompat.isLoaded() && LivelierPokemonCompat.getCats().contains(pokemonEntity.getPokemon().getSpecies().getName())))) {
+            } else if (target instanceof Creeper && !(CobblemonFightOrFlight.commonConfig().do_pokemon_defend_creeper_proactive)) {
                 this.target = null;
             } else if (CobblemonFightOrFlight.commonConfig().pokemon_proactive_level == 1) {
                 if (target instanceof NeutralMob neutralMob) {

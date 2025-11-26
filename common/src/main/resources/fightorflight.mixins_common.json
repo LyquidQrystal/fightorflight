@@ -13,9 +13,7 @@
     "LivingEntityMixin",
     "EnderDragonMixin",
     "PokemonBrainMixin",
-    "PokemonMeleeTaskMixin"
-  ],
-  "server": [
+    "PokemonMeleeTaskMixin",
     "PokemonServerDelegateMixin"
   ],
   "injectors": {

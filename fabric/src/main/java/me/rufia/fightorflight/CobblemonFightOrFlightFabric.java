@@ -1,6 +1,6 @@
 package me.rufia.fightorflight;
 
-import me.rufia.fightorflight.compat.LivelierPokemonCompat;
+
 import me.rufia.fightorflight.effects.FOFEffects;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.event.EntityLoadHandler;
@@ -21,8 +21,5 @@ public final class CobblemonFightOrFlightFabric implements ModInitializer {
         FOFEffects.bootstrap();
         CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> ((MobEntityAccessor) pokemonEntity).goalSelector().addGoal(priority, goal));
         ServerEntityEvents.ENTITY_LOAD.register(new EntityLoadHandler());
-        if (FabricLoader.getInstance().isModLoaded(LivelierPokemonCompat.getModID())) {
-            LivelierPokemonCompat.load(true);
-        }
     }
 }

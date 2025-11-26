@@ -20,7 +20,7 @@ public abstract class PokemonServerDelegateMixin implements PokemonSideDelegate 
 
     @Inject(method = "updateAttributes", at = @At("HEAD"), cancellable = true, remap = false)
     public void updateAttributesMixin(Pokemon pokemon, CallbackInfo ci) {
-
+        //CobblemonFightOrFlight.LOGGER.info("UPDATING ATTRIBUTES");
 
     }
 
