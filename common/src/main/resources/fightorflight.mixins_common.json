@@ -15,7 +15,8 @@
     "PokemonBrainMixin",
     "PokemonMeleeTaskMixin",
     "PokemonServerDelegateMixin",
-    "MeleeAttackTaskMixin"
+    "MeleeAttackTaskMixin",
+    "ActivityConfigurationContextMixin"
   ],
   "injectors": {
     "defaultRequire": 1

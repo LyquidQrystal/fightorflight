@@ -6,16 +6,16 @@ import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import net.minecraft.server.level.ServerPlayer;
 
-public class FOFPokemonAttackTask {
-    protected static int getAttackTime(PokemonEntity pokemonEntity) {
+public abstract class FOFPokemonAttackTask {
+     public static int getAttackTime(PokemonEntity pokemonEntity) {
         return ((PokemonInterface) pokemonEntity).getAttackTime();
     }
 
-    protected static void resetAttackTime(PokemonEntity pokemonEntity, double dis) {
+    public static void resetAttackTime(PokemonEntity pokemonEntity, double dis) {
         PokemonAttackEffect.resetAttackTime(pokemonEntity, dis);
     }
 
-    protected static boolean isTargetInBattle(PokemonEntity pokemonEntity) {
+    public static boolean isTargetInBattle(PokemonEntity pokemonEntity) {
         if (pokemonEntity.getTarget() instanceof ServerPlayer targetAsPlayer) {
             return BattleRegistry.getBattleByParticipatingPlayer(targetAsPlayer) != null;
         }

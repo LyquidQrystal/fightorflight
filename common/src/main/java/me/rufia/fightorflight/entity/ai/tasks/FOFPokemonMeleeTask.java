@@ -3,6 +3,7 @@ package me.rufia.fightorflight.entity.ai.tasks;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.world.InteractionHand;
@@ -14,7 +15,7 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
 import java.util.Arrays;
 
-public class FOFPokemonMeleeTask extends FOFPokemonAttackTask {
+public class FOFPokemonMeleeTask {
     public static OneShot<LivingEntity> create(int cooldownBetweenAttacks) {
         return BehaviorBuilder.create(context ->
                 context.group(
@@ -27,9 +28,10 @@ public class FOFPokemonMeleeTask extends FOFPokemonAttackTask {
                     if (livingEntity instanceof PokemonEntity pokemonEntity) {
                         if (canPerformAttack(pokemonEntity, target)) {
                             lookTargetAccessor.set(new EntityTracker(target, true));
-                            resetAttackTime(pokemonEntity, 0);
+                            FOFPokemonAttackTask.resetAttackTime(pokemonEntity, 0);
                             pokemonEntity.swing(InteractionHand.MAIN_HAND);
                             pokemonDoHurtTarget(pokemonEntity, target);
+                            ((PokemonInterface) pokemonEntity).setAttackTime(cooldownBetweenAttacks);
                             attackCooldownAccessor.setWithExpiry(true, cooldownBetweenAttacks);
                             return true;
                         }
@@ -40,12 +42,12 @@ public class FOFPokemonMeleeTask extends FOFPokemonAttackTask {
     }
 
     protected static boolean canPerformAttack(PokemonEntity pokemonEntity, LivingEntity entity) {
-        return getAttackTime(pokemonEntity) == 0 && pokemonEntity.isWithinMeleeAttackRange(entity) && pokemonEntity.getSensing().hasLineOfSight(entity);
+        return FOFPokemonAttackTask.getAttackTime(pokemonEntity) == 0 && pokemonEntity.isWithinMeleeAttackRange(entity) && pokemonEntity.getSensing().hasLineOfSight(entity);
     }
 
     protected static boolean pokemonDoHurtTarget(PokemonEntity pokemonEntity, LivingEntity hurtTarget) {
         if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack_in_battle) {
-            if (isTargetInBattle(pokemonEntity)) {
+            if (FOFPokemonAttackTask.isTargetInBattle(pokemonEntity)) {
                 return false;
             }
         }

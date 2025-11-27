@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
+//TODO unfinished
 @Mixin(PokemonServerDelegate.class)
 public abstract class PokemonServerDelegateMixin implements PokemonSideDelegate {
     @Shadow(remap = false)

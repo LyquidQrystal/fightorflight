@@ -1,0 +1,43 @@
+package me.rufia.fightorflight.mixin;
+
+import com.cobblemon.mod.common.api.ai.ActivityConfigurationContext;
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import com.mojang.datafixers.util.Pair;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.entity.ai.tasks.FOFPokemonRangeTask;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.behavior.BehaviorControl;
+import net.minecraft.world.entity.schedule.Activity;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import java.util.List;
+import java.util.Objects;
+
+@Mixin(ActivityConfigurationContext.class)
+public abstract class ActivityConfigurationContextMixin {
+    @Final
+    @Shadow(remap = false)
+    private List<Pair<Integer, BehaviorControl<? super LivingEntity>>> tasks;
+    @Final
+    @Shadow(remap = false)
+    private Activity activity;
+
+    @Inject(method = "apply", at = @At("HEAD"),remap = false)
+    private void applyMixin(LivingEntity entity, CallbackInfo ci) {
+        if (entity instanceof PokemonEntity) {
+            if (Objects.equals(activity.getName(), "fight")) {
+                CobblemonFightOrFlight.LOGGER.info("{} get a range task.",entity.getName().getString());
+                for(var t :tasks){
+                    CobblemonFightOrFlight.LOGGER.info("{} fight tasks:{}",entity.getName().getString(),t.getSecond().getClass().getName());
+                }
+                CobblemonFightOrFlight.LOGGER.info("{} PRINT END",entity.getName().getString());
+                //tasks.add(new Pair<>(0, new FOFPokemonRangeTask()));
+            }
+        }
+    }
+}
