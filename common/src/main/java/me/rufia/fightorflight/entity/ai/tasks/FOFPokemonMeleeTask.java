@@ -15,22 +15,24 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import java.util.Arrays;
 
 public class FOFPokemonMeleeTask extends FOFPokemonAttackTask {
-    public static OneShot<PokemonEntity> create(int cooldownBetweenAttacks) {
+    public static OneShot<LivingEntity> create(int cooldownBetweenAttacks) {
         return BehaviorBuilder.create(context ->
                 context.group(
                         context.registered(MemoryModuleType.LOOK_TARGET),
                         context.present(MemoryModuleType.ATTACK_TARGET),
                         context.absent(MemoryModuleType.ATTACK_COOLING_DOWN),
                         context.present(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES)
-                ).apply(context, (lookTargetAccessor, attackTargetAccessor, attackCooldownAccessor, visibleMobsAccessor) -> ((serverLevel, pokemonEntity, l) -> {
+                ).apply(context, (lookTargetAccessor, attackTargetAccessor, attackCooldownAccessor, visibleMobsAccessor) -> ((serverLevel, livingEntity, l) -> {
                     LivingEntity target = context.get(attackTargetAccessor);
-                    if (canPerformAttack(pokemonEntity, target)) {
-                        lookTargetAccessor.set(new EntityTracker(target, true));
-                        resetAttackTime(pokemonEntity, 0);
-                        pokemonEntity.swing(InteractionHand.MAIN_HAND);
-                        pokemonDoHurtTarget(pokemonEntity, target);
-                        attackCooldownAccessor.setWithExpiry(true,cooldownBetweenAttacks);
-                        return true;
+                    if (livingEntity instanceof PokemonEntity pokemonEntity) {
+                        if (canPerformAttack(pokemonEntity, target)) {
+                            lookTargetAccessor.set(new EntityTracker(target, true));
+                            resetAttackTime(pokemonEntity, 0);
+                            pokemonEntity.swing(InteractionHand.MAIN_HAND);
+                            pokemonDoHurtTarget(pokemonEntity, target);
+                            attackCooldownAccessor.setWithExpiry(true, cooldownBetweenAttacks);
+                            return true;
+                        }
                     }
                     return false;
                 }

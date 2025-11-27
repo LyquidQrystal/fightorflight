@@ -47,8 +47,8 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import java.util.*;
 
-@Debug(export = true)
 @Mixin(PokemonEntity.class)
+@Debug(export = true)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
     @Shadow(remap = false)
     public abstract void cry();

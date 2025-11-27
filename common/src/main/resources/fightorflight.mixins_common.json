@@ -14,7 +14,8 @@
     "EnderDragonMixin",
     "PokemonBrainMixin",
     "PokemonMeleeTaskMixin",
-    "PokemonServerDelegateMixin"
+    "PokemonServerDelegateMixin",
+    "MeleeAttackTaskMixin"
   ],
   "injectors": {
     "defaultRequire": 1

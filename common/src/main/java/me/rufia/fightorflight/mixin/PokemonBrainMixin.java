@@ -8,6 +8,7 @@ import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.ai.PokemonBrain;
 import com.cobblemon.mod.common.util.MoLangExtensionsKt;
 import com.mojang.datafixers.util.Pair;
+import com.mojang.serialization.Dynamic;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.ai.tasks.FOFPokemonMeleeTask;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
@@ -24,19 +25,28 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.ArrayList;
 import java.util.List;
 
-@Debug(export = true)
+
 @Mixin(PokemonBrain.class)
+@Debug(export = true)
 public abstract class PokemonBrainMixin {
     @Inject(method = "fightTasks", at = @At("HEAD"), remap = false, cancellable = true)
     private void fightTasksMixin(Pokemon pokemon, CallbackInfoReturnable<List<Pair<Integer, BehaviorControl<? super PokemonEntity>>>> cir) {
-        CobblemonFightOrFlight.LOGGER.info("Brain Mixin is running");//This one doesn't work
-        var tasks = addTasks();
-        cir.setReturnValue(tasks);
+        //This will only be used when there is no behavior configuration
     }
 
-    @Inject(method = "<clinit>",at = @At("HEAD"))
-    private static void initTest(CallbackInfo ci){
-        CobblemonFightOrFlight.LOGGER.info("Testing brain inject on init.");//It works.
+    @Inject(method = "<clinit>", at = @At("HEAD"))
+    private static void initTest(CallbackInfo ci) {
+        //CobblemonFightOrFlight.LOGGER.info("Testing brain inject on init.");
+    }
+
+    @Inject(method = "applyBrain", at = @At("HEAD"), remap = false)
+    private void applyBrainMixin(PokemonEntity entity, Pokemon pokemon, Dynamic<?> dynamic, CallbackInfo ci) {
+        //CobblemonFightOrFlight.LOGGER.info("Applying brain.");
+    }
+
+    @Inject(method = "coreTasks", at = @At("HEAD"), remap = false)
+    private void coreTasksMixin(Pokemon pokemon, CallbackInfoReturnable<List<Pair<Integer, BehaviorControl<? super PokemonEntity>>>> cir) {
+        //CobblemonFightOrFlight.LOGGER.info("Applying core tasks.");//This will only be used when there is no behavior configuration
     }
 
     @Unique
