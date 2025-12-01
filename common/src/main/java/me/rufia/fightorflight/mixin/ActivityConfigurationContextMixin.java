@@ -32,11 +32,14 @@ public abstract class ActivityConfigurationContextMixin {
         if (entity instanceof PokemonEntity) {
             if (Objects.equals(activity.getName(), "fight")) {
                 CobblemonFightOrFlight.LOGGER.info("{} get a range task.",entity.getName().getString());
+                /*
                 for(var t :tasks){
                     CobblemonFightOrFlight.LOGGER.info("{} fight tasks:{}",entity.getName().getString(),t.getSecond().getClass().getName());
                 }
+                */
                 CobblemonFightOrFlight.LOGGER.info("{} PRINT END",entity.getName().getString());
-                //tasks.add(new Pair<>(0, new FOFPokemonRangeTask()));
+                tasks.add(new Pair<>(0, new FOFPokemonRangeTask()));//It can be added, but it doesn't seem to work.
+
             }
         }
     }

@@ -12,6 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(PokemonMeleeTask.class)
 @Deprecated
+//Use MeleeAttackTaskMixin instead
 public abstract class PokemonMeleeTaskMixin {
     //This class is not used currently. The default behavior config will use MeleeAttackTask directly.
     @Inject(method = "create", at = @At(value = "HEAD"), cancellable = true)

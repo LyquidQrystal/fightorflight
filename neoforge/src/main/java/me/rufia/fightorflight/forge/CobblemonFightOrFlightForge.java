@@ -15,7 +15,7 @@ import net.neoforged.neoforge.common.NeoForge;
 @Mod(CobblemonFightOrFlight.MODID)
 public final class CobblemonFightOrFlightForge {
     public CobblemonFightOrFlightForge(IEventBus modEventBus, ModContainer modContainer) {
-        CobblemonFightOrFlight.LOGGER.info("Hello neoforge");
+        CobblemonFightOrFlight.LOGGER.info("Hello neoforge from Fight or Flight");
         EntityFightOrFlight.bootstrap();
         ItemFightOrFlight.bootstrap();
         FOFEffects.bootstrap();

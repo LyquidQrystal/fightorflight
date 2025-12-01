@@ -2,6 +2,7 @@ package me.rufia.fightorflight.entity.ai.tasks;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.google.common.collect.ImmutableMap;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
@@ -35,14 +36,20 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
         this.seeTime = 0;
         attackRadiusSqr = 64;
         speedModifier = 0.5;
+        CobblemonFightOrFlight.LOGGER.info("Range task created");
     }
 
     @Override
     protected boolean checkExtraStartConditions(ServerLevel level, LivingEntity pokemon) {
-        if (pokemon instanceof PokemonEntity pokemonEntity) {
-            LivingEntity livingEntity = pokemonEntity.getTarget();
-            if (livingEntity != null) {
-                return BehaviorUtils.canSee(pokemonEntity, livingEntity) && isWithinAttackRange(pokemonEntity, livingEntity);
+        CobblemonFightOrFlight.LOGGER.info("[{}] Yeah, we're checking the conditions, sir.", pokemon.getName());
+        var targetOpt = pokemon.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET);
+        if (targetOpt.isPresent()) {
+            LivingEntity target = targetOpt.get();
+            CobblemonFightOrFlight.LOGGER.info("Target Confirmed");
+            if (pokemon instanceof PokemonEntity pokemonEntity) {
+                //LivingEntity livingEntity = pokemonEntity.getTarget();
+                CobblemonFightOrFlight.LOGGER.info("Final checking.");
+                return BehaviorUtils.canSee(pokemonEntity, target) && isWithinAttackRange(pokemonEntity, target);
             }
         }
         return false;
@@ -65,6 +72,7 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
 
     @Override
     protected void tick(ServerLevel level, LivingEntity pokemon, long gameTime) {
+        CobblemonFightOrFlight.LOGGER.info("Yeah, we're ticking, sir.");
         if (pokemon instanceof PokemonEntity pokemonEntity) {
             LivingEntity target = pokemonEntity.getTarget();
             if (target != null) {
