@@ -34,5 +34,5 @@
   "key.fightorflight.categories.fightorflight.pokestaff": "Cobblemon Fight or Flight: Poke Staff",
   "effect.fightorflight.resistance_weakened": "Resistance Weakened",
   "fightorflight.behaviour.fights_range.name": "Range Attack(FOF)",
-  "fightorflight.behaviour.fights_range.desc": "Range attack behaviour(FOF)"
+  "fightorflight.behaviour.fights_range.desc": "Range attack behaviour from FOF, please don't apply this behaviour manually."
 }

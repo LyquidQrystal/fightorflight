@@ -12,13 +12,12 @@
     "EmptyPokeBallEntityMixin",
     "LivingEntityMixin",
     "EnderDragonMixin",
-    "PokemonBrainMixin",
-    "PokemonMeleeTaskMixin",
     "PokemonServerDelegateMixin",
     "MeleeAttackTaskMixin",
+    "MoveToAttackTargetTaskMixin",
     "ActivityConfigurationContextMixin",
-    "BehaviourConfigurationContextMixin",
-    "TaskConfigMixin"
+    "TaskConfigMixin",
+    "PokemonBrainMixin"
   ],
   "injectors": {
     "defaultRequire": 1

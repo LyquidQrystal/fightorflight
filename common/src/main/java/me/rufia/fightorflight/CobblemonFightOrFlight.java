@@ -136,8 +136,8 @@ public class CobblemonFightOrFlight {
             typeSecondary = typePrimary;
         }
 
-        boolean ghostLightLevelModifier = CobblemonFightOrFlight.commonConfig().ghost_light_level_aggro && (typePrimary.getName().equals("ghost") || typeSecondary.getName().equals("ghost"));
-        boolean darkLightLevelModifier = CobblemonFightOrFlight.commonConfig().dark_light_level_aggro && (typePrimary.getName().equals("dark") || typeSecondary.getName().equals("dark"));
+        boolean ghostLightLevelModifier = CobblemonFightOrFlight.commonConfig().ghost_light_level_aggro && (typePrimary.getName().equalsIgnoreCase("ghost") || typeSecondary.getName().equalsIgnoreCase("ghost"));
+        boolean darkLightLevelModifier = CobblemonFightOrFlight.commonConfig().dark_light_level_aggro && (typePrimary.getName().equalsIgnoreCase("dark") || typeSecondary.getName().equalsIgnoreCase("dark"));
 
         if (ghostLightLevelModifier || darkLightLevelModifier) {
             int skyDarken = pokemonEntity.level().getSkyDarken();

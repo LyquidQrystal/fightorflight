@@ -3,8 +3,9 @@ This version is no longer server-side only. I added new items and entities to su
 ## Finished:
 * This mod won't crash your game now. But it's not fully usable. Most of the features are unavailable now.
 * Melee attack(Cobblemon already implemented a simple melee attack, but we got more special effects for the moves.)
-## Unfinished:
-* Range attack(I have no idea how to add a custom behaviour to Pokemon now. It should take longer time than I had expected.)
+* Range attack(Finally! It seems to work. I'll try to test if there are some other bugs.)
+## Unfinished features that you might care about:
+* Pokemon won't attack the target you hit. (I can't add a new sensor without overriding
 * Some effects added in 0.9.0 used a special way to implement. They might need to be rebuilt?
 * Poke Staff
 * Some misc features

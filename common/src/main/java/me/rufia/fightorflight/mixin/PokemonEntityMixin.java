@@ -2,16 +2,20 @@ package me.rufia.fightorflight.mixin;
 
 
 import com.cobblemon.mod.common.CobblemonItems;
+import com.cobblemon.mod.common.CobblemonMemories;
+import com.cobblemon.mod.common.CobblemonSensors;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.pokemon.ai.PokemonBrain;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import me.rufia.fightorflight.entity.ai.sensors.FOFSensors;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.utils.*;
 import net.minecraft.core.BlockPos;
@@ -31,6 +35,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.Brain;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
@@ -48,7 +53,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.*;
 
 @Mixin(PokemonEntity.class)
-@Debug(export = true)
 public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
     @Shadow(remap = false)
     public abstract void cry();
@@ -184,6 +188,14 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private void readAdditionalNbt(CompoundTag compoundTag, CallbackInfo ci) {
         entityData.set(CRY_CD, compoundTag.getInt(CRY_CD.toString()));
     }
+    /*
+    @Inject(method = "brainProvider", at = @At("HEAD"), cancellable = true)
+    private void brainProviderMixin(CallbackInfoReturnable<Brain.Provider<PokemonEntity>> cir) {
+        var cobSensors = PokemonBrain.INSTANCE.getSENSORS();
+        var sensors = new ArrayList<>(cobSensors.stream().toList());
+        sensors.add(FOFSensors.POKEMON_HELP_OWNER);
+        cir.setReturnValue(Brain.provider(PokemonBrain.INSTANCE.getMEMORY_MODULES(), List.copyOf(sensors)));
+    }*/
 
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
@@ -385,7 +397,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         if (Objects.equals(getCommand(), PokeStaffComponent.CMDMODE.CLEAR.name())) {
             setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
         }
-        var targetEntity = getTarget();
+        var targetEntity = PokemonUtils.getTarget((PokemonEntity) (Object) this);
         if (targetEntity != null && targetEntity.isAlive()) {
             if (getNextCryTime() == 0) {
                 this.cry();
@@ -500,6 +512,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                 } else {
                     setAttackMode(0);
                 }
+                //CobblemonFightOrFlight.LOGGER.info("Current attack mode: {}", getAttackMode());
                 setCurrentMove(move);
             }
         } else {

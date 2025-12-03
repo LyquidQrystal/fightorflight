@@ -16,9 +16,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class MeleeAttackTaskMixin {
     @Inject(method = "create", at = @At(value = "HEAD"),cancellable = true)
     private void createFOFMixin(Expression range, Expression cooldownTicks, CallbackInfoReturnable<OneShot<LivingEntity>> cir) {
-        //CobblemonFightOrFlight.LOGGER.info("Mixin usable");
         if (CobblemonFightOrFlight.commonConfig().use_fof_style_melee) {
-            //CobblemonFightOrFlight.LOGGER.info("Mixin used");
             int cooldownTicksValue = MoLangExtensionsKt.resolveInt(MoLangExtensionsKt.getMainThreadRuntime(), cooldownTicks,MoLangExtensionsKt.getContextOrEmpty(MoLangExtensionsKt.getMainThreadRuntime()));
             cir.setReturnValue(FOFPokemonMeleeTask.create(cooldownTicksValue));
         }

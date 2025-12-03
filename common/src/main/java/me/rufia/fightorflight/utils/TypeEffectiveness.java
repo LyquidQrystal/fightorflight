@@ -31,13 +31,13 @@ public class TypeEffectiveness {
 
     public static float getTypeEffectiveness(Move offenseMove, ElementalType defenseType) {
         if (offenseMove.getName().equals("freezedry")) {
-            if (defenseType.getName().equals("water")) {
+            if (defenseType.getName().equals("Water")) {
                 return 2f;
             }
         }
         float result = getTypeEffectiveness(offenseMove.getType(), defenseType);
         if (offenseMove.getName().equals("flyingpress")) {
-            result *= getTypeEffectiveness("flying", defenseType.getName());
+            result *= getTypeEffectiveness("Flying", defenseType.getName());
         }
         return result;
     }
@@ -63,25 +63,27 @@ public class TypeEffectiveness {
     }
 
     public static float getTypeEffectiveness(String offenseTypeName, String defenseTypeName) {
-        return switch (offenseTypeName) {
-            case "normal" -> normalOffense(defenseTypeName);
-            case "fighting" -> fightingOffense(defenseTypeName);
-            case "flying" -> flyingOffense(defenseTypeName);
-            case "poison" -> poisonOffense(defenseTypeName);
-            case "ground" -> groundOffense(defenseTypeName);
-            case "rock" -> rockOffense(defenseTypeName);
-            case "bug" -> bugOffense(defenseTypeName);
-            case "ghost" -> ghostOffense(defenseTypeName);
-            case "steel" -> steelOffense(defenseTypeName);
-            case "fire" -> fireOffense(defenseTypeName);
-            case "water" -> waterOffense(defenseTypeName);
-            case "grass" -> grassOffense(defenseTypeName);
-            case "electric" -> electricOffense(defenseTypeName);
-            case "psychic" -> psychicOffense(defenseTypeName);
-            case "ice" -> iceOffense(defenseTypeName);
-            case "dragon" -> dragonOffense(defenseTypeName);
-            case "dark" -> darkOffense(defenseTypeName);
-            case "fairy" -> fairyOffense(defenseTypeName);
+        String offenseTypeNameLower = offenseTypeName.toLowerCase();
+        String defenseTypeNameLower=defenseTypeName.toLowerCase();
+        return switch (offenseTypeNameLower) {
+            case "normal" -> normalOffense(defenseTypeNameLower);
+            case "fighting" -> fightingOffense(defenseTypeNameLower);
+            case "flying" -> flyingOffense(defenseTypeNameLower);
+            case "poison" -> poisonOffense(defenseTypeNameLower);
+            case "ground" -> groundOffense(defenseTypeNameLower);
+            case "rock" -> rockOffense(defenseTypeNameLower);
+            case "bug" -> bugOffense(defenseTypeNameLower);
+            case "ghost" -> ghostOffense(defenseTypeNameLower);
+            case "steel" -> steelOffense(defenseTypeNameLower);
+            case "fire" -> fireOffense(defenseTypeNameLower);
+            case "water" -> waterOffense(defenseTypeNameLower);
+            case "grass" -> grassOffense(defenseTypeNameLower);
+            case "electric" -> electricOffense(defenseTypeNameLower);
+            case "psychic" -> psychicOffense(defenseTypeNameLower);
+            case "ice" -> iceOffense(defenseTypeNameLower);
+            case "dragon" -> dragonOffense(defenseTypeNameLower);
+            case "dark" -> darkOffense(defenseTypeNameLower);
+            case "fairy" -> fairyOffense(defenseTypeNameLower);
             default -> 1f;
         };
     }

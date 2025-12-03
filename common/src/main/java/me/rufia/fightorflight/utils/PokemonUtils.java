@@ -27,6 +27,7 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.monster.Enemy;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -56,11 +57,11 @@ public class PokemonUtils {
 
         LivingEntity owner = pokemonEntity.getOwner();
         if (owner != null) {
-            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || pokemonEntity.getTarget() == null || pokemonEntity.getTarget() == owner || pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
+            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || PokemonUtils.getTarget(pokemonEntity) == null || PokemonUtils.getTarget(pokemonEntity) == owner || pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
                 return false;
             }
 
-            if (pokemonEntity.getTarget() instanceof PokemonEntity targetPokemon) {
+            if (getTarget(pokemonEntity) instanceof PokemonEntity targetPokemon) {
                 LivingEntity targetOwner = targetPokemon.getOwner();
                 if (targetOwner != null) {
                     if (targetOwner == owner) {
@@ -71,19 +72,19 @@ public class PokemonUtils {
                     }
                 }
             }
-            if (pokemonEntity.getTarget() instanceof Player) {
+            if (getTarget(pokemonEntity) instanceof Player) {
                 if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
                     return false;
                 }
             }
 
         } else {
-            if (pokemonEntity.getTarget() != null) {
+            LivingEntity targetEntity = PokemonUtils.getTarget(pokemonEntity);
+            if (targetEntity != null) {
                 if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= 0) {
                     return false;
                 }
 
-                LivingEntity targetEntity = pokemonEntity.getTarget();
                 if (pokemonEntity.distanceToSqr(targetEntity.getX(), targetEntity.getY(), targetEntity.getZ()) > 400) {
                     return false;
                 }
@@ -635,5 +636,10 @@ public class PokemonUtils {
 
     public static boolean shouldCheckPokeStaff() {
         return CobblemonFightOrFlight.commonConfig().should_check_poke_staff;
+    }
+
+    public static LivingEntity getTarget(PokemonEntity pokemonEntity) {
+        var targetOpt = pokemonEntity.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET);
+        return targetOpt.orElse(null);
     }
 }

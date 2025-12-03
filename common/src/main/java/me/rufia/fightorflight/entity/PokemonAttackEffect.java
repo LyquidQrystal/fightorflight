@@ -35,7 +35,8 @@ import java.util.*;
 
 public class PokemonAttackEffect {
     public static SimpleParticleType getParticleFromType(String name) {
-        return switch (name) {
+        String nameLower = name.toLowerCase();
+        return switch (nameLower) {
             case "fire" -> ParticleTypes.FLAME;
             case "ice" -> ParticleTypes.SNOWFLAKE;
             case "poison" -> ParticleTypes.MYCELIUM;
@@ -57,7 +58,8 @@ public class PokemonAttackEffect {
     }
 
     public static Color getColorFromType(String typeName) {
-        return switch (typeName) {
+        String nameLower = typeName.toLowerCase();
+        return switch (nameLower) {
             case "fire" -> new Color(230, 40, 41);
             case "ice" -> new Color(63, 216, 255);
             case "poison" -> new Color(145, 65, 203);
@@ -229,7 +231,8 @@ public class PokemonAttackEffect {
         //Type-enhancing item.
         if (type != null) {
             float typeEnhancingMultiplier = 1.2f;
-            switch (type.getName()) {
+            String typeName = type.getName().toLowerCase();
+            switch (typeName) {
                 case "fire":
                     if (heldItem.is(CobblemonItems.CHARCOAL)) return typeEnhancingMultiplier;
                     break;
@@ -303,8 +306,8 @@ public class PokemonAttackEffect {
         if (hurtTarget instanceof
                 LivingEntity livingHurtTarget) {
             int effectStrength = Math.max(pkmLevel / 10, 1);
-
-            switch (typeName) {
+            String type = typeName.toLowerCase();
+            switch (type) {
                 case "fire":
                     livingHurtTarget.setRemainingFireTicks(effectStrength * 20);
                     break;
@@ -606,7 +609,7 @@ public class PokemonAttackEffect {
         double horizontal = 1 + pokemonEntity.getBbWidth() / 2;
         float velocity = 0.8f;
 
-        if (pokemonEntity.getTarget() instanceof LivingEntity target) {
+        if (PokemonUtils.getTarget(pokemonEntity) instanceof LivingEntity target) {
             double x = target.getX() - pokemonEntity.getX();
             double z = target.getZ() - pokemonEntity.getZ();
             spreadFanShape(x, z, count, 3, pokemonEntity, type, rand, velocity);

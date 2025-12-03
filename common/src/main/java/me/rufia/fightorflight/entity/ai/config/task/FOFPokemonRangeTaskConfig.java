@@ -19,13 +19,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class FOFPokemonRangeTaskConfig implements SingleTaskConfig {
-    private Either<Expression, MoLangConfigVariable> condition = booleanVariable(SharedEntityVariables.ATTACKING_CATEGORY, "attacks_melee", true).asExpressible();
-    private Either<Expression, MoLangConfigVariable> range = numberVariable(SharedEntityVariables.ATTACKING_CATEGORY, "range_radius", 8F).asExpressible();
-    private Either<Expression, MoLangConfigVariable> cooldownTicks = numberVariable(SharedEntityVariables.ATTACKING_CATEGORY, "melee_cooldown", 20).asExpressible();
+    private final Either<Expression, MoLangConfigVariable> condition = booleanVariable(SharedEntityVariables.ATTACKING_CATEGORY, "attacks_melee", true).asExpressible();
+    private final Either<Expression, MoLangConfigVariable> range = numberVariable(SharedEntityVariables.ATTACKING_CATEGORY, "range_radius", 8F).asExpressible();
+    private final Either<Expression, MoLangConfigVariable> cooldownTicks = numberVariable(SharedEntityVariables.ATTACKING_CATEGORY, "melee_cooldown", 20).asExpressible();
 
     @Override
     public @Nullable BehaviorControl<? super LivingEntity> createTask(@NotNull LivingEntity livingEntity, @NotNull BehaviourConfigurationContext behaviourConfigurationContext) {
-        CobblemonFightOrFlight.LOGGER.info("Range task created");
         var runtime = behaviourConfigurationContext.getRuntime();
         var expression = condition.left();
         if (expression.isPresent() && !MoLangExtensionsKt.resolveBoolean(runtime, expression.get(), MoLangExtensionsKt.getContextOrEmpty(runtime))) {
@@ -36,7 +35,6 @@ public class FOFPokemonRangeTaskConfig implements SingleTaskConfig {
                 MemoryModuleType.ATTACK_COOLING_DOWN
         );
         return new FOFPokemonRangeTask();
-        //return null;
     }
 
     @Override

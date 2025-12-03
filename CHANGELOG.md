@@ -1,3 +1,13 @@
+# V0.10.0:
+## Halfly Reborn Update
+Cobblemon 1.7 has changed a lot of things. The Brain system used in Minecraft might be easy to create complex behaviour if you build an entity from the ground up. However, it's quite hard to inject something new to a brain due to the highly immutable structure Mojang uses.  
+I've tried my best to update this mod to Cobblemon 1.7 but there are still something that needs to be updated. This version doesn't have all the features already included in V0.9.0, but I still hope that you can enjoy this update.
+### Implemented Features:
+* FOF style melee attack and range attack.
+### Some unimplemented features that you might care():
+* Pokemon won't attack the target you hit. (I like this feature so much, too.)  
+
+check README.md in the github repo if you want to know what technical problem is troubling me
 # V0.9.0:
 This version is for Cobblemon 1.6 and 1.6.1! The new version for Cobblemon 1.7 will be released in a few days.  
 Since Cobblemon 1.7 is released. 0.9.0 will be the last version that adds new features and supports Cobblemon 1.6.1. However, I will still fix the bugs reported before 2026.1.1 for Cobblemon 1.6.1.

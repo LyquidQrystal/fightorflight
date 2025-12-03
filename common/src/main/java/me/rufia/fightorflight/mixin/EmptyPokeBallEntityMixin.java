@@ -41,7 +41,7 @@ public abstract class EmptyPokeBallEntityMixin extends ThrowableProjectile {
     private void onHitEntityMixin(EntityHitResult hitResult, CallbackInfo ci) {
         if (getCaptureState() == EmptyPokeBallEntity.CaptureState.NOT) {
             if (!level().isClientSide && hitResult.getEntity() instanceof PokemonEntity pokemonEntity) {
-                if (!CobblemonFightOrFlight.commonConfig().aggressive_pokemon_catchable && PokemonUtils.shouldFightTarget(pokemonEntity) && pokemonEntity.getTarget() != null) {
+                if (!CobblemonFightOrFlight.commonConfig().aggressive_pokemon_catchable && PokemonUtils.shouldFightTarget(pokemonEntity) && PokemonUtils.getTarget(pokemonEntity) != null) {
                     drop();
                     ci.cancel();
                 }
