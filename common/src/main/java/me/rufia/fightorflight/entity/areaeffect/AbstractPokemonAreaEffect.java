@@ -159,11 +159,11 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
 
     protected void playActivateSound() {
         String typeName = getElementalType();
-        if (typeName.equals("electric")) {
+        if (typeName.equals("Electric")) {
             playSound(SoundEvents.LIGHTNING_BOLT_THUNDER, 4f, (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
-        } else if (typeName.equals("fire")) {
+        } else if (typeName.equals("Fire")) {
             playSound(SoundEvents.GENERIC_BURN, 4f, (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
-        } else if (typeName.equals("water")) {
+        } else if (typeName.equals("Water")) {
             playSound(SoundEvents.GENERIC_SPLASH, 4f, (1.0F + (level().random.nextFloat() - level().random.nextFloat()) * 0.2F) * 0.7F);
         } else {
             playDefaultSound();

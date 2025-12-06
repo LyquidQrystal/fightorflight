@@ -26,16 +26,21 @@ public class FOFPokemonMeleeTask {
                 ).apply(context, (lookTargetAccessor, attackTargetAccessor, attackCooldownAccessor, visibleMobsAccessor) -> ((serverLevel, livingEntity, l) -> {
                     LivingEntity target = context.get(attackTargetAccessor);
                     if (livingEntity instanceof PokemonEntity pokemonEntity) {
+                        int attackTime = FOFPokemonAttackTask.getAttackTime(pokemonEntity);
                         if (PokemonUtils.shouldMelee(pokemonEntity)) {
                             if (canPerformAttack(pokemonEntity, target)) {
-                                lookTargetAccessor.set(new EntityTracker(target, true));
-                                FOFPokemonAttackTask.resetAttackTime(pokemonEntity, 0);
-                                pokemonEntity.swing(InteractionHand.MAIN_HAND);
-                                pokemonDoHurtTarget(pokemonEntity, target);
-                                pokemonEntity.setTarget(target);
-                                ((PokemonInterface) pokemonEntity).setAttackTime(cooldownBetweenAttacks);
-                                attackCooldownAccessor.setWithExpiry(true, cooldownBetweenAttacks);
-                                return true;
+                                if (attackTime == 0) {
+                                    lookTargetAccessor.set(new EntityTracker(target, true));
+                                    FOFPokemonAttackTask.resetAttackTime(pokemonEntity, 0);
+                                    pokemonEntity.swing(InteractionHand.MAIN_HAND);
+                                    pokemonDoHurtTarget(pokemonEntity, target);
+                                    pokemonEntity.setTarget(target);
+                                    ((PokemonInterface) pokemonEntity).setAttackTime(cooldownBetweenAttacks);
+                                    attackCooldownAccessor.setWithExpiry(true, cooldownBetweenAttacks);
+                                    return true;
+                                } else if (attackTime < 0) {
+                                    FOFPokemonAttackTask.refreshAttackTime(pokemonEntity, 10);
+                                }
                             }
                         }
                     }
@@ -45,7 +50,7 @@ public class FOFPokemonMeleeTask {
     }
 
     protected static boolean canPerformAttack(PokemonEntity pokemonEntity, LivingEntity entity) {
-        return FOFPokemonAttackTask.getAttackTime(pokemonEntity) == 0 && pokemonEntity.isWithinMeleeAttackRange(entity) && pokemonEntity.getSensing().hasLineOfSight(entity);
+        return pokemonEntity.isWithinMeleeAttackRange(entity) && pokemonEntity.getSensing().hasLineOfSight(entity);
     }
 
     protected static boolean pokemonDoHurtTarget(PokemonEntity pokemonEntity, LivingEntity hurtTarget) {

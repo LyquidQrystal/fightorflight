@@ -1,18 +1,18 @@
 This version is no longer server-side only. I added new items and entities to support some features.
 # Cobblemon 1.7 support progress:
 ## Finished:
-* This mod won't crash your game now. But it's not fully usable. Most of the features are unavailable now.
+* This mod won't crash your game now. Most of the features are available now.
 * Melee attack(Cobblemon already implemented a simple melee attack, but we got more special effects for the moves.)
 * Range attack(Finally! It seems to work. I'll try to test if there are some other bugs.)
+* Pokemon will attack the target you hit.
+* Some other features
 ## Unfinished features that you might care about:
-* Pokemon won't attack the target you hit. (I can't add a new sensor without overriding
 * Some effects added in 0.9.0 used a special way to implement. They might need to be rebuilt?
-* Poke Staff
-* Some misc features
+* Poke Staff(You can only select the move you want to use. You can't command the Pokemon to walk/attack a target currently.)
 * Removing the features implemented by Cobblemon.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
-### Features included in v0.8.2:
+### Features included in v0.9.0:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -92,12 +92,11 @@ This version is no longer server-side only. I added new items and entities to su
 
 ## TODO
 - Main Goal For the Following Updates:
-  - Status move effect
-- Things that might be done in a short period of time(1~3 big updates):
   - Porting to Cobblemon 1.7
+- Things that might be done in a short period of time(1~3 big updates):
   - Add some features from ZA.
 - Things that might not be done in a short period of time:
-  - Datapack driven behavior setting(quite complex)
+  - Datapack driven behavior setting(quite complex, especially for the behaviour system from Cobblemon now.)
   - Add an item similar to the Sticky Glob(Sounds cool, but we still got many things to do.)
   - Repel effect.(It's being worked on by the Cobblemon team according to their roadmap.)
   - Attack Position for Poke Staff(not available currently. It is quite difficult.)
@@ -106,7 +105,6 @@ This version is no longer server-side only. I added new items and entities to su
   - Give more special effects to different moves.
   - Special effect for abilities like aftermath,bulletproof,soundproof,etc.
   - More config options for fight of flight choices.
-  - The pp of the pokemon moves will be consumed after using it outside the battle(this feature could make the pokemon obviously weaker at the early game and the moves don't need to be balanced that way currently, so I won't work on it until the mod got cool enough. Besides, ZA doesn't need to consume the pp to use a move, so I guess I won't add it now.)
 ## Known Issues
 - Damage of moves that needs the stat like electro ball can't be calculated properly.(I don't know how to find a proper way to calculate the damage if this move is used to attack a non-Pokemon mob,so I won't fix it until I figure out a way.Sorry about that.)
 ### Known issues for 1.21.1 version

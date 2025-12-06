@@ -26,7 +26,7 @@ public class PokemonAreaEffectMagicRenderer extends EntityRenderer<PokemonAreaEf
     private static final ResourceLocation ERUPTION_TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "textures/entity/eruption.png");
     private static final ResourceLocation MAGIC_TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "textures/entity/magic.png");
     private static final ResourceLocation ERUPTION_FIRE_TEXTURE_LOCATION = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "textures/entity/eruption_fire.png");
-    private static final List<String> specialTypes = Arrays.asList("fire", "ground", "electric");
+    private static final List<String> specialTypes = Arrays.asList("Fire", "Ground", "Electric");
     private final PokemonAreaEffectMagicModel<PokemonAreaEffectMagic> model;
 
     public PokemonAreaEffectMagicRenderer(EntityRendererProvider.Context context) {
@@ -50,7 +50,7 @@ public class PokemonAreaEffectMagicRenderer extends EntityRenderer<PokemonAreaEf
             int waitTime = entity.getWaitTime();
             float tick = entity.tickCount + partialTicks - waitTime;
             float yScale;
-            if (entity.getElementalType().equals("electric")) {
+            if (entity.getElementalType().equals("Electric")) {
                 poseStack.translate(0, -2, 0);
                 yScale = Mth.clampedLerp(0.2f, 1f, tick / 4);
                 poseStack.scale(1, yScale, 1);
@@ -71,8 +71,8 @@ public class PokemonAreaEffectMagicRenderer extends EntityRenderer<PokemonAreaEf
     public ResourceLocation getTextureLocation(PokemonAreaEffectMagic entity) {
         String typeName = entity.getElementalType();
         return switch (typeName) {
-            case "electric" -> LIGHTNING_TEXTURE_LOCATION;
-            case "ground", "fire" -> ERUPTION_TEXTURE_LOCATION;
+            case "Electric" -> LIGHTNING_TEXTURE_LOCATION;
+            case "Ground", "Fire" -> ERUPTION_TEXTURE_LOCATION;
             default -> MAGIC_TEXTURE_LOCATION;
         };
     }

@@ -2,6 +2,8 @@ package me.rufia.fightorflight;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 
 
 public interface PokemonInterface {
@@ -100,5 +102,16 @@ public interface PokemonInterface {
     }
 
     default void setMoveDuration(int duration) {
+    }
+
+    default LivingEntity getOwnerLastHurt() {
+        return null;
+    }
+
+    default void setOwnerLastHurt(@Nullable LivingEntity livingEntity) {
+    }
+
+    default int getOwnerLastHurtTick() {
+        return -1;
     }
 }

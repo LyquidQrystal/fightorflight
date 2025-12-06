@@ -35,16 +35,18 @@ public abstract class ActivityConfigurationContextMixin {
     private void applyMixin(LivingEntity entity, CallbackInfo ci) {
         if (entity instanceof PokemonEntity) {
             if (Objects.equals(activity.getName(), "fight")) {
-                tasks.add(new Pair<>(0, BehaviorBuilder.triggerIf(
-                        livingEntity -> {
-                            if (livingEntity instanceof PokemonEntity pokemonEntity) {
-                                return PokemonUtils.shouldShoot(pokemonEntity);
-                            }
-                            return false;
-                        },
-                        FOFBackUpIfTooClose.create(5, 0.75f)
-                )));
-                tasks.add(new Pair<>(1, new FOFPokemonRangeTask()));
+                if (CobblemonFightOrFlight.commonConfig().use_range_attack) {
+                    tasks.add(new Pair<>(0, BehaviorBuilder.triggerIf(
+                            livingEntity -> {
+                                if (livingEntity instanceof PokemonEntity pokemonEntity) {
+                                    return PokemonUtils.shouldShoot(pokemonEntity);
+                                }
+                                return false;
+                            },
+                            FOFBackUpIfTooClose.create(5, 0.75f)
+                    )));
+                    tasks.add(new Pair<>(1, new FOFPokemonRangeTask()));
+                }
             }
         }
     }

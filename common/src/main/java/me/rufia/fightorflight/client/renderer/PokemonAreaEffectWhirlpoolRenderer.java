@@ -57,7 +57,7 @@ public class PokemonAreaEffectWhirlpoolRenderer extends EntityRenderer<AbstractP
 
     public int getSecondaryColorCode(String typeName) {
         Color color = Color.WHITE;
-        if (Objects.equals(typeName, "fire")) {
+        if (Objects.equals(typeName, "Fire")) {
             color = Color.ORANGE;
         }
         return FastColor.ARGB32.colorFromFloat(0.4f, (float) color.getRed() / 255, (float) color.getGreen() / 255, (float) color.getBlue() / 255);

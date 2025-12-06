@@ -19,7 +19,6 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
                 MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT,
                 MemoryModuleType.ATTACK_COOLING_DOWN, MemoryStatus.VALUE_ABSENT
         ));
-        //CobblemonFightOrFlight.LOGGER.info("Range task created");
     }
 
     @Override
@@ -43,9 +42,6 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
 
     @Override
     protected void stop(ServerLevel level, LivingEntity pokemon, long gameTime) {
-        if (pokemon instanceof PokemonEntity pokemonEntity) {
-            //FOFPokemonAttackTask.resetAttackTime(pokemonEntity, 0);
-        }
     }
 
     @Override
@@ -54,9 +50,7 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
             LivingEntity target = FOFPokemonAttackTask.getTarget(pokemonEntity);
             if (target != null) {
                 pokemonEntity.setTarget(target);
-                double d = pokemonEntity.distanceToSqr(target);
                 boolean canSee = pokemonEntity.getSensing().hasLineOfSight(target);
-                //rangeAttackPathFinding(pokemonEntity, target, canSee, d);
                 int attackTime = FOFPokemonAttackTask.getAttackTime(pokemonEntity);
                 if (attackTime == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
                     PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
@@ -68,10 +62,9 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
                     if (!canSee) {
                         return;
                     }
-                    //FOFPokemonAttackTask.resetAttackTime(pokemonEntity, d);
                     performRangedAttack(pokemonEntity, target);
                 } else if (attackTime < 0) {
-                    FOFPokemonAttackTask.resetAttackTime(pokemonEntity, d);
+                    FOFPokemonAttackTask.refreshAttackTime(pokemonEntity, 10);
                 }
             }
         }

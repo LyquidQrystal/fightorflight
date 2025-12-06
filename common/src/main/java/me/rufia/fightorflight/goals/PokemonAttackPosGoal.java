@@ -8,7 +8,7 @@ import net.minecraft.core.Vec3i;
 
 import java.util.EnumSet;
 
-//TODO uncompleted
+@Deprecated
 public class PokemonAttackPosGoal extends PokemonAttackGoal {
     private final PokemonEntity pokemonEntity;
     private final double speedModifier;

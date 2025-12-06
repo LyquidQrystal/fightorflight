@@ -2,15 +2,12 @@ package me.rufia.fightorflight.mixin;
 
 
 import com.cobblemon.mod.common.CobblemonItems;
-import com.cobblemon.mod.common.CobblemonMemories;
-import com.cobblemon.mod.common.CobblemonSensors;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
-import com.cobblemon.mod.common.pokemon.ai.PokemonBrain;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.data.movedata.MoveData;
@@ -35,12 +32,11 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.Brain;
+import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -63,6 +59,11 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Unique
     @Nullable
     private LivingEntity fightorflight$clientSideCachedAttackTarget;
+    @Unique
+    @Nullable
+    private LivingEntity ownerLastHurt;
+    @Unique
+    private int ownerLastHurtTick = 0;
     @Unique
     private static final EntityDataAccessor<Integer> DATA_ID_ATTACK_TARGET;
     @Unique
@@ -197,6 +198,13 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         cir.setReturnValue(Brain.provider(PokemonBrain.INSTANCE.getMEMORY_MODULES(), List.copyOf(sensors)));
     }*/
 
+    @ModifyVariable(method = "assignNewBrainWithMemoriesAndSensors", at = @At("HEAD"), argsOnly = true, index = 3)
+    private Set<SensorType<?>> assignNewBrainWithMemoriesAndSensorsMixin(Set<SensorType<?>> sensors) {
+        HashSet<SensorType<?>> hashSet = new HashSet<>(sensors);
+        hashSet.add(FOFSensors.POKEMON_HELP_OWNER);
+        return Set.copyOf(hashSet);
+    }
+
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
         if (target != null) {
@@ -329,6 +337,22 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         entityData.set(MOVE_DURATION, duration);
     }
 
+    @Override
+    public int getOwnerLastHurtTick() {
+        return ownerLastHurtTick;
+    }
+
+    @Override
+    public LivingEntity getOwnerLastHurt() {
+        return ownerLastHurt;
+    }
+
+    @Override
+    public void setOwnerLastHurt(@Nullable LivingEntity livingEntity) {
+        ownerLastHurt = livingEntity;
+        ownerLastHurtTick = tickCount;
+    }
+
     @ModifyVariable(method = "hurt", at = @At("HEAD"), argsOnly = true)
     private float hurtDamageTweak(float amount) {
         if (PokemonUtils.shouldRetreat((PokemonEntity) (Object) this)) {
@@ -414,7 +438,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             setNextCryTime(getNextCryTime() - 1);
         }
         int attackTime = getAttackTime();
-        if (attackTime > 0) {
+        if (attackTime > -1) {
             setAttackTime(attackTime - 1);
         }
         if (!level().isClientSide) {

@@ -31,7 +31,7 @@ public class PokemonSpike extends AbstractPokemonSpike {
     protected void hurtEntity(LivingEntity target) {
         if (getOwner() instanceof PokemonEntity pokemonEntity) {
             if (PokemonAttackEffect.shouldHurtAllyMob(pokemonEntity, target)) {
-                if (Objects.equals(getElementalType(), "poison")) {
+                if (Objects.equals(getElementalType(), "Poison")) {
                     target.addEffect(new MobEffectInstance(MobEffects.POISON, 200, 0), pokemonEntity);
                 } else {
                     DamageSource damageSource = this.damageSources().indirectMagic(this, pokemonEntity);

@@ -125,8 +125,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean do_pokemon_defend_proactive = true;
     @Comment("0 zero means follow the same rule as Iron Golem. 1 means ignores neutral mobs that are not aiming at the player.")
     public int pokemon_proactive_level = 1;
-    @Comment("The enemy detection radius for the pokemon to defend its owner.")
-    public float pokemon_defend_proactive_radius = 8f;
     @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
     public boolean do_pokemon_defend_creeper_proactive = false;
     @Comment("If the player's cat pokemon will attack the creeper proactively(LivelierPokemon required) ")
@@ -239,9 +237,9 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float poison_type_no_effect_dmg_multiplier = 0.1f;
     @ConfigEntry.Category("Health Calculation & Synchronization")
     @Comment("If the original updateMaxHealth() will be replaced by my version. Pokemons outside of battle will use the hp stat instead of the base hp stat. The following configurations needs this one to work.")
-    public boolean shouldOverrideUpdateMaxHealth = true;
+    public boolean shouldOverrideHealthMechanic = true;
     @Comment("If you want to use the FOF style hp calculation.")
-    public boolean use_fof_style_hp_calculation = false;
+    public boolean use_fof_style_hp_calculation = true;
     @Comment("If health sync will work on the wild pokemon, set to false will heal them on standard pokemon battle start if they were damaged before.")
     public boolean enable_health_sync_for_wild_pokemon = false;
     @Comment("The minimum hp of a pokemon outside standard pokemon battle,shedinja is set to 1.0 and can't be changed.")
@@ -274,6 +272,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean player_pokemon_can_hurt_ender_dragon = true;
     @Comment("If the wild poekmon can hurt ender dragon")
     public boolean wild_pokemon_can_hurt_ender_dragon = false;
-    @Comment("If you want to use the fof style melee attack?")
+    @Comment("If you want to use the FOF style melee attack?")
     public boolean use_fof_style_melee = true;
+    @Comment("If you want to use range attack from FOF")
+    public boolean use_range_attack = true;
 }

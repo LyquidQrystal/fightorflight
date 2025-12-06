@@ -18,6 +18,10 @@ public abstract class FOFPokemonAttackTask {
         PokemonAttackEffect.resetAttackTime(pokemonEntity, dis);
     }
 
+    public static void refreshAttackTime(PokemonEntity pokemonEntity, int ticks) {
+        PokemonAttackEffect.refreshAttackTime(pokemonEntity, ticks);
+    }
+
     public static boolean isTargetInBattle(PokemonEntity pokemonEntity) {
         if (getTarget(pokemonEntity) instanceof ServerPlayer targetAsPlayer) {
             return BattleRegistry.getBattleByParticipatingPlayer(targetAsPlayer) != null;

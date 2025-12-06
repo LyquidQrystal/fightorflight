@@ -361,7 +361,7 @@ public class PokemonUtils {
     }
 
     public static boolean isUsingNewHealthMechanic() {
-        return CobblemonFightOrFlight.commonConfig().shouldOverrideUpdateMaxHealth;
+        return CobblemonFightOrFlight.commonConfig().shouldOverrideHealthMechanic;
     }
 
     public static String getNatureName(PokemonEntity pokemonEntity) {
