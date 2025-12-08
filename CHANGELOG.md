@@ -1,3 +1,11 @@
+# V0.10.1:
+### Bug Fixes:
+* Fix the bug that the Pokemon won't try to approach the target if the Pokemon can see the target but it is not within the attack range if the Pokemon is using a range attack move.
+### Changes:
+* Increased the range attack radius.
+### Known issue:
+* Some Pokemon added by MSD can't use the combat behaviour I added. I'm not sure what's the reason, but I guess it's not my problem because they can't use the mechanic added by Cobblemon, too.
+
 # V0.10.0:
 ## Half Reborn Update
 Cobblemon 1.7 has changed a lot of things. The Brain system used in Minecraft might be easy to create complex behaviour if you build an entity from the ground up. However, it's quite hard to inject something new to a brain due to the highly immutable structure Mojang uses.  

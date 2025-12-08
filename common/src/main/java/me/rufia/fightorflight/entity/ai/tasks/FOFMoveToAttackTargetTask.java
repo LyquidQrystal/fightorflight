@@ -19,9 +19,9 @@ public class FOFMoveToAttackTargetTask {
                         context.present(MemoryModuleType.ATTACK_TARGET),
                         context.registered(MemoryModuleType.WALK_TARGET)
                 ).apply(context, (attackTargetAccessor, walkTargetAccessor) -> ((serverLevel, livingEntity, l) -> {
-                    if (livingEntity instanceof PokemonEntity pokemonEntity && PokemonUtils.shouldMelee(pokemonEntity)) {
+                    if (livingEntity instanceof PokemonEntity pokemonEntity && (PokemonUtils.shouldMelee(pokemonEntity) || PokemonUtils.shouldShoot(pokemonEntity))) {
                         float speedMultiplier = MoLangExtensionsKt.resolveFloat(MoLangExtensionsKt.getMainThreadRuntime(), speedMultiplierExp, MoLangExtensionsKt.getContextOrEmpty(MoLangExtensionsKt.getMainThreadRuntime()));
-                        int closeEnoughDistance = MoLangExtensionsKt.resolveInt(MoLangExtensionsKt.getMainThreadRuntime(), closeEnoughDistanceExp, MoLangExtensionsKt.getContextOrEmpty(MoLangExtensionsKt.getMainThreadRuntime()));
+                        int closeEnoughDistance = PokemonUtils.shouldShoot(pokemonEntity) ? (int) (PokemonUtils.getAttackRadius() * 0.6) : MoLangExtensionsKt.resolveInt(MoLangExtensionsKt.getMainThreadRuntime(), closeEnoughDistanceExp, MoLangExtensionsKt.getContextOrEmpty(MoLangExtensionsKt.getMainThreadRuntime()));
 
                         var attackTarget = context.get(attackTargetAccessor);
                         var position = attackTarget.position();

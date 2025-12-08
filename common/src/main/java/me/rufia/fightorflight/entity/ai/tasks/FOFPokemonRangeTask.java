@@ -73,7 +73,7 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
     protected boolean isWithinAttackRange(LivingEntity pokemon, LivingEntity target) {
         if (pokemon instanceof PokemonEntity pokemonEntity) {
             double d = pokemonEntity.distanceTo(target);
-            return d < 8;
+            return d < PokemonUtils.getAttackRadius();
         }
         return false;
     }
