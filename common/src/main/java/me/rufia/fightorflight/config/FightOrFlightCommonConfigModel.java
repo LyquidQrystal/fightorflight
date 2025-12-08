@@ -127,11 +127,11 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public int pokemon_proactive_level = 1;
     @Comment("Do player Pokemon defend their owners from Creepers proactively?(Iron Golems won't attack Creeper proactively.")
     public boolean do_pokemon_defend_creeper_proactive = false;
-    @Comment("If the player's cat pokemon will attack the creeper proactively(LivelierPokemon required) ")
+    @Comment("If the player's cat pokemon will attack the creeper proactively(LivelierPokemon required, this one is not functioning anymore currently) ")
     public boolean do_cat_pokemon_defend_creeper_proactive = true;
-    @Comment("Can player Pokemon target other players? (EXPERIMENTAL)")
+    @Comment("Can player Pokemon target other players?")
     public boolean do_player_pokemon_attack_other_players = false;
-    @Comment("Can player Pokemon target other player's Pokemon? (EXPERIMENTAL)")
+    @Comment("Can player Pokemon target other player's Pokemon?")
     public boolean do_player_pokemon_attack_other_player_pokemon = false;
     @Comment("Will the wild pokemon cries for several times when angered,set to false so the pokemon will only cry one time when it's angered")
     public boolean multiple_cries = true;
@@ -236,7 +236,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Poison type damage will be not very effective against undead mobs.(set to 0 if you want a complete immune)")
     public float poison_type_no_effect_dmg_multiplier = 0.1f;
     @ConfigEntry.Category("Health Calculation & Synchronization")
-    @Comment("If the original updateMaxHealth() will be replaced by my version. Pokemons outside of battle will use the hp stat instead of the base hp stat. The following configurations needs this one to work.")
+    @Comment("If you want to use FOF health mechanic. A different curve that was used in FOF previously. The following configurations needs this one to work.")
     public boolean shouldOverrideHealthMechanic = true;
     @Comment("If you want to use the FOF style hp calculation.")
     public boolean use_fof_style_hp_calculation = true;

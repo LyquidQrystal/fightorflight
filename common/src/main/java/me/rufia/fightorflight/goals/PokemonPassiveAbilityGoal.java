@@ -10,6 +10,7 @@ import net.minecraft.world.phys.AABB;
 import java.util.Objects;
 // UNUSED CURRENTLY
 //Some status moves are designed to be used passively,which means you just need to have it in the pokemon's moveset
+@Deprecated
 public class PokemonPassiveAbilityGoal extends Goal {
     protected PokemonEntity pokemonEntity;
     protected float radius;

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 
 import java.util.*;
 
+@Deprecated
 public class PokemonBehaviorData {
     public static final Map<String, List<PokemonBehaviorData>> behaviorData = new HashMap<>();
     private final String species;

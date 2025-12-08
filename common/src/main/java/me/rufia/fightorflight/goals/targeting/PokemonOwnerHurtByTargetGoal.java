@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.targeting.TargetingConditions;
 
 import java.util.EnumSet;
 
+@Deprecated
 public class PokemonOwnerHurtByTargetGoal extends TargetGoal {
     private final PokemonEntity pokemonEntity;
     private LivingEntity ownerLastHurtBy;

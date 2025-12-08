@@ -202,6 +202,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private Set<SensorType<?>> assignNewBrainWithMemoriesAndSensorsMixin(Set<SensorType<?>> sensors) {
         HashSet<SensorType<?>> hashSet = new HashSet<>(sensors);
         hashSet.add(FOFSensors.POKEMON_HELP_OWNER);
+        hashSet.add(FOFSensors.POKEMON_WILD_PROACTIVE);
         return Set.copyOf(hashSet);
     }
 

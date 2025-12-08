@@ -444,7 +444,7 @@ public class PokemonUtils {
     }
 
     public static boolean WildPokemonCanPerformUnprovokedAttack(PokemonEntity pokemonEntity) {//It doesn't include the aggro check.
-        return pokemonEntity != null && CobblemonFightOrFlight.commonConfig().do_pokemon_attack_unprovoked && pokemonEntity.getPokemon().getLevel() >= CobblemonFightOrFlight.commonConfig().minimum_attack_unprovoked_level && !pokemonEntity.getPokemon().isPlayerOwned();
+        return pokemonEntity != null && CobblemonFightOrFlight.commonConfig().do_pokemon_attack_unprovoked && !pokemonEntity.getPokemon().isPlayerOwned() && pokemonEntity.getPokemon().getLevel() >= CobblemonFightOrFlight.commonConfig().minimum_attack_unprovoked_level;
     }
 
     public static String getCommandData(PokemonEntity pokemonEntity) {

@@ -4,7 +4,7 @@ license = "MIT License"
 
 [[mods]]
 modId = "fightorflight"
-version = "0.10.1"
+version = "0.10.2"
 displayName = "Cobblemon Fight or Flight"
 authors = "rufia,LyquidQrystal"
 description = '''

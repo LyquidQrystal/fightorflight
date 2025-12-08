@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+@Deprecated
 public class PokemonBehaviorDataContainer {
     private final List<String> species;
     private final List<String> aspects;

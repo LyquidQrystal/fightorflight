@@ -1,7 +1,7 @@
 package me.rufia.fightorflight.entity.ai.sensors;
 
-import com.cobblemon.mod.common.CobblemonMemories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
@@ -22,10 +22,13 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
 
     @Override
     protected void doTick(ServerLevel level, PokemonEntity entity) {
+        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner) {
+            return;
+        }
         var owner = entity.getOwner();
         if (owner != null) {
             entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> {
-                setNearestAttacker(entity, visibleLivingEntities, owner);
+                setNearestTarget(entity, visibleLivingEntities, owner);
             });
         }
     }
@@ -35,21 +38,23 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
         return Set.of(MemoryModuleType.ATTACK_TARGET);
     }
 
-    private void setNearestAttacker(PokemonEntity pokemonEntity, NearestVisibleLivingEntities visibleMobs, LivingEntity owner) {
+    private void setNearestTarget(PokemonEntity pokemonEntity, NearestVisibleLivingEntities visibleMobs, LivingEntity owner) {
+        //Inherit the target. lastHurtBy will be cleared automatically
         int ownerLastHurtTick = ((PokemonInterface) pokemonEntity).getOwnerLastHurtTick();
         var ownerLastHurtTarget = ((PokemonInterface) pokemonEntity).getOwnerLastHurt();
         if (ownerLastHurtTarget != null && ownerLastHurtTarget.isAlive() && pokemonEntity.tickCount - ownerLastHurtTick < REFRESH_RATE) {
             pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, ownerLastHurtTarget);
             return;
         }
+        //Finding target
         var nearestAttacker = visibleMobs.findClosest(livingEntity -> {
             if (livingEntity instanceof ServerPlayer) {
                 return false;
             }
             var lastHurtByMob = livingEntity.getLastHurtByMob();
-            boolean cond = lastHurtByMob != null && lastHurtByMob.is(owner);
-            return cond;
+            return lastHurtByMob != null && lastHurtByMob.is(owner);
         });
+        //Trying to set target
         LivingEntity livingEntity = nearestAttacker.orElse(null);
         ((PokemonInterface) pokemonEntity).setOwnerLastHurt(livingEntity);
         if (livingEntity != null) {

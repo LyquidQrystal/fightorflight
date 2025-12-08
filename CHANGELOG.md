@@ -1,3 +1,9 @@
+# V0.10.2:
+### Implemented Features:
+* Wild Pokemon proactive attack
+### Localization:
+* fr_fr localization from [@Augustin Laurent](https://github.com/augustin-laurent)
+
 # V0.10.1:
 ### Bug Fixes:
 * Fix the bug that the Pokemon won't try to approach the target if the Pokemon can see the target but it is not within the attack range if the Pokemon is using a range attack move.
