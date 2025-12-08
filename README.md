@@ -9,6 +9,7 @@ This version is no longer server-side only. I added new items and entities to su
 ## Unfinished features that you might care about:
 * Some effects added in 0.9.0 used a special way to implement. They might need to be rebuilt?
 * Poke Staff(You can only select the move you want to use. You can't command the Pokemon to walk/attack a target currently.)
+* Wild Pokemon attack player proactively.
 * Removing the features implemented by Cobblemon.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3

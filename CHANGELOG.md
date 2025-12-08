@@ -5,9 +5,13 @@ I've tried my best to update this mod to Cobblemon 1.7 but there are still somet
 ### Implemented Features:
 * FOF style melee attack and range attack.
 * Pokemon will attack the target you hit.
-### Some unimplemented features that you might care():
+### Some unimplemented features that you might care:
 * Poke Staff can't select the target for the Pokemon currently.
 * Poke Staff can't select the position you want the Pokemon to move to.
+* Wild Pokemon attack the player proactively.
+
+### Localization:
+* PT_BR localization from [@PrincessStelllar](https://github.com/PrincessStelllar)
 
 # V0.9.0:
 This version is for Cobblemon 1.6 and 1.6.1! The new version for Cobblemon 1.7 will be released in a few days.  

@@ -9,7 +9,7 @@ import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.fml.common.EventBusSubscriber;
 import net.neoforged.neoforge.client.event.RenderGuiEvent;
 
-@EventBusSubscriber(modid = CobblemonFightOrFlight.MODID, bus = EventBusSubscriber.Bus.GAME, value = Dist.CLIENT)
+@EventBusSubscriber(modid = CobblemonFightOrFlight.MODID, value = Dist.CLIENT)
 public class ClientBusEvent {
     @SubscribeEvent
     public static void onRenderHud(RenderGuiEvent.Post event) {

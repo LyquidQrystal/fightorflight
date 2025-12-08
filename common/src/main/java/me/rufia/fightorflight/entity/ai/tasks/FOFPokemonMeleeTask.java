@@ -5,7 +5,10 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
+import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.EntityTracker;
@@ -28,8 +31,9 @@ public class FOFPokemonMeleeTask {
                     if (livingEntity instanceof PokemonEntity pokemonEntity) {
                         int attackTime = FOFPokemonAttackTask.getAttackTime(pokemonEntity);
                         if (PokemonUtils.shouldMelee(pokemonEntity)) {
+                            tryQuickApproach(pokemonEntity, target);
                             if (canPerformAttack(pokemonEntity, target)) {
-                                if (attackTime == 0) {
+                                if (attackTime <= 0) {
                                     lookTargetAccessor.set(new EntityTracker(target, true));
                                     FOFPokemonAttackTask.resetAttackTime(pokemonEntity, 0);
                                     pokemonEntity.swing(InteractionHand.MAIN_HAND);
@@ -38,8 +42,6 @@ public class FOFPokemonMeleeTask {
                                     ((PokemonInterface) pokemonEntity).setAttackTime(cooldownBetweenAttacks);
                                     attackCooldownAccessor.setWithExpiry(true, cooldownBetweenAttacks);
                                     return true;
-                                } else if (attackTime < 0) {
-                                    FOFPokemonAttackTask.refreshAttackTime(pokemonEntity, 10);
                                 }
                             }
                         }
@@ -78,5 +80,25 @@ public class FOFPokemonMeleeTask {
         }
 
         return false;
+    }
+
+    protected static void tryQuickApproach(PokemonEntity pokemonEntity, LivingEntity target) {
+        if (target != null && FOFPokemonAttackTask.getAttackTime(pokemonEntity) == 0) {
+            Move move = PokemonUtils.getMove(pokemonEntity);
+            if (move != null) {
+                String moveName = move.getName();
+                if (Arrays.stream(CobblemonFightOrFlight.moveConfig().quick_attack_like_move).toList().contains(moveName)) {
+                    float distance = pokemonEntity.distanceTo(target);
+                    if (distance >= 1.5f && distance <= 10f) {
+                        BlockPos targetBlockPos = target.blockPosition();
+                        if (FOFUtils.multiSamplingCollisionCheckBlock(pokemonEntity, target, 5, 3)) {
+                            PokemonUtils.makeParticle(4, pokemonEntity, ParticleTypes.WHITE_SMOKE);
+                            pokemonEntity.teleportTo(targetBlockPos.getX(), targetBlockPos.getY(), targetBlockPos.getZ());
+                            PokemonUtils.makeParticle(4, target, ParticleTypes.WHITE_SMOKE);
+                        }
+                    }
+                }
+            }
+        }
     }
 }

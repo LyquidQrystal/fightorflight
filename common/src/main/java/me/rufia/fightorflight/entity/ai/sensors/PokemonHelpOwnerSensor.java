@@ -32,7 +32,7 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
 
     @Override
     public @NotNull Set<MemoryModuleType<?>> requires() {
-        return Set.of(CobblemonMemories.NEAREST_VISIBLE_ATTACKER);
+        return Set.of(MemoryModuleType.ATTACK_TARGET);
     }
 
     private void setNearestAttacker(PokemonEntity pokemonEntity, NearestVisibleLivingEntities visibleMobs, LivingEntity owner) {
@@ -50,7 +50,10 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
             boolean cond = lastHurtByMob != null && lastHurtByMob.is(owner);
             return cond;
         });
-        ((PokemonInterface) pokemonEntity).setOwnerLastHurt(nearestAttacker.orElse(null));
-        pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, nearestAttacker);
+        LivingEntity livingEntity = nearestAttacker.orElse(null);
+        ((PokemonInterface) pokemonEntity).setOwnerLastHurt(livingEntity);
+        if (livingEntity != null) {
+            pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, nearestAttacker);
+        }
     }
 }

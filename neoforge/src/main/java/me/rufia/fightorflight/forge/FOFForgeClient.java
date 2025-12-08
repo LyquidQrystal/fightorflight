@@ -13,7 +13,7 @@ import net.neoforged.fml.event.lifecycle.FMLClientSetupEvent;
 import net.neoforged.neoforge.client.event.EntityRenderersEvent;
 import net.neoforged.neoforge.client.event.RegisterKeyMappingsEvent;
 
-@EventBusSubscriber(modid = CobblemonFightOrFlight.MODID, value = Dist.CLIENT, bus = EventBusSubscriber.Bus.MOD)
+@EventBusSubscriber(modid = CobblemonFightOrFlight.MODID, value = Dist.CLIENT)
 public final class FOFForgeClient {
     @SubscribeEvent
     public static void setup(FMLClientSetupEvent event) {

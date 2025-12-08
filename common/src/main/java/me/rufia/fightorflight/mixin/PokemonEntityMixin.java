@@ -177,7 +177,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
         builder.define(ATTACK_MODE, 0);
         builder.define(MOVE_DURATION, 0);
-        PokemonEntity.Companion.createAttributes();
+        //PokemonEntity.Companion.createAttributes();
     }
 
     @Inject(method = "saveWithoutId", at = @At("HEAD"))

@@ -21,7 +21,7 @@ public final class CobblemonFightOrFlightForge {
         FOFEffects.bootstrap();
         EffectRegisterImpl.MOB_EFFECTS.register(modEventBus);
         CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> pokemonEntity.goalSelector.addGoal(priority, goal));
-        NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onEntityJoined);
-        NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onRegister);
+        //NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onEntityJoined);
+        modEventBus.addListener(ForgeBusEvent::onRegister);
     }
 }

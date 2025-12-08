@@ -107,10 +107,7 @@ public abstract class MinecraftClientInject {
             for (PokemonEntity pokemonEntity : entities) {
                 if (pokemonEntity.getOwner() == null && pokemonEntity.canBattle(player)) {
                     BattleChallengePacket packet = new BattleChallengePacket(pokemonEntity.getId(), pokemon.getUuid(), BattleFormat.Companion.getGEN_9_SINGLES());
-                    //packet.sendToServer();
                     CobblemonNetwork.sendToServer(packet);
-                    //CobblemonFightOrFlight.LOGGER.info("sending battle packet");
-                    //player.sendSystemMessage(Component.literal("Sending battle packet - message"));
                     break;
                 } else if (pokemonEntity.getOwner() != player) {
                     if (pokemonEntity.getOwner() instanceof Player) {
@@ -118,7 +115,6 @@ public abstract class MinecraftClientInject {
                         //break;
                     }
                 } else {
-                    //CobblemonFightOrFlight.LOGGER.info("You must be joking");
                 }
             }
         }
