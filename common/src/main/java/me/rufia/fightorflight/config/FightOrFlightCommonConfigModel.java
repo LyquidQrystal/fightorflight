@@ -276,4 +276,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean use_fof_style_melee = true;
     @Comment("If you want to use range attack from FOF")
     public boolean use_range_attack = true;
+    @Comment("If you want to set willDefendOwner to true in Pokemon's combat behaviour of Cobblemon, should be useful for solving the problem that the Pokemon added by the datapacks can't attack.")
+    public boolean force_enable_defend_owner = true;
 }

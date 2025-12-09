@@ -141,22 +141,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         return super.getTarget();
     }
 
-    /*
-    //No more goals now, bye.
-    @Inject(method = "registerGoals", at = @At("TAIL"))
-    protected void registerFOFGoals(CallbackInfo ci) {
-        PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
-        float proactiveRadiusSqr = (float) Math.pow(CobblemonFightOrFlight.commonConfig().pokemon_defend_proactive_radius, 2);
-        targetSelector.addGoal(1, new PokemonCommandedTargetGoal<>(pokemonEntity, LivingEntity.class, false));
-        targetSelector.addGoal(2, new PokemonOwnerHurtByTargetGoal(pokemonEntity));
-        targetSelector.addGoal(3, new PokemonOwnerHurtTargetGoal(pokemonEntity));
-        targetSelector.addGoal(3, new PokemonTauntedTargetGoal(pokemonEntity, false));
-        targetSelector.addGoal(4, new HurtByTargetGoal(pokemonEntity));
-        targetSelector.addGoal(4, new CaughtByTargetGoal(pokemonEntity));
-        targetSelector.addGoal(5, new PokemonNearestAttackableTargetGoal<>(pokemonEntity, Player.class, PokemonUtils.getAttackRadius() * 3, true, true));
-        targetSelector.addGoal(5, new PokemonProactiveTargetGoal<>(pokemonEntity, Mob.class, proactiveRadiusSqr, 5, false, false, PokemonUtils::canAttackTargetProactively));
-    }*/
-
     @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
     public void onSyncedDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {
         if (DATA_ID_ATTACK_TARGET.equals(key)) {
@@ -177,7 +161,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
         builder.define(ATTACK_MODE, 0);
         builder.define(MOVE_DURATION, 0);
-        //PokemonEntity.Companion.createAttributes();
     }
 
     @Inject(method = "saveWithoutId", at = @At("HEAD"))
@@ -189,14 +172,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     private void readAdditionalNbt(CompoundTag compoundTag, CallbackInfo ci) {
         entityData.set(CRY_CD, compoundTag.getInt(CRY_CD.toString()));
     }
-    /*
-    @Inject(method = "brainProvider", at = @At("HEAD"), cancellable = true)
-    private void brainProviderMixin(CallbackInfoReturnable<Brain.Provider<PokemonEntity>> cir) {
-        var cobSensors = PokemonBrain.INSTANCE.getSENSORS();
-        var sensors = new ArrayList<>(cobSensors.stream().toList());
-        sensors.add(FOFSensors.POKEMON_HELP_OWNER);
-        cir.setReturnValue(Brain.provider(PokemonBrain.INSTANCE.getMEMORY_MODULES(), List.copyOf(sensors)));
-    }*/
 
     @ModifyVariable(method = "assignNewBrainWithMemoriesAndSensors", at = @At("HEAD"), argsOnly = true, index = 3)
     private Set<SensorType<?>> assignNewBrainWithMemoriesAndSensorsMixin(Set<SensorType<?>> sensors) {
