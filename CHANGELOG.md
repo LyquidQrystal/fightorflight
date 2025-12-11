@@ -3,6 +3,7 @@
 * Wild Pokemon proactive attack
 ### New Config:
 * force_enable_defend_owner: TLDR:Allows you to solve the problem that Pokemon added by the datapacks/addons can't attack. Explanation: It set willDefendOwner to true in the Pokemon combat behaviour. So the Pokemon can be prepared for targeting entities. The datapack creators can enable this by themselves, too.
+* force_enable_defend_self: TLDR:Allows you to solve the problem that Pokemon added by the datapacks/addons can't attack. It works in a similar way like the one mentioned above.
 ### Localization:
 * fr_fr localization from [@Augustin Laurent](https://github.com/augustin-laurent)
 

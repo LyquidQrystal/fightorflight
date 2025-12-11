@@ -32,6 +32,9 @@ public abstract class PokemonBrainMixin {
         if (CobblemonFightOrFlight.commonConfig().force_enable_defend_owner) {
             pokemonEntity.getBehaviour().getCombat().setWillDefendOwner(true);
         }
+        if (CobblemonFightOrFlight.commonConfig().force_enable_defend_self) {
+            pokemonEntity.getBehaviour().getCombat().setWillDefendSelf(true);
+        }
     }
 
     @Inject(method = "<clinit>", at = @At("HEAD"), remap = false)
