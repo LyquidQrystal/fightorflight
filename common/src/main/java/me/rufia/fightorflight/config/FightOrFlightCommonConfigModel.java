@@ -25,6 +25,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public int minimum_attack_level = 5;
     @Comment("The minimum level a Pokemon needs to be to attack unprovoked.")
     public int minimum_attack_unprovoked_level = 10;
+    @Comment("If this is set to true, player's Pokemon won't attack shiny Pokemon")
+    public boolean not_attacking_wild_shiny = true;
     @Comment("If a wild Pokemon's aggro is above this value, it will attack the player proactively")
     public float aggressive_threshold = 100f;
     @Comment("If a wild Pokemon's aggro is above this value and lower than the aggressive_threshold, it will fight back when attacked,if the Pokemon's aggro is lower than this, it will just run away.")

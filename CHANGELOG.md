@@ -1,3 +1,9 @@
+# v0.10.3:
+### Implemented Features:
+* Added back wild Pokemon's cries and angry particles
+### New Config:
+* not_attacking_wild_shiny: If this is set to true, player's Pokemon won't hurt wild shiny Pokemon
+
 # V0.10.2:
 ### Implemented Features:
 * Wild Pokemon proactive attack

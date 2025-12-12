@@ -52,6 +52,11 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
                 return false;
             }
             var lastHurtByMob = livingEntity.getLastHurtByMob();
+            if (lastHurtByMob instanceof PokemonEntity pokemonEntity1) {
+                if (pokemonEntity1.getPokemon().getShiny() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny) {
+                    return false;
+                }
+            }
             return lastHurtByMob != null && lastHurtByMob.is(owner);
         });
         //Trying to set target

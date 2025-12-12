@@ -65,6 +65,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
     @Unique
     private int ownerLastHurtTick = 0;
     @Unique
+    private int ticksUntilNewAngerParticle = 0;
+    @Unique
     private static final EntityDataAccessor<Integer> DATA_ID_ATTACK_TARGET;
     @Unique
     private static final EntityDataAccessor<Integer> DATA_ID_CAPTURED_BY;
@@ -398,8 +400,9 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
         }
         var targetEntity = PokemonUtils.getTarget((PokemonEntity) (Object) this);
+        int nextCryTime = getNextCryTime();
         if (targetEntity != null && targetEntity.isAlive()) {
-            if (getNextCryTime() == 0) {
+            if (nextCryTime == 0) {
                 this.cry();
                 if (CobblemonFightOrFlight.commonConfig().multiple_cries) {
                     setNextCryTime(CobblemonFightOrFlight.commonConfig().time_to_cry_again);
@@ -407,12 +410,20 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                     setNextCryTime(-1);
                 }
             }
+            if (ticksUntilNewAngerParticle < 1) {
+                CobblemonFightOrFlight.PokemonEmoteAngry(this);
+                ticksUntilNewAngerParticle = 25;
+            } else {
+                --ticksUntilNewAngerParticle;
+            }
         } else {
             setNextCryTime(0);
+            ticksUntilNewAngerParticle = 0;
         }
-        if (getNextCryTime() >= 0) {
-            setNextCryTime(getNextCryTime() - 1);
+        if (nextCryTime > 0) {
+            setNextCryTime(nextCryTime - 1);
         }
+
         int attackTime = getAttackTime();
         if (attackTime > -1) {
             setAttackTime(attackTime - 1);
