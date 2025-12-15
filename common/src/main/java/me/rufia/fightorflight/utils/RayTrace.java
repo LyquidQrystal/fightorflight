@@ -26,11 +26,6 @@ public class RayTrace {
                 }
             }
         }
-        /*
-        if (livingEntity != null) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 100, 0));
-        }//DEBUG ONLY
-        */
         return livingEntity;
     }
 

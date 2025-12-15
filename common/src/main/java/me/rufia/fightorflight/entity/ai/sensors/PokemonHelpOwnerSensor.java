@@ -27,9 +27,7 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
         }
         var owner = entity.getOwner();
         if (owner != null) {
-            entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> {
-                setNearestTarget(entity, visibleLivingEntities, owner);
-            });
+            entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> setNearestTarget(entity, visibleLivingEntities, owner));
         }
     }
 
@@ -53,7 +51,7 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
             }
             var lastHurtByMob = livingEntity.getLastHurtByMob();
             if (lastHurtByMob instanceof PokemonEntity pokemonEntity1) {
-                if (pokemonEntity1.getPokemon().getShiny() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny) {
+                if (pokemonEntity1.getPokemon().getShiny() && pokemonEntity1.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny) {
                     return false;
                 }
             }

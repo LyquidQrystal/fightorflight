@@ -8,7 +8,6 @@ import me.rufia.fightorflight.entity.ai.tasks.FOFBackUpIfTooClose;
 import me.rufia.fightorflight.entity.ai.tasks.FOFPokemonRangeTask;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.behavior.BackUpIfTooClose;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;
 import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
 import net.minecraft.world.entity.schedule.Activity;

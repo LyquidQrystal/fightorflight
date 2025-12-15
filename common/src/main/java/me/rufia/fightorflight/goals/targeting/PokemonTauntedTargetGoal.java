@@ -3,11 +3,7 @@ package me.rufia.fightorflight.goals.targeting;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.utils.PokemonUtils;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.phys.AABB;
 
 public class PokemonTauntedTargetGoal extends NearestAttackableTargetGoal<PokemonEntity> {
     protected PokemonEntity pokemonEntity;

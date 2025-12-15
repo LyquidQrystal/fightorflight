@@ -620,7 +620,7 @@ public class PokemonUtils {
             }
         }
 
-        return BattleRegistry.INSTANCE.getBattleByParticipatingPlayer(serverPlayer) == null
+        return BattleRegistry.getBattleByParticipatingPlayer(serverPlayer) == null
                 && playerHasAlivePokemon
                 && serverPlayer.isAlive();
     }

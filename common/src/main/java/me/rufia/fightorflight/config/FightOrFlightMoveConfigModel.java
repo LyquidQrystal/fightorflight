@@ -9,25 +9,25 @@ import me.shedaniel.cloth.clothconfig.shadowed.blue.endless.jankson.Comment;
 public class FightOrFlightMoveConfigModel implements ConfigData {
     @ConfigEntry.Category("Special attack moves")
     @Comment("The multiplier of the move power in calculating damage(The final damage can't be higher than the value in the config)")
-    public float move_power_multiplier = 1.0f;
+    public final float move_power_multiplier = 1.0f;
     @Comment("The multiplier for the moves that don't make contacts or shoot projectiles when calculating damage(The final damage can't be higher than the value in the config.These moves are hard to avoid in an open area so the damage should be slightly lower than the others)")
-    public float indirect_attack_move_power_multiplier = 0.8f;
+    public final float indirect_attack_move_power_multiplier = 0.8f;
     @Comment("If a pokemon doesn't have the correct moves to use,the base power will be used to calculate the damage.")
-    public int base_power = 60;
+    public final int base_power = 60;
     @Comment("The minimum radius of the AoE moves")
-    public float min_AoE_radius = 1.5f;
+    public final float min_AoE_radius = 1.5f;
     @Comment("The maximum radius of the AoE moves")
-    public float max_AoE_radius = 3.0f;
+    public final float max_AoE_radius = 3.0f;
     @Comment("The AoE damage will be lower to the target away from the center,this value sets the lowest damage multiplier of the AOE damage")
-    public float min_AoE_damage_multiplier = 0.6f;
+    public final float min_AoE_damage_multiplier = 0.6f;
     @Comment("The radius of the status moves(unused)")
-    public float status_move_radius = 8.0f;
+    public final float status_move_radius = 8.0f;
     @Comment("Taunting moves are needed to taunt the aggressive wild pokemon")
-    public boolean taunt_moves_needed = true;
+    public final boolean taunt_moves_needed = true;
     @Comment("Wild pokemon can taunt your pokemon")
-    public boolean wild_pokemon_taunt = false;
+    public final boolean wild_pokemon_taunt = false;
     @Comment("Special moves that makes contact,these moves will let the Pokemon melee while using the Special Attack stat to calculate the damage.")
-    public String[] special_contact_moves = {
+    public final String[] special_contact_moves = {
             "electrodrift",
             "infestation",
             "drainingkiss",
@@ -37,7 +37,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "petaldance"
     };
     @Comment("Physical moves that uses arrow,these moves will let the Pokemon shoot arrow while using the Attack stat to calculate the damage.")
-    public String[] physical_single_arrow_moves = {
+    public final String[] physical_single_arrow_moves = {
             "dragondarts",
             "iceshard",
             "iciclecrash",
@@ -49,11 +49,11 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "thousandarrows"
     };
     @Comment("Moves that shoots multiple bullet")
-    public String[] multiple_bullet_moves = {
+    public final String[] multiple_bullet_moves = {
             "bulletseed"
     };
     @Comment("Moves that shoots single bullet.Physical moves still shoots the bullet and uses the Attack stat to calculate the damage.")
-    public String[] single_bullet_moves = {
+    public final String[] single_bullet_moves = {
             "electroball",
             "focusblast",
             "weatherball",
@@ -80,17 +80,17 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "fusionflare"
     };
     @Comment("Moves that shoots multiple tracing bullet")
-    public String[] multiple_tracing_bullet_moves = {
+    public final String[] multiple_tracing_bullet_moves = {
             "dracometeor",
             "ancientpower",
             "infernalparade"
     };
     @Comment("Moves that shoots single tracing bullet")
-    public String[] single_tracing_bullet_moves = {
+    public final String[] single_tracing_bullet_moves = {
             "aurasphere"
     };
     @Comment("Moves that shoots single beam or pulse")
-    public String[] single_beam_moves = {
+    public final String[] single_beam_moves = {
             "signalbeam",
             "chargebeam",
             "icebeam",
@@ -121,7 +121,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "snipeshot"
     };
     @Comment("Moves that hurt a target without any projectiles or blast.(The AOE moves will be implemented in another way)")
-    public String[] magic_attack_moves = {
+    public final String[] magic_attack_moves = {
             "absorb",
             "gigadrain",
             "megadrain",
@@ -139,7 +139,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "psychoboost"
     };
     @Comment("Moves that hurts the entity(including the allies) around the pokemon")
-    public String[] self_centered_aoe_moves = {
+    public final String[] self_centered_aoe_moves = {
             "earthquake",
             "surf",
             "lavaplume",
@@ -151,7 +151,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "corrosivegas"
     };
     @Comment("Moves that drains HP(50% of the damage dealt)")
-    public String[] hp_draining_moves_50 = {
+    public final String[] hp_draining_moves_50 = {
             "absorb",
             "bitterblade",
             "bouncybubble",
@@ -164,7 +164,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "paraboliccharge"
     };
     @Comment("Moves that drains HP(75% of the damage dealt)")
-    public String[] hp_draining_moves_75 = {
+    public final String[] hp_draining_moves_75 = {
             "drainingkiss",
             "oblivionwing"
     };
@@ -175,14 +175,14 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "photongeyser"
     };
     @Comment("Moves that start an explode")
-    public String[] explosive_moves = {
+    public final String[] explosive_moves = {
             "selfdestruct",
             "explosion",
             "mindblown",
             "mistyexplosion"
     };
     @Comment("Moves that use sound to attack")
-    public String[] sound_based_moves = {
+    public final String[] sound_based_moves = {
             "snore",
             "uproar",
             "hypervoice",
@@ -205,7 +205,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "roaroftime"
     };
     @Comment("Moves that can switch your pokemon")
-    public String[] switch_moves = {
+    public final String[] switch_moves = {
             "teleport",
             "batonpass",
             "uturn",
@@ -214,12 +214,12 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "flipturn"
     };
     @Comment("Abilities that forces your Pokemon to switch when it is below 50% HP")
-    public String[] emergency_exit_like_abilities = {
+    public final String[] emergency_exit_like_abilities = {
             "emergencyexit",
             "wimpout"
     };
     @Comment()
-    public String[] recoil_moves_allHP = {
+    public final String[] recoil_moves_allHP = {
             "selfdestruct",
             "explosion",
             "mindblown",
@@ -228,11 +228,11 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     //TODO
     @ConfigEntry.Category("Status moves(WIP)")
     @Comment("Enable the Pokemon to use the spikes.")
-    public boolean enable_spikes = true;
+    public final boolean enable_spikes = true;
     @Comment("The base damage of Spikes and Stealth Rock")
-    public float spike_basic_damage = 3f;
+    public final float spike_basic_damage = 3f;
     @Comment("Moves that taunt other pokemon")
-    public String[] taunting_moves = {
+    public final String[] taunting_moves = {
             "taunt",
             "followme",
             "ragepowder",
@@ -243,7 +243,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "willowisp"
     };
     @Comment("Status moves that are used on the user.")
-    public String[] self_targeting_status_move = {
+    public final String[] self_targeting_status_move = {
             "bulkup",
             "meditate",
             "coil",
@@ -302,7 +302,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "tailglow"
     };
     @Comment("Moves that is similar to Quick Attack. Approaching target quickly and attack.")
-    public String[] quick_attack_like_move = {
+    public final String[] quick_attack_like_move = {
             "quickattack",
             "extremespeed",
             "feint",
@@ -312,7 +312,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "jetpunch"
     };
     @Comment("Area of Effect that is created at the target's position and deal the damage after a short period of time.")
-    public String[] delayed_aoe_at_target_position = {
+    public final String[] delayed_aoe_at_target_position = {
             "firespin",
             "whirlpool",
             "sandtomb",
@@ -338,7 +338,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "earthpower"
     };
     @Comment("Area of Effect that can be created in the air")
-    public String[] delayed_aoe_can_float = {
+    public final String[] delayed_aoe_can_float = {
             "hurricane",
             "heatwave",
             "petalblizzard",
@@ -355,7 +355,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "sandsearstorm"
     };
     @Comment("Area of Effect that will rise up from the ground and become a small tornado when activated")
-    public String[] delayed_aoe_rise_up_tornado = {
+    public final String[] delayed_aoe_rise_up_tornado = {
             "magmastorm",
 
             "hurricane",
@@ -374,14 +374,14 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "sandsearstorm"
     };
     @Comment("Area of Effect that will rise up from the ground and become a small tornado when activated")
-    public String[] delayed_aoe_bounding_whirlpool = {
+    public final String[] delayed_aoe_bounding_whirlpool = {
             "firespin",
             "whirlpool",
             "sandtomb",
             "thundercage"
     };
     @Comment("Area of effect listed here will stop being activated after its activation.")
-    public String[] delayed_aoe_is_instant = {
+    public final String[] delayed_aoe_is_instant = {
             "hurricane",
             "heatwave",
             "petalblizzard",
@@ -402,7 +402,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")
-    public boolean pokemon_griefing = false;
+    public final boolean pokemon_griefing = false;
     @Comment("Fire type attack(only explosions currently) should burn the ground")
-    public boolean should_create_fire = false;
+    public final boolean should_create_fire = false;
 }

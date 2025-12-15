@@ -49,8 +49,8 @@ public class FOFExplosion extends Explosion {
     protected final PokemonEntity pokemon;
     protected final boolean shouldHurtAlly;
     @Nullable
-    public Entity source;
-    public float radius;
+    public final Entity source;
+    public final float radius;
     protected final DamageSource damageSource;
     protected final ExplosionDamageCalculator damageCalculator;
     protected final ObjectArrayList<BlockPos> toBlow;
@@ -165,9 +165,7 @@ public class FOFExplosion extends Explosion {
             Util.shuffle(this.toBlow, this.level.random);
 
             for (BlockPos blockPos : this.toBlow) {
-                this.level.getBlockState(blockPos).onExplosionHit(this.level, blockPos, this, (itemStack, blockPosx) -> {
-                    addOrAppendStack(list, itemStack, blockPosx);
-                });
+                this.level.getBlockState(blockPos).onExplosionHit(this.level, blockPos, this, (itemStack, blockPosx) -> addOrAppendStack(list, itemStack, blockPosx));
             }
 
             for (Pair<ItemStack, BlockPos> pair : list) {
@@ -202,7 +200,7 @@ public class FOFExplosion extends Explosion {
         float radius = calculateRadius(pokemonEntity);
         ElementalType type1 = pokemonEntity.getPokemon().getPrimaryType();
         ElementalType type2 = pokemonEntity.getPokemon().getSecondaryType();
-        boolean shouldCreateFire = CobblemonFightOrFlight.moveConfig().should_create_fire && (type1.equals(ElementalTypes.INSTANCE.getFIRE()) || (type2 != null && type2.equals(ElementalTypes.INSTANCE.getFIRE())));
+        boolean shouldCreateFire = CobblemonFightOrFlight.moveConfig().should_create_fire && (type1.equals(ElementalTypes.FIRE) || (type2 != null && type2.equals(ElementalTypes.FIRE)));
         BlockInteraction blockInteraction1;
         if (CobblemonFightOrFlight.moveConfig().pokemon_griefing) {
             blockInteraction1 = BlockInteraction.DESTROY_WITH_DECAY;

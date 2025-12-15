@@ -8,7 +8,6 @@ import com.cobblemon.mod.common.net.messages.server.BattleChallengePacket;
 import com.cobblemon.mod.common.net.messages.server.RequestPlayerInteractionsPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import dev.architectury.networking.NetworkManager;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.client.keybinds.CommandKeybind;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
@@ -24,6 +23,7 @@ import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -61,6 +61,7 @@ public abstract class MinecraftClientInject {
         }
     }
 
+    @Unique
     private void sendMoveSlotPacket(int moveSlot) {
         if (getInstance() == null) {
             return;
@@ -80,6 +81,7 @@ public abstract class MinecraftClientInject {
         }
     }
 
+    @Unique
     private void sendCommandModePacket(PokeStaffComponent.CMDMODE cmdmode) {
         var player = getInstance().player;
         if (player == null) {
@@ -90,6 +92,7 @@ public abstract class MinecraftClientInject {
         NetworkManager.sendToServer(new SendCommandPacket(slot, cmdmode.name(), cmdData));
     }
 
+    @Unique
     private void startBattle() {
         var player = getInstance().player;
         boolean isSpectator = player.isSpectator();

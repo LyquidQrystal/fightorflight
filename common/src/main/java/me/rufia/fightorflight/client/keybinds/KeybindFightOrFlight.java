@@ -2,7 +2,6 @@ package me.rufia.fightorflight.client.keybinds;
 
 import com.mojang.blaze3d.platform.InputConstants;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
-import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.client.KeyMapping;
 
 import java.util.ArrayList;

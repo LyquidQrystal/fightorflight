@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class FOFEVCalculator {
-    protected static Map<Stat, TagKey<Item>> POWER_ITEM = new HashMap<>() {
+    protected static final Map<Stat, TagKey<Item>> POWER_ITEM = new HashMap<>() {
         {
             put(Stats.HP, CobblemonItemTags.POWER_WEIGHT);
             put(Stats.ATTACK, CobblemonItemTags.POWER_BRACER);

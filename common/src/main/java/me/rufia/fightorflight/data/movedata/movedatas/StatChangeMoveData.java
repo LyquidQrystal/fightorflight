@@ -10,7 +10,7 @@ import net.minecraft.world.entity.LivingEntity;
 import java.util.Objects;
 
 public class StatChangeMoveData extends MoveData {
-    private int stage;
+    private final int stage;
 
     public StatChangeMoveData(String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name, int stage) {
         super("stat", target, triggerEvent, chance, canActivateSheerForce, name);

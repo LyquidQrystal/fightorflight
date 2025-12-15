@@ -15,7 +15,7 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-
+@Deprecated
 public class BehaviorDataListener extends SimplePreparableReloadListener<Map<ResourceLocation, PokemonBehaviorDataContainer>> {
     public BehaviorDataListener() {
     }

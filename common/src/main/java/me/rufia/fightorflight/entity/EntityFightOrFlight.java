@@ -4,7 +4,6 @@ import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.client.model.PokemonAreaEffectMagicModel;
 import me.rufia.fightorflight.entity.areaeffect.PokemonAreaEffectMagic;
 import me.rufia.fightorflight.entity.areaeffect.PokemonTornado;
 import me.rufia.fightorflight.entity.areaeffect.PokemonWhirlPool;

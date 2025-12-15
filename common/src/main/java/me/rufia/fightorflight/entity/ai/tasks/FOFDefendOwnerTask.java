@@ -17,7 +17,7 @@ public class FOFDefendOwnerTask {
                         .apply(context, (visibleAttackerAccessor, attackTargetAccessor) -> ((serverLevel, pokemonEntity, l) -> {
                             var attacker = context.get(visibleAttackerAccessor);
                             if (attacker instanceof PokemonEntity targetPokemon) {
-                                if (targetPokemon.getPokemon().getShiny() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny) {
+                                if (targetPokemon.getPokemon().getShiny() && targetPokemon.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny) {
                                     return false;
                                 }
                             }

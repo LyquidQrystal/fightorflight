@@ -3,7 +3,6 @@ package me.rufia.fightorflight.entity.ai.tasks;
 import com.bedrockk.molang.Expression;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.util.MoLangExtensionsKt;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.OneShot;

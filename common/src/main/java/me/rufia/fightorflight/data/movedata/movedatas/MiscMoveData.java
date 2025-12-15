@@ -1,6 +1,5 @@
 package me.rufia.fightorflight.data.movedata.movedatas;
 
-import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.data.movedata.MoveData;

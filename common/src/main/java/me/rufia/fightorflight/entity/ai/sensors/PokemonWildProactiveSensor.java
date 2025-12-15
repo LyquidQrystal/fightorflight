@@ -26,9 +26,7 @@ public class PokemonWildProactiveSensor extends Sensor<PokemonEntity> {
         if (CobblemonFightOrFlight.getFightOrFlightCoefficient(entity) <= CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD() || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && entity.getLightLevelDependentMagicValue() >= 0.5f)) {
             return;
         }
-        entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> {
-            findTarget(entity, visibleLivingEntities);
-        });
+        entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> findTarget(entity, visibleLivingEntities));
     }
 
     @Override
@@ -44,9 +42,7 @@ public class PokemonWildProactiveSensor extends Sensor<PokemonEntity> {
             return false;
         });
         if (pokemonEntity.getBrain().checkMemory(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT))
-            nearestPlayer.ifPresent(player -> {
-                pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, player);
-            });
+            nearestPlayer.ifPresent(player -> pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, player));
     }
 
 }

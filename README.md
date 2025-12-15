@@ -6,7 +6,7 @@ This version is no longer server-side only. I added new items and entities to su
 * Range attack(Finally! It seems to work. I'll try to test if there are some other bugs.)
 * Pokemon will attack the target you hit.
 * Some other features
-* Wild Pokemon attack player proactively.(In v0.10.2, the next update)
+* Wild Pokemon attack player proactively.
 ## Unfinished features that you might care about:
 * Poke Staff(You can only select the move you want to use. You can't command the Pokemon to walk/attack a target currently.)
 * Removing the features implemented by Cobblemon.

@@ -4,6 +4,9 @@ package me.rufia.fightorflight.mixin;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
+import com.cobblemon.mod.common.api.pokemon.stats.BattleEvSource;
+import com.cobblemon.mod.common.api.pokemon.stats.EvSource;
+import com.cobblemon.mod.common.api.pokemon.stats.SidemodEvSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
@@ -107,6 +110,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         MOVE_DURATION = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
     }
 
+    @Unique
     protected void createTargetBlockPos() {
         String data = this.getCommandData();
         BlockPos blockPos = BlockPos.ZERO;
@@ -401,7 +405,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         var targetEntity = PokemonUtils.getTarget((PokemonEntity) (Object) this);
         int nextCryTime = getNextCryTime();
-        if (targetEntity != null && targetEntity.isAlive()) {
+        if (!getPokemon().isPlayerOwned() && targetEntity != null && targetEntity.isAlive()) {
             if (nextCryTime == 0) {
                 this.cry();
                 if (CobblemonFightOrFlight.commonConfig().multiple_cries) {
@@ -482,7 +486,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
                 hurt(damageSources().magic(), maxHealth / 8);
             }
         } else if (FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.BLACK_SLUDGE)) {
-            if (PokemonUtils.hasType(pokemon, ElementalTypes.INSTANCE.getPOISON())) {
+            if (PokemonUtils.hasType(pokemon, ElementalTypes.POISON)) {
                 heal(maxHealth / 16);
             } else {
                 if (!PokemonUtils.abilityIs(pokemonEntity, "magicguard")) {
@@ -592,7 +596,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             if (CobblemonFightOrFlight.commonConfig().can_gain_ev) {
                 var map = FOFEVCalculator.calculate(pokemonEntity.getPokemon(), self.getPokemon());
                 for (Map.Entry<Stat, Integer> entry : map.entrySet()) {
-                    pokemonEntity.getPokemon().getEvs().add(entry.getKey(), entry.getValue());
+                    EvSource evSource=new SidemodEvSource(CobblemonFightOrFlight.MODID,pokemonEntity.getPokemon());
+                    pokemonEntity.getPokemon().getEvs().add(entry.getKey(), entry.getValue(),evSource);
                 }
             }
         }

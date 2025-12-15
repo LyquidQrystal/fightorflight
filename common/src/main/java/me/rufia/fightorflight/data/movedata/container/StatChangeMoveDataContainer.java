@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 public class StatChangeMoveDataContainer extends MoveDataContainer<StatChangeMoveData> {
-    private int stage;
+    private final int stage;
 
     public StatChangeMoveDataContainer(String type, String target, String triggerEvent, float chance, boolean canActivateSheerForce, String name, List<String> move_list, int stage) {
         super(type, target, triggerEvent, chance, canActivateSheerForce, name, move_list);

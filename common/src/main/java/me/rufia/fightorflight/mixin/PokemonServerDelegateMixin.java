@@ -18,7 +18,7 @@ public abstract class PokemonServerDelegateMixin implements PokemonSideDelegate 
     @Shadow(remap = false)
     public PokemonEntity entity;
 
-    @Inject(method = "updateAttributes", at = @At("HEAD"), cancellable = true, remap = false)
+    @Inject(method = "updateAttributes", at = @At("HEAD"), remap = false)
     public void updateAttributesMixin(Pokemon pokemon, CallbackInfo ci) {
         //CobblemonFightOrFlight.LOGGER.info("UPDATING ATTRIBUTES");
 

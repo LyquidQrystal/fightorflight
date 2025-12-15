@@ -6,7 +6,6 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 public class TargetingWhitelist {

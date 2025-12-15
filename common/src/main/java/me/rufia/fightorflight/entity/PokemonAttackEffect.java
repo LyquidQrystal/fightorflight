@@ -11,7 +11,6 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.entity.areaeffect.AbstractPokemonAreaEffect;
-import me.rufia.fightorflight.entity.areaeffect.PokemonTornado;
 import me.rufia.fightorflight.entity.projectile.*;
 import me.rufia.fightorflight.utils.*;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
@@ -30,8 +29,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 public class PokemonAttackEffect {
     public static SimpleParticleType getParticleFromType(String name) {
@@ -150,17 +149,17 @@ public class PokemonAttackEffect {
         }
         ElementalType type = moveType == null ? pokemonEntity.getPokemon().getPrimaryType() : moveType;
         if (!(livingEntity instanceof PokemonEntity targetPokemon)) {
-            if (ElementalTypes.INSTANCE.getWATER().equals(type)) {
+            if (ElementalTypes.WATER.equals(type)) {
                 if (livingEntity.isSensitiveToWater()) {
                     return CobblemonFightOrFlight.commonConfig().water_type_super_effective_dmg_multiplier;
                 }
             }
-            if (ElementalTypes.INSTANCE.getFIRE().equals(type)) {
+            if (ElementalTypes.FIRE.equals(type)) {
                 if (livingEntity.fireImmune()) {
                     return CobblemonFightOrFlight.commonConfig().fire_type_no_effect_dmg_multiplier;
                 }
             }
-            if (ElementalTypes.INSTANCE.getICE().equals(type)) {
+            if (ElementalTypes.ICE.equals(type)) {
                 if (!livingEntity.canFreeze()) {
                     return CobblemonFightOrFlight.commonConfig().ice_type_no_effect_dmg_multiplier;
                 }
@@ -168,7 +167,7 @@ public class PokemonAttackEffect {
                     return CobblemonFightOrFlight.commonConfig().ice_type_super_effective_dmg_multiplier;
                 }
             }
-            if (ElementalTypes.INSTANCE.getPOISON().equals(type)) {
+            if (ElementalTypes.POISON.equals(type)) {
                 if (livingEntity.getType().is(EntityTypeTags.UNDEAD)) {
 
                     return CobblemonFightOrFlight.commonConfig().poison_type_no_effect_dmg_multiplier;

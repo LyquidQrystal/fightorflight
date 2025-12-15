@@ -12,7 +12,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 @Deprecated
 public class PokemonNearestAttackableTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
     public int ticksUntilNewAngerParticle = 0;
-    public float safeDistanceSqr = 36;
+    public float safeDistanceSqr;
     private int ticksNextDataBehaviorCheckCycle = 0;
 
     public PokemonNearestAttackableTargetGoal(Mob mob, Class<T> targetType, float safeDistanceSqr, boolean mustSee, boolean mustReach) {

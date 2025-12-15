@@ -7,7 +7,6 @@ import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
 public abstract class FOFPokemonAttackTask {
     public static int getAttackTime(PokemonEntity pokemonEntity) {

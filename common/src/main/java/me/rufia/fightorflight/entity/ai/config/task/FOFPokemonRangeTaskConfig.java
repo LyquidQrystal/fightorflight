@@ -8,7 +8,6 @@ import com.cobblemon.mod.common.api.ai.config.task.SingleTaskConfig;
 import com.cobblemon.mod.common.api.npc.configuration.MoLangConfigVariable;
 import com.cobblemon.mod.common.util.MoLangExtensionsKt;
 import com.mojang.datafixers.util.Either;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.ai.tasks.FOFPokemonRangeTask;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.BehaviorControl;

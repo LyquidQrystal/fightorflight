@@ -4,7 +4,7 @@ import me.rufia.fightorflight.net.NetworkPacket;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 
 public abstract class PokeStaffCmdPacket implements NetworkPacket, CustomPacketPayload {
-    protected int slot;
+    protected final int slot;
     private final boolean isFromPokeStaff;
 
     public PokeStaffCmdPacket(int slot, boolean isFromPokeStaff) {
