@@ -63,19 +63,12 @@ public class PokemonUtils {
 
             if (getTarget(pokemonEntity) instanceof PokemonEntity targetPokemon) {
                 LivingEntity targetOwner = targetPokemon.getOwner();
-                if (targetOwner != null) {
-                    if (targetOwner == owner) {
-                        return false;
-                    }
-                    if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
-                        return false;
-                    }
-                }
-            }
-            if (getTarget(pokemonEntity) instanceof Player) {
-                if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
+                if (targetOwner == owner || !CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
                     return false;
                 }
+            }
+            if (getTarget(pokemonEntity) instanceof Player && !CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
+                return false;
             }
 
         } else {
@@ -215,7 +208,7 @@ public class PokemonUtils {
         if (move == null) {
             return null;
         }
-        boolean b = DamageCategories.INSTANCE.getSTATUS().equals(move.getDamageCategory());
+        boolean b = isStatusMove(move);
         boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().self_targeting_status_move).toList().contains(move.getName());
         boolean b2 = MoveData.moveData.containsKey(move.getName());
         if (b && (b1 || b2)) {
@@ -271,7 +264,6 @@ public class PokemonUtils {
         if (owner instanceof Player player) {
             if (target instanceof LivingEntity livingEntity) {
                 livingEntity.setLastHurtByPlayer(player);
-                //CobblemonFightOrFlight.LOGGER.info("Hurt by player's cobblemon");
             }
         }
     }
@@ -531,7 +523,7 @@ public class PokemonUtils {
                         return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
                     }
                 }
-            } else if (defendingPokemon.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
+            } else if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt && defendingPokemon.getPokemon().isPlayerOwned()) {
                 return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
             }
         } else if (hurtTarget instanceof ServerPlayer player) {
@@ -557,7 +549,6 @@ public class PokemonUtils {
 
     public static boolean pokemonForceEncounterPvP(ServerPlayer serverPlayer, PokemonEntity opponentPokemon) {
         if (serverPlayer != null && opponentPokemon.getOwner() instanceof ServerPlayer serverOpponent) {
-
             if (serverPlayer == serverOpponent // I don't see why this should ever happen, but probably best to account for it
                     || !canBattlePlayer(serverPlayer)
                     || !canBattlePlayer(serverOpponent)) {
@@ -571,6 +562,7 @@ public class PokemonUtils {
                     BattleFormat.Companion.getGEN_9_SINGLES(),
                     false,
                     false);
+            return true;
         }
         return false;
     }
@@ -589,6 +581,7 @@ public class PokemonUtils {
                     false,
                     Cobblemon.config.getDefaultFleeDistance(),
                     Cobblemon.INSTANCE.getStorage().getParty(serverPlayer));
+            return true;
         }
         return false;
     }
@@ -607,6 +600,7 @@ public class PokemonUtils {
                     false,
                     Cobblemon.config.getDefaultFleeDistance(),
                     Cobblemon.INSTANCE.getStorage().getParty(serverPlayer));
+            return true;
         }
         return false;
     }
@@ -629,9 +623,8 @@ public class PokemonUtils {
         if (livingEntity == null) {
             return false;
         }
-        boolean isEnemy = livingEntity instanceof Enemy;
 
-        return isEnemy;
+        return livingEntity instanceof Enemy;
     }
 
     public static boolean shouldCheckPokeStaff() {
@@ -641,5 +634,16 @@ public class PokemonUtils {
     public static LivingEntity getTarget(PokemonEntity pokemonEntity) {
         var targetOpt = pokemonEntity.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET);
         return targetOpt.orElse(null);
+    }
+
+    public static float calculateExtraSpeed(PokemonEntity pokemonEntity) {
+        if (pokemonEntity == null) {
+            return 1f;
+        }
+        float minimum_movement_speed = CobblemonFightOrFlight.commonConfig().minimum_movement_speed;
+        float maximum_movement_speed = CobblemonFightOrFlight.commonConfig().maximum_movement_speed;
+        float speed_limit = CobblemonFightOrFlight.commonConfig().speed_stat_limit;
+        float speed = pokemonEntity.getPokemon().getSpeed();
+        return Mth.lerp(speed / speed_limit, minimum_movement_speed, maximum_movement_speed);
     }
 }

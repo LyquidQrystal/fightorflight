@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.entity.ai.tasks;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.EntityTracker;
@@ -19,8 +20,9 @@ public class FOFBackUpIfTooClose {
                     LivingEntity livingEntity = instance.get(attackTargetAccessor);
                     if (pokemon instanceof PokemonEntity pokemonEntity) {
                         if (livingEntity.closerThan(pokemonEntity, tooCloseDistance) && (instance.get(nearestVisibleLivingEntitiesAccessor)).contains(livingEntity)) {
+                            float extraSpeedMultiplier = PokemonUtils.calculateExtraSpeed(pokemonEntity);
                             lookTargetAccessor.set(new EntityTracker(livingEntity, true));
-                            pokemonEntity.getMoveControl().strafe(-strafeSpeed, 0.0F);
+                            pokemonEntity.getMoveControl().strafe(-strafeSpeed * extraSpeedMultiplier, 0.0F);
                             pokemon.setYRot(Mth.rotateIfNecessary(pokemonEntity.getYRot(), pokemonEntity.yHeadRot, 0.0F));
                             return true;
                         }

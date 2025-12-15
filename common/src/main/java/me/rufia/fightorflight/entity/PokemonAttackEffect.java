@@ -2,7 +2,6 @@ package me.rufia.fightorflight.entity;
 
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
@@ -25,6 +24,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 
@@ -78,6 +78,31 @@ public class PokemonAttackEffect {
             case "water" -> new Color(41, 128, 239);
             case "normal" -> new Color(159, 161, 159);
             default -> new Color(68, 104, 94);
+        };
+    }
+
+    public static Item getTypeEnhancingItem(String typeName) {
+        String name = typeName.toLowerCase();
+        return switch (typeName) {
+            case "fire" -> CobblemonItems.CHARCOAL;
+            case "ice" -> CobblemonItems.NEVER_MELT_ICE;
+            case "poison" -> CobblemonItems.POISON_BARB;
+            case "psychic" -> CobblemonItems.TWISTED_SPOON;
+            case "fairy" -> CobblemonItems.FAIRY_FEATHER;
+            case "fighting" -> CobblemonItems.BLACK_BELT;
+            case "steel" -> CobblemonItems.METAL_COAT;
+            case "ghost" -> CobblemonItems.SPELL_TAG;
+            case "dark" -> CobblemonItems.BLACK_GLASSES;
+            case "ground" -> CobblemonItems.SOFT_SAND;
+            case "rock" -> CobblemonItems.HARD_STONE;
+            case "electric" -> CobblemonItems.MAGNET;
+            case "bug" -> CobblemonItems.SILVER_POWDER;
+            case "grass" -> CobblemonItems.MIRACLE_SEED;
+            case "dragon" -> CobblemonItems.DRAGON_FANG;
+            case "flying" -> CobblemonItems.SHARP_BEAK;
+            case "water" -> CobblemonItems.MYSTIC_WATER;
+            case "normal" -> CobblemonItems.SILK_SCARF;
+            default -> CobblemonItems.SILK_SCARF;
         };
     }
 
@@ -149,15 +174,11 @@ public class PokemonAttackEffect {
         }
         ElementalType type = moveType == null ? pokemonEntity.getPokemon().getPrimaryType() : moveType;
         if (!(livingEntity instanceof PokemonEntity targetPokemon)) {
-            if (ElementalTypes.WATER.equals(type)) {
-                if (livingEntity.isSensitiveToWater()) {
-                    return CobblemonFightOrFlight.commonConfig().water_type_super_effective_dmg_multiplier;
-                }
+            if (ElementalTypes.WATER.equals(type) && livingEntity.isSensitiveToWater()) {
+                return CobblemonFightOrFlight.commonConfig().water_type_super_effective_dmg_multiplier;
             }
-            if (ElementalTypes.FIRE.equals(type)) {
-                if (livingEntity.fireImmune()) {
-                    return CobblemonFightOrFlight.commonConfig().fire_type_no_effect_dmg_multiplier;
-                }
+            if (ElementalTypes.FIRE.equals(type) && livingEntity.fireImmune()) {
+                return CobblemonFightOrFlight.commonConfig().fire_type_no_effect_dmg_multiplier;
             }
             if (ElementalTypes.ICE.equals(type)) {
                 if (!livingEntity.canFreeze()) {
@@ -167,14 +188,10 @@ public class PokemonAttackEffect {
                     return CobblemonFightOrFlight.commonConfig().ice_type_super_effective_dmg_multiplier;
                 }
             }
-            if (ElementalTypes.POISON.equals(type)) {
-                if (livingEntity.getType().is(EntityTypeTags.UNDEAD)) {
-
-                    return CobblemonFightOrFlight.commonConfig().poison_type_no_effect_dmg_multiplier;
-                }
+            if (ElementalTypes.POISON.equals(type) && livingEntity.getType().is(EntityTypeTags.UNDEAD)) {
+                return CobblemonFightOrFlight.commonConfig().poison_type_no_effect_dmg_multiplier;
             }
         } else {
-            //TODO type effectiveness here
             return TypeEffectiveness.getTypeEffectiveness(pokemonEntity, targetPokemon);
         }
         return 1.0f;
@@ -213,17 +230,19 @@ public class PokemonAttackEffect {
             return 1.3f;//Do you really like 5324/4096(1.2998046875)?
         }
         if (move != null) {
-            if (DamageCategories.INSTANCE.getPHYSICAL().equals(move.getDamageCategory())) {
+            float normalMultiplier = 1.1f;
+            float choiceItemMultiplier = 1.5f;
+            if (PokemonUtils.isPhysicalMove(move)) {
                 if (heldItem.is(CobblemonItems.MUSCLE_BAND)) {
-                    return 1.1f;
+                    return normalMultiplier;
                 } else if (heldItem.is(CobblemonItems.CHOICE_BAND)) {
-                    return 1.5f;
+                    return choiceItemMultiplier;
                 }
-            } else if (DamageCategories.INSTANCE.getSPECIAL().equals(move.getDamageCategory())) {
+            } else if (PokemonUtils.isSpecialMove(move)) {
                 if (heldItem.is(CobblemonItems.WISE_GLASSES)) {
-                    return 1.1f;
+                    return normalMultiplier;
                 } else if (heldItem.is(CobblemonItems.CHOICE_SPECS)) {
-                    return 1.5f;
+                    return choiceItemMultiplier;
                 }
             }
         }
@@ -231,63 +250,8 @@ public class PokemonAttackEffect {
         if (type != null) {
             float typeEnhancingMultiplier = 1.2f;
             String typeName = type.getName().toLowerCase();
-            switch (typeName) {
-                case "fire":
-                    if (heldItem.is(CobblemonItems.CHARCOAL)) return typeEnhancingMultiplier;
-                    break;
-                case "ice":
-                    if (heldItem.is(CobblemonItems.NEVER_MELT_ICE)) return typeEnhancingMultiplier;
-                    break;
-                case "poison":
-                    if (heldItem.is(CobblemonItems.POISON_BARB)) return typeEnhancingMultiplier;
-                    break;
-                case "psychic":
-                    if (heldItem.is(CobblemonItems.TWISTED_SPOON)) return typeEnhancingMultiplier;
-                    break;
-                case "fairy":
-                    if (heldItem.is(CobblemonItems.FAIRY_FEATHER)) return typeEnhancingMultiplier;
-                    break;
-                case "fighting":
-                    if (heldItem.is(CobblemonItems.BLACK_BELT)) return typeEnhancingMultiplier;
-                    break;
-                case "steel":
-                    if (heldItem.is(CobblemonItems.METAL_COAT)) return typeEnhancingMultiplier;
-                    break;
-                case "ghost":
-                    if (heldItem.is(CobblemonItems.SPELL_TAG)) return typeEnhancingMultiplier;
-                    break;
-                case "dark":
-                    if (heldItem.is(CobblemonItems.BLACK_GLASSES)) return typeEnhancingMultiplier;
-                    break;
-                case "ground":
-                    if (heldItem.is(CobblemonItems.SOFT_SAND)) return typeEnhancingMultiplier;
-                    break;
-                case "rock":
-                    if (heldItem.is(CobblemonItems.HARD_STONE)) return typeEnhancingMultiplier;
-                    break;
-                case "electric":
-                    if (heldItem.is(CobblemonItems.MAGNET)) return typeEnhancingMultiplier;
-                    break;
-                case "bug":
-                    if (heldItem.is(CobblemonItems.SILVER_POWDER)) return typeEnhancingMultiplier;
-                    break;
-                case "grass":
-                    if (heldItem.is(CobblemonItems.MIRACLE_SEED)) return typeEnhancingMultiplier;
-                    break;
-                case "dragon":
-                    if (heldItem.is(CobblemonItems.DRAGON_FANG)) return typeEnhancingMultiplier;
-                    break;
-                case "flying":
-                    if (heldItem.is(CobblemonItems.SHARP_BEAK)) return typeEnhancingMultiplier;
-                    break;
-                case "water":
-                    if (heldItem.is(CobblemonItems.MYSTIC_WATER)) return typeEnhancingMultiplier;
-                    break;
-                case "normal":
-                    if (heldItem.is(CobblemonItems.SILK_SCARF)) return typeEnhancingMultiplier;
-                    break;
-                default:
-                    break;
+            if (heldItem.is(getTypeEnhancingItem(typeName))) {
+                return typeEnhancingMultiplier;
             }
         }
         return 1.0f;
@@ -434,12 +398,10 @@ public class PokemonAttackEffect {
         if (move == null || level.isClientSide) {
             return;
         }
-        if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
-            if (MoveData.moveData.containsKey(move.getName())) {
-                for (MoveData data : MoveData.moveData.get(move.getName())) {
-                    if (data.isOnUse()) {
-                        data.invoke(pokemonEntity, hurtTarget);
-                    }
+        if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+            for (MoveData data : MoveData.moveData.get(move.getName())) {
+                if (data.isOnUse()) {
+                    data.invoke(pokemonEntity, hurtTarget);
                 }
             }
         }
@@ -486,12 +448,10 @@ public class PokemonAttackEffect {
             applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
         }
 
-        if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
-            if (MoveData.moveData.containsKey(move.getName())) {
-                for (MoveData data : MoveData.moveData.get(move.getName())) {
-                    if (data.isOnHit() && targetIsHurt) {
-                        data.invoke(pokemonEntity, hurtTarget);
-                    }
+        if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+            for (MoveData data : MoveData.moveData.get(move.getName())) {
+                if (data.isOnHit() && targetIsHurt) {
+                    data.invoke(pokemonEntity, hurtTarget);
                 }
             }
         }
@@ -773,7 +733,7 @@ public class PokemonAttackEffect {
 
     public static float getAoERadius(PokemonEntity entity, Move move) {
         Pokemon pokemon = entity.getPokemon();
-        boolean isSpecial = move.getDamageCategory().equals(DamageCategories.INSTANCE.getSPECIAL());
+        boolean isSpecial = PokemonUtils.isSpecialMove(move);
         int stat = isSpecial ? pokemon.getSpecialAttack() : pokemon.getAttack();
         int requiredStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
         return Math.min(Mth.lerp(((float) stat) / requiredStat, CobblemonFightOrFlight.moveConfig().min_AoE_radius, CobblemonFightOrFlight.moveConfig().max_AoE_radius), CobblemonFightOrFlight.moveConfig().max_AoE_radius);

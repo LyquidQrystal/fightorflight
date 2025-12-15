@@ -1,6 +1,7 @@
 # v0.10.3:
 ### Implemented Features:
 * Added back wild Pokemon's cries and angry particles
+* Added back extra speed multiplier affected by the Pokemon's speed stat.(Only usable when chasing the target currently.)
 ### New Config:
 * not_attacking_wild_shiny: If this is set to true, player's Pokemon won't hurt wild shiny Pokemon
 
@@ -195,7 +196,7 @@ A small update that fixes some small bug before I start working on the other fea
 * Bug fixes.
 ## v0.6.0
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.
-- **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
+- **Configurable aggression:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggression.
 - **Faster Pokemon:** Pokemon with a higher speed stat can run faster.(can be changed in the config)
 - **Range attack!:** Added a range attack for pokemon whose Sp.ATK is higher than its ATK.
 - - Wild pokemon are not allowed to use the range attack.(can be enabled in the config)

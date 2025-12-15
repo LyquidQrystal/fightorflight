@@ -406,14 +406,17 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         var targetEntity = PokemonUtils.getTarget((PokemonEntity) (Object) this);
         int nextCryTime = getNextCryTime();
         if (!getPokemon().isPlayerOwned() && targetEntity != null && targetEntity.isAlive()) {
-            if (nextCryTime == 0) {
+            if (nextCryTime < 1) {
                 this.cry();
                 if (CobblemonFightOrFlight.commonConfig().multiple_cries) {
                     setNextCryTime(CobblemonFightOrFlight.commonConfig().time_to_cry_again);
                 } else {
                     setNextCryTime(-1);
                 }
+            } else {
+                setNextCryTime(nextCryTime - 1);
             }
+
             if (ticksUntilNewAngerParticle < 1) {
                 CobblemonFightOrFlight.PokemonEmoteAngry(this);
                 ticksUntilNewAngerParticle = 25;
@@ -423,9 +426,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         } else {
             setNextCryTime(0);
             ticksUntilNewAngerParticle = 0;
-        }
-        if (nextCryTime > 0) {
-            setNextCryTime(nextCryTime - 1);
         }
 
         int attackTime = getAttackTime();
@@ -518,18 +518,16 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         boolean attackIsHigher = pokemon.getAttack() > pokemon.getSpecialAttack();//The default setting.
         boolean hasOwner = pokemonEntity.getOwner() != null;//The pokemon has no trainer.
         boolean moveAvailable = move != null;
-        if (hasOwner) {
-            if (moveAvailable) {
-                if (PokemonUtils.isMeleeAttackMove(move)) {
-                    setAttackMode(1);
-                } else if (PokemonUtils.isRangeAttackMove(move)) {
-                    setAttackMode(2);
-                } else {
-                    setAttackMode(0);
-                }
-                //CobblemonFightOrFlight.LOGGER.info("Current attack mode: {}", getAttackMode());
-                setCurrentMove(move);
+        if (hasOwner && moveAvailable) {
+            if (PokemonUtils.isMeleeAttackMove(move)) {
+                setAttackMode(1);
+            } else if (PokemonUtils.isRangeAttackMove(move)) {
+                setAttackMode(2);
+            } else {
+                setAttackMode(0);
             }
+            //CobblemonFightOrFlight.LOGGER.info("Current attack mode: {}", getAttackMode());
+            setCurrentMove(move);
         } else {
             if (!attackIsHigher && CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack) {
                 setAttackMode(2);
@@ -596,8 +594,8 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             if (CobblemonFightOrFlight.commonConfig().can_gain_ev) {
                 var map = FOFEVCalculator.calculate(pokemonEntity.getPokemon(), self.getPokemon());
                 for (Map.Entry<Stat, Integer> entry : map.entrySet()) {
-                    EvSource evSource=new SidemodEvSource(CobblemonFightOrFlight.MODID,pokemonEntity.getPokemon());
-                    pokemonEntity.getPokemon().getEvs().add(entry.getKey(), entry.getValue(),evSource);
+                    EvSource evSource = new SidemodEvSource(CobblemonFightOrFlight.MODID, pokemonEntity.getPokemon());
+                    pokemonEntity.getPokemon().getEvs().add(entry.getKey(), entry.getValue(), evSource);
                 }
             }
         }
