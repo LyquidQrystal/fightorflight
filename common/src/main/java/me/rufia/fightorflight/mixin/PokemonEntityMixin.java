@@ -4,7 +4,6 @@ package me.rufia.fightorflight.mixin;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
-import com.cobblemon.mod.common.api.pokemon.stats.BattleEvSource;
 import com.cobblemon.mod.common.api.pokemon.stats.EvSource;
 import com.cobblemon.mod.common.api.pokemon.stats.SidemodEvSource;
 import com.cobblemon.mod.common.api.pokemon.stats.Stat;
@@ -380,9 +379,6 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
 
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
     private void hurtImmune(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
-        if (CobblemonFightOrFlight.commonConfig().suffocation_immunity && source.type().equals(damageSources().inWall().type())) {
-            cir.setReturnValue(false);
-        }
         if (source.getEntity() instanceof LivingEntity livingEntity) {
             if (!PokemonAttackEffect.shouldBeHurtByAllyMob(((PokemonEntity) (Object) this), livingEntity)) {
                 cir.setReturnValue(false);
@@ -405,27 +401,32 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
         var targetEntity = PokemonUtils.getTarget((PokemonEntity) (Object) this);
         int nextCryTime = getNextCryTime();
-        if (!getPokemon().isPlayerOwned() && targetEntity != null && targetEntity.isAlive()) {
-            if (nextCryTime < 1) {
-                this.cry();
-                if (CobblemonFightOrFlight.commonConfig().multiple_cries) {
-                    setNextCryTime(CobblemonFightOrFlight.commonConfig().time_to_cry_again);
-                } else {
-                    setNextCryTime(-1);
-                }
-            } else {
+        if (!getPokemon().isPlayerOwned()) {
+            boolean targetAvailable=targetEntity != null && targetEntity.isAlive();
+            if (nextCryTime > 0) {
                 setNextCryTime(nextCryTime - 1);
             }
+            if (nextCryTime == 0) {
+                setNextCryTime(20);
+                if (targetAvailable) {
+                    this.cry();
+                    if (CobblemonFightOrFlight.commonConfig().multiple_cries) {
+                        setNextCryTime(CobblemonFightOrFlight.commonConfig().time_to_cry_again);
+                    } else {
+                        setNextCryTime(-1);
+                    }
+                }
+            }
 
-            if (ticksUntilNewAngerParticle < 1) {
-                CobblemonFightOrFlight.PokemonEmoteAngry(this);
-                ticksUntilNewAngerParticle = 25;
-            } else {
+            if (ticksUntilNewAngerParticle > 0) {
                 --ticksUntilNewAngerParticle;
             }
-        } else {
-            setNextCryTime(0);
-            ticksUntilNewAngerParticle = 0;
+            if (ticksUntilNewAngerParticle == 0) {
+                ticksUntilNewAngerParticle = 25;
+                if(targetAvailable){
+                    CobblemonFightOrFlight.PokemonEmoteAngry(this);
+                }
+            }
         }
 
         int attackTime = getAttackTime();

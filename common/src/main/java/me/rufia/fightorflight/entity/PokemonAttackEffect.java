@@ -13,8 +13,10 @@ import me.rufia.fightorflight.entity.areaeffect.AbstractPokemonAreaEffect;
 import me.rufia.fightorflight.entity.projectile.*;
 import me.rufia.fightorflight.utils.*;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
+import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -135,7 +137,7 @@ public class PokemonAttackEffect {
         float sheerForceMultiplier = PokemonUtils.canActivateSheerForce(pokemonEntity) ? 1.3f : 1.0f;
         float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack);
         float mobEffectBoost = getMobEffectBoost(pokemonEntity);
-        PokemonInterface pokemonInterface = ((PokemonInterface) pokemonEntity);
+        PokemonInterface pokemonInterface = (PokemonInterface) pokemonEntity;
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
@@ -335,6 +337,13 @@ public class PokemonAttackEffect {
         calculateTypeEffect(pokemonEntity, hurtTarget, primaryType, pkmLevel);
     }
 
+    public static void applySFX(Level level, Move move, BlockPos blockPos) {
+        if (move == null) {
+            return;
+        }
+        level.playSound(null, blockPos, FOFSoundManager.getTypeSound(move.getTemplate().getElementalType()), SoundSource.HOSTILE);
+    }
+
     public static void applyOnHitVisualEffect(PokemonEntity pokemonEntity, Entity hurtTarget, Move move) {
         if (move == null) {
             return;
@@ -525,6 +534,7 @@ public class PokemonAttackEffect {
                     boolean success = target.hurt(pokemonEntity.damageSources().indirectMagic(pokemonEntity, pokemonEntity), calculatePokemonDamage(pokemonEntity, target, move));
                     PokemonUtils.setHurtByPlayer(pokemonEntity, target);
                     applyOnHitVisualEffect(pokemonEntity, target, move);
+                    applySFX(pokemonEntity.level(), move, pokemonEntity.blockPosition());
                     applyPostEffect(pokemonEntity, target, move, success);
                 }
                 //applyTypeEffect(pokemonEntity, target);
@@ -670,6 +680,7 @@ public class PokemonAttackEffect {
         //CobblemonFightOrFlight.LOGGER.info(Double.toString(radius));
         List<LivingEntity> list = centerEntity.level().getEntitiesOfClass(LivingEntity.class, centerEntity.getBoundingBox().inflate(radius - centerEntity.getBbWidth() / 2));
         Iterator<LivingEntity> it = list.iterator();
+        applySFX(pokemonEntity.level(), move, pokemonEntity.blockPosition());
         while (true) {
             LivingEntity livingEntity;
             do {
@@ -702,6 +713,7 @@ public class PokemonAttackEffect {
                 makeTypeEffectParticle(10, livingEntity, move.getType().getName());
             }
         }
+
     }
 
     public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean shouldHurtAlly, boolean hasDirectContact) {
@@ -790,6 +802,7 @@ public class PokemonAttackEffect {
             hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, false);
         }
         applyOnHitVisualEffect(pokemonEntity, hurtTarget, move);
+        applySFX(pokemonEntity.level(), move, pokemonEntity.blockPosition());
         PokemonUtils.setHurtByPlayer(pokemonEntity, hurtTarget);
 
         boolean flag = hurtTarget.hurt(pokemonEntity.level().damageSources().mobAttack(pokemonEntity), hurtDamage);

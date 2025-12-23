@@ -1,9 +1,16 @@
+# V0.10.4:
+### Bug fixes:
+* Probably fix the bug that mods that increases entity max health not working properly for Pokemon.
+* Fixed the bug that wild Pokemon cries repeatedly if the Pokemon becomes aggressive.
+
 # v0.10.3:
 ### Implemented Features:
 * Added back wild Pokemon's cries and angry particles
 * Added back extra speed multiplier affected by the Pokemon's speed stat.(Only usable when chasing the target currently.)
 ### New Config:
 * not_attacking_wild_shiny: If this is set to true, player's Pokemon won't hurt wild shiny Pokemon
+### New Features:
+* Uses sound from Cobblemon for most of the moves.
 
 # V0.10.2:
 ### Implemented Features:

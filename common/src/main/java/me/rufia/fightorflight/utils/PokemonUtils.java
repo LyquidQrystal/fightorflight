@@ -392,7 +392,8 @@ public class PokemonUtils {
         if (pokemon.getCurrentHealth() == 0 || pokemonEntity.isBattling() || pokemonEntity.getOwner() == null && !CobblemonFightOrFlight.commonConfig().enable_health_sync_for_wild_pokemon) {
             return;
         }
-        float ratio = amount / getMaxHealth(pokemonEntity);
+        //float ratio = amount / getMaxHealth(pokemonEntity);
+        float ratio = amount / pokemonEntity.getMaxHealth();
         int val = pokemon.getCurrentHealth() + (int) Math.floor(ratio * getHPStat(pokemon)) * (isHealing ? 1 : -1);
         pokemon.setCurrentHealth(val);
     }
