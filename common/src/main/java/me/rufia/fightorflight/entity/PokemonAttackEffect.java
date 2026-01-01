@@ -854,7 +854,7 @@ public class PokemonAttackEffect {
                 return !(attacker instanceof Player);
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team) {
-                return !Objects.equals(owner.getTeam(), attacker.getTeam());
+                return !FOFUtils.teamCheck(pokemonEntity, attacker);
             }
             if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner) {
                 return !owner.equals(attacker);

@@ -2,6 +2,7 @@
 ### Bug fixes:
 * Probably fix the bug that mods that increases entity max health not working properly for Pokemon.
 * Fixed the bug that wild Pokemon cries repeatedly if the Pokemon becomes aggressive.
+* Fixed the bug that player's Pokemon can't attack the other players or their Pokemon.
 
 # v0.10.3:
 ### Implemented Features:

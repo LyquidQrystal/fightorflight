@@ -30,15 +30,13 @@ import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.EntityType;
-import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.*;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
 import org.jetbrains.annotations.Nullable;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
@@ -51,12 +49,20 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import java.util.*;
 
 @Mixin(PokemonEntity.class)
-public abstract class PokemonEntityMixin extends Mob implements PokemonInterface {
+public abstract class PokemonEntityMixin extends TamableAnimal implements PokemonInterface {
     @Shadow(remap = false)
     public abstract void cry();
 
     @Shadow(remap = false)
     public abstract Pokemon getPokemon();
+
+    @Final
+    @Shadow(remap = false)
+    private List<Object> busyLocks;
+
+
+    @Shadow(remap = false)
+    public abstract int getBeamMode();
 
     @Unique
     @Nullable
@@ -183,6 +189,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         HashSet<SensorType<?>> hashSet = new HashSet<>(sensors);
         hashSet.add(FOFSensors.POKEMON_HELP_OWNER);
         hashSet.add(FOFSensors.POKEMON_WILD_PROACTIVE);
+        hashSet.add(FOFSensors.POKEMON_CAUGHT_BY);
         return Set.copyOf(hashSet);
     }
 
@@ -377,6 +384,25 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         }
     }
 
+    @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
+    private void invulnerableToModify(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
+        if (!busyLocks.isEmpty()) {
+            cir.setReturnValue(true);
+        }
+        // Don't let Pokémon be hurt during sendout and recall animations
+        if (getBeamMode() != 0) {
+            cir.setReturnValue(true);
+        }
+
+        if (CobblemonFightOrFlight.commonConfig().suffocation_immunity && damageSource.is(DamageTypes.IN_WALL)) {
+            cir.setReturnValue(true);
+        }
+
+        if (!CobblemonFightOrFlight.commonConfig().pvp_immunity && getOwnerUUID() != null && (damageSource.getEntity() instanceof Player)) {
+            cir.setReturnValue(super.isInvulnerableTo(damageSource));
+        }
+    }
+
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
     private void hurtImmune(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (source.getEntity() instanceof LivingEntity livingEntity) {
@@ -402,7 +428,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
         var targetEntity = PokemonUtils.getTarget((PokemonEntity) (Object) this);
         int nextCryTime = getNextCryTime();
         if (!getPokemon().isPlayerOwned()) {
-            boolean targetAvailable=targetEntity != null && targetEntity.isAlive();
+            boolean targetAvailable = targetEntity != null && targetEntity.isAlive();
             if (nextCryTime > 0) {
                 setNextCryTime(nextCryTime - 1);
             }
@@ -423,7 +449,7 @@ public abstract class PokemonEntityMixin extends Mob implements PokemonInterface
             }
             if (ticksUntilNewAngerParticle == 0) {
                 ticksUntilNewAngerParticle = 25;
-                if(targetAvailable){
+                if (targetAvailable) {
                     CobblemonFightOrFlight.PokemonEmoteAngry(this);
                 }
             }

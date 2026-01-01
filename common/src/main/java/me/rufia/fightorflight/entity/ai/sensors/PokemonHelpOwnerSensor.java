@@ -4,7 +4,6 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import net.minecraft.server.level.ServerLevel;
-import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
@@ -46,9 +45,6 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
         }
         //Finding target
         var nearestAttacker = visibleMobs.findClosest(livingEntity -> {
-            if (livingEntity instanceof ServerPlayer) {
-                return false;
-            }
             var lastHurtByMob = livingEntity.getLastHurtByMob();
             if (lastHurtByMob instanceof PokemonEntity pokemonEntity1) {
                 if (pokemonEntity1.getPokemon().getShiny() && pokemonEntity1.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny) {

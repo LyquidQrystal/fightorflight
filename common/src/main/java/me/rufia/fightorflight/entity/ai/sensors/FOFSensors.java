@@ -12,7 +12,8 @@ import java.util.function.Supplier;
 public class FOFSensors {
     public static final Map<String, SensorType<?>> sensors = new HashMap<>();
     public static final SensorType<Sensor<PokemonEntity>> POKEMON_HELP_OWNER = register("pokemon_help_owner_fof", PokemonHelpOwnerSensor::new);
-    public static final SensorType<Sensor<PokemonEntity>> POKEMON_WILD_PROACTIVE = register("pokemon_wild_proactive_fof",PokemonWildProactiveSensor::new);
+    public static final SensorType<Sensor<PokemonEntity>> POKEMON_WILD_PROACTIVE = register("pokemon_wild_proactive_fof", PokemonWildProactiveSensor::new);
+    public static final SensorType<Sensor<PokemonEntity>> POKEMON_CAUGHT_BY = register("pokemon_caught_by_fof", PokemonCaughtBySensor::new);
 
     public static <E extends LivingEntity, U extends Sensor<E>> SensorType<U> register(String id, Supplier<U> supplier) {
         var sensorType = new SensorType<>(supplier);
