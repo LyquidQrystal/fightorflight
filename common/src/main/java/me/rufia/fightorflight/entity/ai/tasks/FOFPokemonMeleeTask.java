@@ -29,8 +29,9 @@ public class FOFPokemonMeleeTask {
                 ).apply(context, (lookTargetAccessor, attackTargetAccessor, attackCooldownAccessor, visibleMobsAccessor) -> ((serverLevel, livingEntity, l) -> {
                     LivingEntity target = context.get(attackTargetAccessor);
                     if (livingEntity instanceof PokemonEntity pokemonEntity) {
+                        pokemonEntity.setTarget(target);
                         int attackTime = FOFPokemonAttackTask.getAttackTime(pokemonEntity);
-                        if (PokemonUtils.shouldMelee(pokemonEntity)) {
+                        if (PokemonUtils.shouldMelee(pokemonEntity) && FOFPokemonAttackTask.sharedStartCondition(pokemonEntity)) {
                             tryQuickApproach(pokemonEntity, target);
                             if (canPerformAttack(pokemonEntity, target)) {
                                 if (attackTime <= 0) {
@@ -38,7 +39,6 @@ public class FOFPokemonMeleeTask {
                                     FOFPokemonAttackTask.resetAttackTime(pokemonEntity, 0);
                                     pokemonEntity.swing(InteractionHand.MAIN_HAND);
                                     pokemonDoHurtTarget(pokemonEntity, target);
-                                    pokemonEntity.setTarget(target);
                                     ((PokemonInterface) pokemonEntity).setAttackTime(cooldownBetweenAttacks);
                                     attackCooldownAccessor.setWithExpiry(true, cooldownBetweenAttacks);
                                     return true;

@@ -28,6 +28,10 @@ public abstract class FOFPokemonAttackTask {
         return false;
     }
 
+    public static boolean sharedStartCondition(PokemonEntity pokemonEntity) {
+        return PokemonUtils.shouldFightTarget(pokemonEntity);
+    }
+
     public static LivingEntity getTarget(PokemonEntity pokemonEntity) {
         return PokemonUtils.getTarget(pokemonEntity);
     }

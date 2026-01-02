@@ -1,12 +1,13 @@
-This version is no longer server-side only. I added new items and entities to support some features.
+This version is no longer server-side only. Try CobbleGuard if you want a server-side only version.
 # Cobblemon 1.7 support progress:
 ## Finished:
 * This mod won't crash your game now. Most of the features are available now.
 * Melee attack(Cobblemon already implemented a simple melee attack, but we got more special effects for the moves.)
 * Range attack(Finally! It seems to work. I'll try to test if there are some other bugs.)
 * Pokemon will attack the target you hit.
-* Some other features
 * Wild Pokemon attack player proactively.
+* Pokemon will get provoked if a catch is failed.
+* Some other features
 ## Unfinished features that you might care about:
 * Poke Staff(You can only select the move you want to use. You can't command the Pokemon to walk/attack a target currently.)
 * Removing the features implemented by Cobblemon.

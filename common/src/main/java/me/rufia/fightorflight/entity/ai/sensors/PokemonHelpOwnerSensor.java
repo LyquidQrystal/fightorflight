@@ -32,7 +32,7 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
 
     @Override
     public @NotNull Set<MemoryModuleType<?>> requires() {
-        return Set.of(MemoryModuleType.ATTACK_TARGET);
+        return Set.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
     }
 
     private void setNearestTarget(PokemonEntity pokemonEntity, NearestVisibleLivingEntities visibleMobs, LivingEntity owner) {
@@ -47,7 +47,7 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
         var nearestAttacker = visibleMobs.findClosest(livingEntity -> {
             var lastHurtByMob = livingEntity.getLastHurtByMob();
             if (lastHurtByMob instanceof PokemonEntity pokemonEntity1) {
-                if (pokemonEntity1.getPokemon().getShiny() && pokemonEntity1.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny) {
+                if (pokemonEntity1.getPokemon().getShiny() && !pokemonEntity1.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny) {
                     return false;
                 }
             }

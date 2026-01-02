@@ -52,19 +52,23 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
                 pokemonEntity.setTarget(target);
                 boolean canSee = pokemonEntity.getSensing().hasLineOfSight(target);
                 int attackTime = FOFPokemonAttackTask.getAttackTime(pokemonEntity);
-                if (attackTime == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
-                    PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
-                }
-                if (attackTime % 5 == 0 && (((PokemonInterface) pokemonEntity).usingMagic())) {
-                    PokemonAttackEffect.makeMagicAttackParticle(pokemonEntity, target);
-                }
-                if (attackTime == 0) {
-                    if (!canSee) {
-                        return;
+                if (FOFPokemonAttackTask.sharedStartCondition(pokemonEntity)) {
+                    if (attackTime == 7 && (((PokemonInterface) pokemonEntity).usingSound())) {
+                        PokemonUtils.createSonicBoomParticle(pokemonEntity, target);
                     }
-                    performRangedAttack(pokemonEntity, target);
-                } else if (attackTime < 0) {
-                    FOFPokemonAttackTask.refreshAttackTime(pokemonEntity, 10);
+                    if ((attackTime + 1) % 5 == 0 && (((PokemonInterface) pokemonEntity).usingMagic())) {
+                        PokemonAttackEffect.makeMagicAttackParticle(pokemonEntity, target);
+                    }
+                    if (attackTime == 0) {
+                        if (!canSee) {
+                            return;
+                        }
+
+                        performRangedAttack(pokemonEntity, target);
+
+                    } else if (attackTime < 0) {
+                        FOFPokemonAttackTask.refreshAttackTime(pokemonEntity, 10);
+                    }
                 }
             }
         }
