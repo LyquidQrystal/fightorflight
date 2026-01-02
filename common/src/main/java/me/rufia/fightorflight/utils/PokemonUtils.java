@@ -313,7 +313,7 @@ public class PokemonUtils {
     }
 
     public static void updateMoveEvolutionProgress(Pokemon pokemon, MoveTemplate move) {
-        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move) && CobblemonFightOrFlight.commonConfig().can_progress_use_move_evoluiton) {
+        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move) && CobblemonFightOrFlight.commonConfig().can_progress_use_move_evolution) {
             UseMoveEvolutionProgress progress = pokemon.getEvolutionProxy().current().progressFirstOrCreate(evolutionProgress -> {
                         if (evolutionProgress instanceof UseMoveEvolutionProgress umep) {
                             return umep.currentProgress().getMove().equals(move);

@@ -145,7 +145,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("Your pokemon can gain EV points by killing a pokemon without a battle?")
     public boolean can_gain_ev = true;
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle? For example Primeape can use Rage Fist 20x to evolve without a traditional Pokemon Battle.")
-    public boolean can_progress_use_move_evoluiton = true;
+    public boolean can_progress_use_move_evolution = true;
     @ConfigEntry.Category("Pokemon Damage and Effects")
     @Comment("Pokemons should be immune to suffocation damage? (cant die to wall damage, like when sand drops into them)")
     public boolean suffocation_immunity = true;

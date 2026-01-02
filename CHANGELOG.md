@@ -7,6 +7,7 @@
 * Fixed the bug that player's Pokemon can't attack the other players or their Pokemon.
 * Fixed the bug that not_attacking_wild_shiny is not working correctly.
 * Fixed the bug that Pokemon can still attack in battle.
+* Fixed the misspelling of 
 ### Known bugs:
 * Pokemon will stop trying to attack after being mounted. Needs to be recalled and released again.(I'm quite busy, I'll spend more time looking at the code after I'm free.)
 * [Nether Invader](https://modrinth.com/mod/nether-invader) will cause all the Pokemon can't attack proactively.(I'm not sure about the reason. The findClosest method of NearestVisibleLivingEntities fails to return the correct value. Might be caused by its mixin.)
