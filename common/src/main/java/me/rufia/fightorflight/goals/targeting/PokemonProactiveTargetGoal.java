@@ -3,17 +3,14 @@ package me.rufia.fightorflight.goals.targeting;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.utils.TargetingWhitelist;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.NeutralMob;
 import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
-import net.minecraft.world.entity.monster.Creeper;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.Objects;
 import java.util.function.Predicate;
 
+@Deprecated
 public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
 
     public float safeDistanceSqr;
@@ -44,6 +41,7 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
             return;
         }
 
+        /*
         if (this.target != null) {
             if (this.target.distanceToSqr(this.mob) > safeDistanceSqr) {
                 this.target = null;
@@ -59,6 +57,6 @@ public class PokemonProactiveTargetGoal<T extends LivingEntity> extends NearestA
                     }
                 }
             }
-        }
+        }*/
     }
 }

@@ -1,3 +1,9 @@
+# V0.10.5:
+### Implemented Features:
+* Poke Staff Commands(Move, Attack, Hold Position)
+### Bug Fixes:
+* Fixed the bug that the anger effect will be spawned on Pokemon that can't attack.
+
 # V0.10.4:
 ### Implemented Features:
 * Failed captures will be counted as a provocation.
@@ -7,7 +13,7 @@
 * Fixed the bug that player's Pokemon can't attack the other players or their Pokemon.
 * Fixed the bug that not_attacking_wild_shiny is not working correctly.
 * Fixed the bug that Pokemon can still attack in battle.
-* Fixed the misspelling of 
+* Fixed the misspelling of can_progress_use_move_evolution.
 ### Known bugs:
 * Pokemon will stop trying to attack after being mounted. Needs to be recalled and released again.(I'm quite busy, I'll spend more time looking at the code after I'm free.)
 * [Nether Invader](https://modrinth.com/mod/nether-invader) will cause all the Pokemon can't attack proactively.(I'm not sure about the reason. The findClosest method of NearestVisibleLivingEntities fails to return the correct value. Might be caused by its mixin.)

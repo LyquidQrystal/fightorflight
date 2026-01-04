@@ -485,7 +485,6 @@ public class PokemonUtils {
         if (CobblemonFightOrFlight.commonConfig().stay_after_move_command) {
             if (moveCommandAvailable(pokemonEntity)) {
                 ((PokemonInterface) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.STAY.name());
-                pokemonEntity.getNavigation().stop();
             }
         } else {
             clearCommand(pokemonEntity);

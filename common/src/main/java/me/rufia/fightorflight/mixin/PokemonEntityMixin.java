@@ -193,6 +193,8 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         hashSet.add(FOFSensors.POKEMON_HELP_OWNER);
         hashSet.add(FOFSensors.POKEMON_WILD_PROACTIVE);
         hashSet.add(FOFSensors.POKEMON_CAUGHT_BY);
+        hashSet.add(FOFSensors.POKESTAFF_ATTACK_TARGET);
+        hashSet.add(FOFSensors.POKESTAFF_WALK_TARGET);
         return Set.copyOf(hashSet);
     }
 
@@ -428,9 +430,10 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         if (Objects.equals(getCommand(), PokeStaffComponent.CMDMODE.CLEAR.name())) {
             setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
         }
-        var targetEntity = PokemonUtils.getTarget((PokemonEntity) (Object) this);
+        PokemonEntity thisEntity = (PokemonEntity) (Object) this;
+        var targetEntity = PokemonUtils.getTarget(thisEntity);
         int nextCryTime = getNextCryTime();
-        if (!getPokemon().isPlayerOwned()) {
+        if (!getPokemon().isPlayerOwned() && PokemonUtils.shouldFightTarget(thisEntity)) {
             boolean targetAvailable = targetEntity != null && targetEntity.isAlive();
             if (nextCryTime > 0) {
                 setNextCryTime(nextCryTime - 1);

@@ -11,6 +11,7 @@ import net.minecraft.world.entity.ai.goal.target.NearestAttackableTargetGoal;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Deprecated
 public class PokemonCommandedTargetGoal<T extends LivingEntity> extends NearestAttackableTargetGoal<T> {
     protected PokemonEntity pokemonEntity;
     protected float safeDistanceSqr = 64;
@@ -22,7 +23,7 @@ public class PokemonCommandedTargetGoal<T extends LivingEntity> extends NearestA
             }
             if (mob instanceof PokemonEntity pokemonEntity) {
                 if (PokemonUtils.getCommandMode(pokemonEntity).equals(PokeStaffComponent.CMDMODE.ATTACK)) {
-                    String data = ((PokemonInterface) (Object) pokemonEntity).getCommandData();
+                    String data = ((PokemonInterface) pokemonEntity).getCommandData();
                     if (data.startsWith("ENTITY_")) {
                         Pattern pattern = Pattern.compile("ENTITY_([a-z\\d]{8}-[a-z\\d]{4}-[a-z\\d]{4}-[a-z\\d]{4}-[a-z\\d]{12})");
                         Matcher m = pattern.matcher(data);

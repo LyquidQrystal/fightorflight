@@ -16,6 +16,7 @@ import net.minecraft.world.level.GameRules;
 
 import java.util.EnumSet;
 
+@Deprecated
 public class CaughtByTargetGoal extends TargetGoal {
     private static final TargetingConditions HURT_BY_TARGETING = TargetingConditions.forCombat().ignoreLineOfSight().ignoreInvisibilityTesting();
     private LivingEntity lastCaughtByMob;

@@ -1,3 +1,9 @@
+# V0.10.5:
+### 已恢复的重要特性：
+* 宝可杖指令（移动，攻击，原地驻守）。
+### Bug修复：
+* 修复了宝可梦的愤怒效果会出现在无法攻击的宝可梦上的bug。
+
 # V0.10.4:
 ### 已恢复的重要特性：
 * 捕捉失败会激怒宝可梦
@@ -7,6 +13,7 @@
 * 修复玩家宝可梦不能攻击别的玩家或他们的宝可梦的bug。
 * 修复not_attacking_wild_shiny没有正常运行的bug。
 * 修复宝可梦在战斗中仍旧能攻击的bug。
+* 修复can_progress_use_move_evolution拼写错误。
 ### 已知的bug：
 * 骑上宝可梦后可能会无法攻击。收回并重新放出来可以解决（最近比较忙，有空再看看方块宝可梦的代码）
 * [Nether Invader](https://modrinth.com/mod/nether-invader)会导致所有宝可梦无法主动攻击（我不是很确定的什么原因。NearestVisibleLivingEntities类的方法findClosest无法返回正确的值，可能是由它的mixin导致的。)

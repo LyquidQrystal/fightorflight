@@ -16,7 +16,6 @@ import me.rufia.fightorflight.net.CobblemonFightOrFlightNetwork;
 import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.TargetingWhitelist;
-import me.rufia.fightorflight.utils.listeners.BehaviorDataListener;
 import me.rufia.fightorflight.utils.listeners.MoveDataListener;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
