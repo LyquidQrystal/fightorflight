@@ -179,6 +179,10 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float max_damage_reduction_multiplier_player = 1.2f;
     @Comment("The highest defense stat needed to get the highest damage reduction.")
     public int defense_stat_limit = 161;
+    @Comment("When a player hurts wild pokemon, should a pokemon battle be started?")
+    public boolean force_wild_battle_on_player_attack = false;
+    @Comment("When a player hurts another player's pokemon, should a pokemon battle be started?")
+    public boolean force_player_battle_on_player_attack = false;
     @Comment("When a player owned Pokemon hurts or is hurt by a wild pokemon, should a pokemon battle be started?")
     public boolean force_wild_battle_on_pokemon_hurt = false;
     @Comment("When a player owned Pokemon hurts or is hurt by another player's pokemon, should a pokemon battle be started?")

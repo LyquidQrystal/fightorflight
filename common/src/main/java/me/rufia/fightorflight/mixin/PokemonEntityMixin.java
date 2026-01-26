@@ -25,6 +25,7 @@ import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.damagesource.DamageTypes;
@@ -411,6 +412,18 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
     private void hurtImmune(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
         if (source.getEntity() instanceof LivingEntity livingEntity) {
+            if (livingEntity instanceof ServerPlayer player) {
+                LivingEntity ownerEntity = getOwner();
+                PokemonEntity thisEntity = (PokemonEntity) (Object) this;
+                if (ownerEntity == null && CobblemonFightOrFlight.commonConfig().force_wild_battle_on_player_attack) {
+                    PokemonUtils.pokemonForceEncounterPvE(player, thisEntity);
+                    cir.setReturnValue(false);
+                } else if (ownerEntity instanceof Player && CobblemonFightOrFlight.commonConfig().force_player_battle_on_player_attack) {
+                    PokemonUtils.pokemonForceEncounterPvP(player, thisEntity);
+                    cir.setReturnValue(false);
+                }
+
+            }
             if (!PokemonAttackEffect.shouldBeHurtByAllyMob(((PokemonEntity) (Object) this), livingEntity)) {
                 cir.setReturnValue(false);
             }
@@ -499,7 +512,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             updateAttackMode();
             backendMoveCooldown();
         }
-        if (sec % 5 == 0 && ticks == 17) {
+        if (sec % 5 == 4 && ticks == 17) {
             turnBasedHeldItemTrigger();
         }
     }

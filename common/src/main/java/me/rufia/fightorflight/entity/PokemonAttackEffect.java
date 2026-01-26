@@ -85,7 +85,7 @@ public class PokemonAttackEffect {
 
     public static Item getTypeEnhancingItem(String typeName) {
         String name = typeName.toLowerCase();
-        return switch (typeName) {
+        return switch (name) {
             case "fire" -> CobblemonItems.CHARCOAL;
             case "ice" -> CobblemonItems.NEVER_MELT_ICE;
             case "poison" -> CobblemonItems.POISON_BARB;
@@ -252,7 +252,10 @@ public class PokemonAttackEffect {
         if (type != null) {
             float typeEnhancingMultiplier = 1.2f;
             String typeName = type.getName().toLowerCase();
-            if (heldItem.is(getTypeEnhancingItem(typeName))) {
+            Item requiredItem = getTypeEnhancingItem(typeName);
+            //Who knows when they will make the soft sand also placeable without making it extends to CobblemonItem?
+            //TODO write a better logic to solve the game crashing bug.
+            if (Objects.equals(heldItem.getItemHolder().getRegisteredName(), requiredItem.arch$holder().getRegisteredName())) {
                 return typeEnhancingMultiplier;
             }
         }
