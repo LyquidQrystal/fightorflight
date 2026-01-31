@@ -1,3 +1,12 @@
+# V0.10.6:
+### New Config:
+* force_wild_battle_on_player_attack: If this is set to true, a battle will be started when a player attacks a wild Pokemon.
+* force_player_battle_on_player_attack: If this is set to true, a battle will be started when a player attacks another player's Pokemon(Untested).
+### Changes:
+* Adjusted the Leftovers mechanic so the players can't heal the pokemon quickly by just sending them out and recalling repeatedly.
+### Bug Fixes:
+* Fixed the bug that the game will crash if a Pokemon tries to use a ghost type move on Cobblemon 1.7.2
+
 # V0.10.5:
 ### Implemented Features:
 * Poke Staff Commands(Move, Attack, Hold Position)

@@ -31,7 +31,7 @@
     "minecraft": ">=1.21.1",
     "fabricloader": ">=0.16.9",
     "fabric": "*",
-    "cobblemon": ">=1.7.2",
+    "cobblemon": ">=1.7.0",
     "architectury": ">=13.0.8",
     "cloth-config": ">=15.0.140"
   }

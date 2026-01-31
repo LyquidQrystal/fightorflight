@@ -1,19 +1,11 @@
 This version is no longer server-side only. Try CobbleGuard if you want a server-side only version.
 # Cobblemon 1.7 support progress:
-## Finished:
-* This mod won't crash your game now. Most of the features are available now.
-* Melee attack(Cobblemon already implemented a simple melee attack, but we got more special effects for the moves.)
-* Range attack(Finally! It seems to work. I'll try to test if there are some other bugs.)
-* Pokemon will attack the target you hit.
-* Wild Pokemon attack player proactively.
-* Pokemon will get provoked if a catch is failed.
-* Some other features
 ## Unfinished features that you might care about:
-* Poke Staff(You can only select the move you want to use. You can't command the Pokemon to walk/attack a target currently.)
+* Taunt for Pokemon.
 * Removing the features implemented by Cobblemon.
 ### [Architectury](https://modrinth.com/mod/architectury-api) required!!!
 ## New Features & Changes Since 0.5.3
-### Features included in v0.9.0:
+### Features included in v0.10.2:
 - **Unprovoked Attack Disabled** I personally don't like this feature because the Pokemon spawns anywhere and anytime.It's quite easy to get attacked when you are doing something. However,you are free to enable it in the config.
 - **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.The stat required to reach the maximum damage is also lowered to suit the lower damage.You are free to use the config to adjust the damage.
 - **Configurable aggresion:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggresion.
@@ -93,7 +85,7 @@ This version is no longer server-side only. Try CobbleGuard if you want a server
 
 ## TODO
 - Main Goal For the Following Updates:
-  - Porting to Cobblemon 1.7
+  - Adjust the way to start a battle so the player can start a battle with the selected Pokemon instead of the first Pokemon in the party.
 - Things that might be done in a short period of time(1~3 big updates):
   - Add some features from ZA.
 - Things that might not be done in a short period of time:
