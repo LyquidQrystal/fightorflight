@@ -5,11 +5,12 @@ license = "MIT License"
 [[mods]]
 modId = "fightorflight"
 version = "0.6.2"
-displayName = "Cobblemon Fight or Flight"
+displayName = "Cobblemon Fight or Flight Reborn"
 authors = "rufia,LyquidQrystal"
 description = '''
-Makes Cobblemon run away or fight back in response to a player attack or failed capture
+Makes Cobblemon run away or fight back in response to a player attack or failed capture. Recode done by LyquidQrystal.
 '''
+displayURL="https://github.com/LyquidQrystal/fightorflight/"
 
 [[dependencies.fightorflight]]
 modId = "minecraft"

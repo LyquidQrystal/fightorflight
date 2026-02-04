@@ -21,11 +21,11 @@ modId = "fightorflight" #mandatory
 # see the associated build.gradle script for how to populate this completely automatically during a build
 version = "${file.jarVersion}" #mandatory
 # A display name for the mod
-displayName = "Cobblemon Fight or Flight" #mandatory
+displayName = "Cobblemon Fight or Flight Reborn" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification https://docs.minecraftforge.net/en/latest/misc/updatechecker/
 #updateJSONURL="https://change.me.example.invalid/updates.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
-#displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
+displayURL="https://github.com/LyquidQrystal/fightorflight/" # Should this go to source?
 # A file name (in the root of the mod JAR) containing a logo for display
 logoFile="logo.png" #optional
 # A text field displayed in the mod UI
@@ -42,7 +42,7 @@ authors = "rufia" #optional
 
 # The description text for the mod (multi line!) (#mandatory)
 description = '''
-Makes Cobblemon run away or fight back in response to a player attack or failed capture
+Makes Cobblemon run away or fight back in response to a player attack or failed capture. Recode done by LyquidQrystal.
 '''
 # A dependency - use the . to indicate dependency for a specific modid. Dependencies are optional.
 [[dependencies.fightorflight]] #optional
