@@ -280,6 +280,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean player_pokemon_can_hurt_ender_dragon = true;
     @Comment("If the wild poekmon can hurt ender dragon")
     public boolean wild_pokemon_can_hurt_ender_dragon = false;
+    @ConfigEntry.Category("Pokemon AI tweak")
     @Comment("If you want to use the FOF style melee attack?")
     public boolean use_fof_style_melee = true;
     @Comment("If you want to use range attack from FOF")
@@ -288,4 +289,25 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean force_enable_defend_owner = true;
     @Comment("If you want to set willDefendSelf to true in Pokemon's combat behaviour of Cobblemon, should be useful for solving the problem that wild Pokemon added by the datapacks can't attack.")
     public boolean force_enable_defend_self = true;
+    @ConfigEntry.Category("Mod Compat")
+    @Comment("Sizes that will be recognized as S for FOF when you are using the basic sizer.(The default sizer)")
+    public String[] size_S_basic_sizer = {"Tiny", "Small"};
+    @Comment("Sizes that will be recognized as M for FOF when you are using the basic sizer.(The default sizer)")
+    public String[] size_M_basic_sizer = {"Average"};
+    @Comment("Sizes that will be recognized as L for FOF when you are using the basic sizer.(The default sizer)")
+    public String[] size_L_basic_sizer = {"Big", "Large", "Huge"};
+    @Comment("Sizes that will be recognized as S for FOF when you are using the Gen9 sizer.")
+    public String[] size_S_gen9_sizer = {"S", "XS", "XXS", "XXXS"};
+    @Comment("Sizes that will be recognized as M for FOF when you are using the Gen9 sizer.")
+    public String[] size_M_gen9_sizer = {"M"};
+    @Comment("Sizes that will be recognized as L for FOF when you are using the Gen9 sizer.")
+    public String[] size_L_gen9_sizer = {"L", "XL", "XXL", "XXXL"};
+    @Comment("The extra aggression a Pokemon can get if it's size is S.")
+    public float aggression_size_S_value = -30f;
+    @Comment("The extra aggression a Pokemon can get if it's size is M.")
+    public float aggression_size_M_value = 0f;
+    @Comment("The extra aggression a Pokemon can get if it's size is L.")
+    public float aggression_size_L_value = 50f;
+
+
 }

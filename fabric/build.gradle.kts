@@ -37,6 +37,7 @@ dependencies {
 
     //Cobblemon
     modImplementation("com.cobblemon:fabric:${project.properties["cobblemon_version"]}")
+    modImplementation("maven.modrinth:cobblemon-size-variations:${project.properties["cobblemon_size_variations_version"]}-fabric")
 
     //modImplementation("maven.modrinth:livelierpokemon:2.0.4+1.21.1-fabric")
 }

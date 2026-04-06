@@ -12,7 +12,7 @@ public class FOFDefendSelfTask {
         return BehaviorBuilder.create(context ->
                 context.group(
                                 context.present(MemoryModuleType.HURT_BY_ENTITY),
-                                context.absent(MemoryModuleType.ATTACK_TARGET)
+                                context.registered(MemoryModuleType.ATTACK_TARGET)
                         )
                         .apply(context, (hurtByAccessor, attackTargetAccessor) -> ((serverLevel, pokemonEntity, l) -> {
                             var hurtByEntity = context.get(hurtByAccessor);
@@ -21,7 +21,15 @@ public class FOFDefendSelfTask {
                                     return false;
                                 }
                             }
-                            attackTargetAccessor.set(hurtByEntity);
+                            var targetOpt = pokemonEntity.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET);
+                            if (targetOpt.isPresent()) {
+                                LivingEntity target = targetOpt.get();
+                                //Try to add a priority queue here, or at least allow the Pokemon to attack the entity that hurts it.
+                            } else {
+                                attackTargetAccessor.set(hurtByEntity);
+                            }
+
+
                             return true;
                         })));
     }

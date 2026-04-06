@@ -72,6 +72,16 @@ public class FOFAggressionCalculator {
         return multiplier * CobblemonFightOrFlight.commonConfig().aggression_nature_base_value;
     }
 
+    //Extra aggression offered by mods that FOF has an integrated support.
+    protected static double getSupportedModExtraAggression(PokemonEntity pokemonEntity) {
+        double result = 0;
+        if (CobblemonFightOrFlight.sizeVariationCompat.isLoaded()) {
+            result += CobblemonFightOrFlight.sizeVariationCompat.getExtraAggression(pokemonEntity);
+        }
+        //CobblemonFightOrFlight.LOGGER.info("{}:{}", pokemonEntity.getPokemon().getDisplayName(false), result);
+        return result;
+    }
+
     //Use mixins, inject at the head add your value to sideModExtraAggressionList, and it should work? To be honest, I'm not sure if anyone will try this.
     protected static double getSideModExtraAggression(PokemonEntity pokemonEntity) {
         double result = 0;
@@ -88,6 +98,7 @@ public class FOFAggressionCalculator {
                     + getIntimidateCoefficient(pokemonEntity)
                     + getLevelAggressionCoefficient(pokemonEntity)
                     + getNatureAggressionCoefficient(pokemonEntity.getPokemon())
+                    + getSupportedModExtraAggression(pokemonEntity)
                     + getSideModExtraAggression(pokemonEntity);
         }
         return 0;

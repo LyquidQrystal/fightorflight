@@ -3,18 +3,14 @@ package me.rufia.fightorflight;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import dev.architectury.registry.ReloadListenerRegistry;
+import me.rufia.fightorflight.compat.CobblemonSizeVariationCompat;
 import me.rufia.fightorflight.config.FightOrFlightCommonConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightMoveConfigModel;
 import me.rufia.fightorflight.config.FightOrFlightVisualEffectConfigModel;
 import me.rufia.fightorflight.data.movedata.movedatas.MiscMoveData;
-import me.rufia.fightorflight.goals.PokemonAttackGoal;
-import me.rufia.fightorflight.goals.PokemonAvoidGoal;
-import me.rufia.fightorflight.goals.PokemonGoToPosGoal;
-import me.rufia.fightorflight.goals.PokemonPanicGoal;
 import me.rufia.fightorflight.net.CobblemonFightOrFlightNetwork;
 import me.rufia.fightorflight.utils.FOFAggressionCalculator;
 import me.rufia.fightorflight.utils.FOFUtils;
-import me.rufia.fightorflight.utils.PokemonUtils;
 import me.rufia.fightorflight.utils.TargetingWhitelist;
 import me.rufia.fightorflight.utils.listeners.MoveDataListener;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -23,10 +19,7 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.packs.PackType;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Mob;
-import net.minecraft.world.entity.ai.goal.Goal;
-import org.apache.logging.log4j.util.TriConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +27,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 public class CobblemonFightOrFlight {
     public static final String MODID = "fightorflight";
@@ -42,7 +36,9 @@ public class CobblemonFightOrFlight {
     private static FightOrFlightCommonConfigModel commonConfig;
     private static FightOrFlightMoveConfigModel moveConfig;
     private static FightOrFlightVisualEffectConfigModel visualEffectConfig;
-    private static TriConsumer<PokemonEntity, Integer, Goal> goalAdder;
+    public static CobblemonSizeVariationCompat sizeVariationCompat;
+    //private static TriConsumer<PokemonEntity, Integer, Goal> goalAdder;
+
 
     public static FightOrFlightCommonConfigModel commonConfig() {
         return commonConfig;
@@ -56,8 +52,9 @@ public class CobblemonFightOrFlight {
         return visualEffectConfig;
     }
 
-    public static void init(TriConsumer<PokemonEntity, Integer, Goal> goalAdder) {
-        CobblemonFightOrFlight.goalAdder = goalAdder;
+    public static void init(Predicate<String> modCompatPredicate) {
+        sizeVariationCompat = new CobblemonSizeVariationCompat();
+        sizeVariationCompat.tryLoad(modCompatPredicate);
         AutoConfig.register(FightOrFlightCommonConfigModel.class, JanksonConfigSerializer::new);
         AutoConfig.register(FightOrFlightMoveConfigModel.class, JanksonConfigSerializer::new);
         AutoConfig.register(FightOrFlightVisualEffectConfigModel.class, JanksonConfigSerializer::new);
@@ -71,6 +68,7 @@ public class CobblemonFightOrFlight {
 
     @Deprecated
     public static void addPokemonGoal(PokemonEntity pokemonEntity) {
+        /*
         float minimum_movement_speed = CobblemonFightOrFlight.commonConfig().minimum_movement_speed;
         float maximum_movement_speed = CobblemonFightOrFlight.commonConfig().maximum_movement_speed;
         float speed_limit = CobblemonFightOrFlight.commonConfig().speed_stat_limit;
@@ -84,6 +82,7 @@ public class CobblemonFightOrFlight {
         goalAdder.accept(pokemonEntity, 3, new PokemonAttackGoal(pokemonEntity, pursuitSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonAvoidGoal(pokemonEntity, PokemonUtils.getAttackRadius() * 3, 1.0f, fleeSpeed));
         goalAdder.accept(pokemonEntity, 4, new PokemonPanicGoal(pokemonEntity, fleeSpeed));
+         */
     }
 
     public static double getFightOrFlightCoefficient(PokemonEntity pokemonEntity) {

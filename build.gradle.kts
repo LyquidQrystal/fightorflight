@@ -47,7 +47,7 @@ allprojects {
         maven("https://jitpack.io")
         maven("https://maven.impactdev.net/repository/development/")
         maven("https://maven.parchmentmc.org")
-        maven("https://maven.pkg.github.com/bedrockk/MoLang")
+        //maven("https://maven.pkg.github.com/bedrockk/MoLang")
         exclusiveContent {
             forRepository {
                 maven("https://api.modrinth.com/maven")

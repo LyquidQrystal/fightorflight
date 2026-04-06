@@ -1,3 +1,12 @@
+# V0.10.8:
+### New Features:
+* Add support for Cobblemon Size Variation
+## TODO list:
+* Adjust Cobblemon's flight mechanic to make sure Pokemon fight or flight when attacked.
+* Test if the angry particle is created incorrectly again.
+* Fix the bug that wild pokemons don't attack the mob that hit them when they're chasing a player that haven't hit them.(An easier way to understand is adding a priority system.)
+* Adjust the XP mechanic
+
 # V0.10.7:
 ### New Features:
 * Using a new packet and handler so a keybind added a long time ago can work properly now. This is used to start a battle with an aggressive pokemon around the player so you don't need to aim at it.
