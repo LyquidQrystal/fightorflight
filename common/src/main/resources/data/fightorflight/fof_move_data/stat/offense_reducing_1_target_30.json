@@ -1,0 +1,13 @@
+{
+  "type": "stat",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.3,
+  "canActivateSheerForce": true,
+  "name": "attack",
+  "move_list": [
+    "moonblast",
+    "springtidestorm"
+  ],
+  "stage": -1
+}

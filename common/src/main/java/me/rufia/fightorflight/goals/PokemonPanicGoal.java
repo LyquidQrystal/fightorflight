@@ -2,6 +2,7 @@ package me.rufia.fightorflight.goals;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.PathfinderMob;
 import net.minecraft.world.entity.ai.goal.PanicGoal;
@@ -21,14 +22,20 @@ public class PokemonPanicGoal extends PanicGoal {
 
 
     protected boolean shouldPanic() {
-        PokemonEntity pokemonEntity = (PokemonEntity)this.mob;
-        if (pokemonEntity.isBusy()) { return false; }
-
-        if (this.mob.isOnFire() || this.mob.isFreezing()){
+        PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
+        if (pokemonEntity.isBusy()) {
+            return false;
+        }
+        if (PokemonUtils.shouldStopRunningAfterHurt(pokemonEntity)) {
+            if (pokemonEntity.getMaxHealth() != pokemonEntity.getHealth()) {
+                return false;
+            }
+        }
+        if (this.mob.isOnFire() || this.mob.isFreezing()) {
             return true;
         }
         if (this.mob.getLastHurtByMob() != null) {
-            return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > 0)|| Arrays.stream(CobblemonFightOrFlight.commonConfig().always_flee).toList().contains(pokemonEntity.getPokemon().getSpecies().getName().toLowerCase());
+            return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > CobblemonFightOrFlight.commonConfig().neutral_threshold) || Arrays.stream(CobblemonFightOrFlight.commonConfig().always_flee).toList().contains(pokemonEntity.getPokemon().getSpecies().getName().toLowerCase());
         }
         return false;
         //return super.shouldPanic();

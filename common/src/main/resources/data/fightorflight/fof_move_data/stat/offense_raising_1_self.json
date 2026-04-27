@@ -1,0 +1,31 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "attack",
+  "move_list": [
+    "poweruppunch",
+    "meteorbeam",
+    "electroshot",
+    "mysticalpower",
+    "torchsong",
+
+    "bulkup",
+    "meditate",
+    "coil",
+    "calmmind",
+    "takeheart",
+    "tidyup",
+    "dragondance",
+    "shiftgear",
+    "victorydance",
+    "quiverdance",
+    "honeclaws",
+    "sharpen",
+    "workup",
+    "growth"
+  ],
+  "stage": 1
+}

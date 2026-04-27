@@ -1,0 +1,27 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "defense",
+  "move_list": [
+    "psyshieldbash",
+    "skullbash",
+
+    "bulkup",
+    "meditate",
+    "coil",
+    "calmmind",
+    "takeheart",
+    "charge",
+    "defensecurl",
+    "harden",
+    "withdraw",
+    "victorydance",
+    "quiverdance",
+    "cosmicpower",
+    "defendorder"
+  ],
+  "stage": 1
+}

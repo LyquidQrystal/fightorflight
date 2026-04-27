@@ -1,0 +1,16 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "flinch",
+  "move_list": [
+    "extrasensory",
+    "hyperfang",
+    "boneclub",
+    "thunderfang",
+    "firefang",
+    "icefang"
+  ]
+}

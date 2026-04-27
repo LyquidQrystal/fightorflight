@@ -15,9 +15,9 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     @Comment("If a pokemon doesn't have the correct moves to use,the base power will be used to calculate the damage.")
     public int base_power = 60;
     @Comment("The minimum radius of the AoE moves")
-    public float min_AoE_radius = 1.0f;
+    public float min_AoE_radius = 1.5f;
     @Comment("The maximum radius of the AoE moves")
-    public float max_AoE_radius = 2.0f;
+    public float max_AoE_radius = 3.0f;
     @Comment("The AoE damage will be lower to the target away from the center,this value sets the lowest damage multiplier of the AOE damage")
     public float min_AoE_damage_multiplier = 0.6f;
     @Comment("The radius of the status moves(unused)")
@@ -43,6 +43,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "iciclecrash",
             "iciclespear",
             "gunkshot",
+            "scaleshot",
             "spikecannon",
             "pinmissile",
             "thousandarrows"
@@ -127,7 +128,6 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "confusion",
             "psychic",
             "freezedry",
-            "earthpower",
             "nightdaze",
             "iceburn",
             "luminacrash",
@@ -136,8 +136,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "seedflare",
             "psyshock",
             "psystrike",
-            "psychoboost",
-            "earthpower"
+            "psychoboost"
     };
     @Comment("Moves that hurts the entity(including the allies) around the pokemon")
     public String[] self_centered_aoe_moves = {
@@ -177,7 +176,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     };
     @Comment("Moves that start an explode")
     public String[] explosive_moves = {
-            "self-destruct",
+            "selfdestruct",
             "explosion",
             "mindblown",
             "mistyexplosion"
@@ -221,13 +220,17 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     };
     @Comment()
     public String[] recoil_moves_allHP = {
-            "self-destruct",
+            "selfdestruct",
             "explosion",
             "mindblown",
             "mistyexplosion"
     };
     //TODO
     @ConfigEntry.Category("Status moves(WIP)")
+    @Comment("Enable the Pokemon to use the spikes.")
+    public boolean enable_spikes = true;
+    @Comment("The base damage of Spikes and Stealth Rock")
+    public float spike_basic_damage = 3f;
     @Comment("Moves that taunt other pokemon")
     public String[] taunting_moves = {
             "taunt",
@@ -238,6 +241,164 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     @Comment("Moves that burns the pokemon(unused)")
     public String[] burn_status_move = {
             "willowisp"
+    };
+    @Comment("Status moves that are used on the user.")
+    public String[] self_targeting_status_move = {
+            "bulkup",
+            "meditate",
+            "coil",
+            "calmmind",
+            "takeheart",
+
+            "charge",
+            "defensecurl",
+            "harden",
+            "withdraw",
+
+            "slackoff",
+            "synthesis",
+            "milkdrink",
+            "healorder",
+            "recover",
+            "morningsun",
+            "moonlight",
+            "softboiled",
+            "roost",
+
+            "geomancy",
+
+            "tidyup",
+            "dragondance",
+
+            "cosmicpower",
+            "defendorder",
+
+            "barrier",
+            "irondefense",
+            "shelter",
+            "acidarmor",
+            "amnesia",
+
+            "rockpolish",
+            "agility",
+            "autotomize",
+
+            "shiftgear",
+
+            "cottonguard",
+
+            "shellsmash",
+
+            "victorydance",
+            "quiverdance",
+
+            "honeclaws",
+            "sharpen",
+            "workup",
+            "growth",
+
+            "swordsdance",
+            "nastyplot",
+            "tailglow"
+    };
+    @Comment("Moves that is similar to Quick Attack. Approaching target quickly and attack.")
+    public String[] quick_attack_like_move = {
+            "quickattack",
+            "extremespeed",
+            "feint",
+            "machpunch",
+            "bulletpunch",
+            "accelerock",
+            "jetpunch"
+    };
+    @Comment("Area of Effect that is created at the target's position and deal the damage after a short period of time.")
+    public String[] delayed_aoe_at_target_position = {
+            "firespin",
+            "whirlpool",
+            "sandtomb",
+            "magmastorm",
+            "thundercage",
+
+            "hurricane",
+            "heatwave",
+            "petalblizzard",
+            "gust",
+            "blizzard",
+            "aeroblast",
+            "twister",
+            "fairywind",
+            "silverwind",
+            "leafstorm",
+            "springtidestorm",
+            "bleakwindstorm",
+            "wlidboltstorm",
+            "sandsearstorm",
+
+            "thunder",
+            "earthpower"
+    };
+    @Comment("Area of Effect that can be created in the air")
+    public String[] delayed_aoe_can_float = {
+            "hurricane",
+            "heatwave",
+            "petalblizzard",
+            "gust",
+            "blizzard",
+            "aeroblast",
+            "twister",
+            "fairywind",
+            "silverwind",
+            "leafstorm",
+            "springtidestorm",
+            "bleakwindstorm",
+            "wlidboltstorm",
+            "sandsearstorm"
+    };
+    @Comment("Area of Effect that will rise up from the ground and become a small tornado when activated")
+    public String[] delayed_aoe_rise_up_tornado = {
+            "magmastorm",
+
+            "hurricane",
+            "heatwave",
+            "petalblizzard",
+            "gust",
+            "blizzard",
+            "aeroblast",
+            "twister",
+            "fairywind",
+            "silverwind",
+            "leafstorm",
+            "springtidestorm",
+            "bleakwindstorm",
+            "wlidboltstorm",
+            "sandsearstorm"
+    };
+    @Comment("Area of Effect that will rise up from the ground and become a small tornado when activated")
+    public String[] delayed_aoe_bounding_whirlpool = {
+            "firespin",
+            "whirlpool",
+            "sandtomb",
+            "thundercage"
+    };
+    @Comment("Area of effect listed here will stop being activated after its activation.")
+    public String[] delayed_aoe_is_instant = {
+            "hurricane",
+            "heatwave",
+            "petalblizzard",
+            "gust",
+            "blizzard",
+            "aeroblast",
+            "twister",
+            "fairywind",
+            "silverwind",
+            "leafstorm",
+            "springtidestorm",
+            "bleakwindstorm",
+            "wlidboltstorm",
+            "sandsearstorm",
+
+            "thunder",
+            "earthpower"
     };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")

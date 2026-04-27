@@ -1,0 +1,28 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.3,
+  "canActivateSheerForce": true,
+  "name": "flinch",
+  "move_list": [
+    "ironhead",
+    "snore",
+    "rockslide",
+    "airslash",
+    "astonish",
+    "bite",
+    "headbutt",
+    "needlearm",
+    "rollingkick",
+    "stomp",
+    "iciclecrash",
+    "skyattack",
+    "heartstamp",
+    "steamroller",
+    "zingzap",
+    "doubleironbash",
+    "mountaingale",
+    "triplearrow"
+  ]
+}

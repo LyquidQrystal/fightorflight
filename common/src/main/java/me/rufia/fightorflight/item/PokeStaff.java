@@ -1,25 +1,22 @@
 package me.rufia.fightorflight.item;
 
-import com.cobblemon.mod.common.CobblemonItems;
-import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import me.rufia.fightorflight.PokemonInterface;
+import com.cobblemon.mod.common.client.CobblemonClient;
+import dev.architectury.networking.NetworkManager;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.item.component.ItemComponentFOF;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
-import me.rufia.fightorflight.utils.RayTrace;
-import net.minecraft.core.BlockPos;
+import me.rufia.fightorflight.net.packet.SendCommandPacket;
+import me.rufia.fightorflight.net.packet.SendMoveSlotPacket;
+import me.rufia.fightorflight.utils.FOFUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.entity.Entity;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.TooltipFlag;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.phys.AABB;
-import net.minecraft.world.phys.BlockHitResult;
 
 import java.util.List;
 import java.util.Objects;
@@ -53,6 +50,9 @@ public class PokeStaff extends Item {
 
     @Override
     public InteractionResultHolder<ItemStack> use(Level level, Player player, InteractionHand usedHand) {
+        if(!CobblemonFightOrFlight.commonConfig().can_use_poke_staff){
+            return InteractionResultHolder.pass(player.getItemInHand(usedHand));
+        }
         ItemStack stack = player.getItemInHand(usedHand);
 
         if (player.isSecondaryUseActive()) {
@@ -98,35 +98,16 @@ public class PokeStaff extends Item {
         if (mode.equals(PokeStaffComponent.MODE.SEND.name())) {
             //CobblemonFightOrFlight.LOGGER.info("SENDING COMMAND");
             PokeStaffComponent.CMDMODE cmdmode = PokeStaffComponent.CMDMODE.valueOf(getCommandMode(stack));
-            String cmdData = "";
+            String cmdData = FOFUtils.createCommandData(player, cmdmode);
 
-            switch (cmdmode) {
-                case MOVE, ATTACK_POSITION, MOVE_ATTACK, STAY -> {
-                    BlockHitResult result = RayTrace.rayTraceBlock(player, 16);
-                    BlockPos blockPos = result.getBlockPos();
-                    //CobblemonFightOrFlight.LOGGER.info("VEC3_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ()));
-                    cmdData = "VEC3i_%s_%s_%s".formatted(blockPos.getX(), blockPos.getY(), blockPos.getZ());
-                }
-                case ATTACK -> {
-                    LivingEntity livingEntity = RayTrace.rayTraceEntity(player, 16);
-                    if (livingEntity != null) {
-                        cmdData = "ENTITY_%s".formatted(livingEntity.getStringUUID());
-
-                        //CobblemonFightOrFlight.LOGGER.info("ENTITY_%s".formatted(livingEntity.getStringUUID()));
-                    }
-                }
-                default -> cmdData = "";
-            }
-            if (!Objects.equals(getCommandMode(stack), PokeStaffComponent.CMDMODE.NOCMD.name())) {
-                for (PokemonEntity pokemonEntity : player.level().getEntitiesOfClass(PokemonEntity.class, AABB.ofSize(player.position(), 8, 8, 8), (pokemonEntity -> Objects.equals(pokemonEntity.getOwner(), player)))) {
-                    ((PokemonInterface) (Object) pokemonEntity).setCommand(getCommandMode(stack));
-                    ((PokemonInterface) (Object) pokemonEntity).setCommandData(cmdData);
-                    if (player.level().isClientSide) {
-                        player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.recv.command", pokemonEntity.getName().getString(), cmdmode.name()));
-                    }
+            if (player.level().isClientSide) {
+                int slot = CobblemonClient.INSTANCE.getStorage().getSelectedSlot();
+                if (!Objects.equals(getCommandMode(stack), PokeStaffComponent.CMDMODE.NOCMD.name())) {
+                    NetworkManager.sendToServer(new SendCommandPacket(slot, getCommandMode(stack), cmdData, true));
+                } else {
+                    NetworkManager.sendToServer(new SendMoveSlotPacket(slot, getMoveSlot(stack), true));
                 }
             }
-
         }
         return InteractionResultHolder.success(player.getItemInHand(usedHand));
     }
@@ -134,33 +115,6 @@ public class PokeStaff extends Item {
     @Override
     public void inventoryTick(ItemStack stack, Level level, Entity entity, int slotId, boolean isSelected) {
         super.inventoryTick(stack, level, entity, slotId, isSelected);
-    }
-
-    public boolean canSend(ItemStack stack) {
-        return Objects.equals(getMode(stack), PokeStaffComponent.MODE.SEND.name());
-    }
-
-    public void sendMoveSlot(Player player, LivingEntity livingEntity, ItemStack itemStack) {
-        if (!livingEntity.level().isClientSide && livingEntity instanceof PokemonEntity pokemonEntity) {
-            if (pokemonEntity.getOwner() == player) {
-                ItemStack heldItem = pokemonEntity.getPokemon().heldItem();
-                if (heldItem.is(CobblemonItems.CHOICE_SCARF) || heldItem.is(CobblemonItems.CHOICE_BAND) || heldItem.is(CobblemonItems.CHOICE_SPECS)) {
-                    return;
-                }
-                int moveSlot = getMoveSlot(itemStack);
-                String cmdMode = getCommandMode(itemStack);
-                if (moveSlot != -1) {
-                    Move move = pokemonEntity.getPokemon().getMoveSet().get(moveSlot);
-                    if (move == null) {
-                        move = pokemonEntity.getPokemon().getMoveSet().get(0);
-                    }
-                    ((PokemonInterface) pokemonEntity).setCurrentMove(move);
-                    player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.send.result.move").append(move.getDisplayName()));
-                    //CobblemonFightOrFlight.LOGGER.info(moveSlot + pokemonEntity.getPokemon().getMoveSet().get(moveSlot).getName());
-                }
-                ((PokemonInterface) pokemonEntity).setCommand(cmdMode);
-            }
-        }
     }
 
     protected String getMode(ItemStack itemStack) {
@@ -171,7 +125,6 @@ public class PokeStaff extends Item {
             }
         }
         return "";
-
     }
 
     public int getMoveSlot(ItemStack itemStack) {
@@ -199,7 +152,7 @@ public class PokeStaff extends Item {
         return true;
     }
 
-    protected void setMoveSlot(ItemStack stack, int moveSlot) {
+    public void setMoveSlot(ItemStack stack, int moveSlot) {
         if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
             PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
             if (component != null) {
@@ -208,7 +161,7 @@ public class PokeStaff extends Item {
         }
     }
 
-    protected void setCommandMode(ItemStack stack, String mode) {
+    public void setCommandMode(ItemStack stack, String mode) {
         if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
             PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
             if (component != null) {
@@ -217,7 +170,7 @@ public class PokeStaff extends Item {
         }
     }
 
-    protected void setMode(ItemStack stack, String mode) {
+    public void setMode(ItemStack stack, String mode) {
         if (stack.has(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT)) {
             PokeStaffComponent component = stack.get(ItemComponentFOF.POKE_STAFF_COMMAND_MODE_COMPONENT);
             if (component != null) {
@@ -241,7 +194,7 @@ public class PokeStaff extends Item {
         setCommandMode(stack, cmd);
     }
 
-    protected Component getTranslatedCmdModeName(String cmdModeName) {
+    public static Component getTranslatedCmdModeName(String cmdModeName) {
         Component component;
         switch (PokeStaffComponent.CMDMODE.valueOf(cmdModeName)) {
             case MOVE_ATTACK -> component = Component.translatable("item.fightorflight.pokestaff.command.move_attack");

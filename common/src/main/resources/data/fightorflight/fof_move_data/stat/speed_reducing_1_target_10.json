@@ -1,0 +1,14 @@
+{
+  "type": "stat",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "speed",
+  "move_list": [
+    "bubblebeam",
+    "bubble",
+    "constrict"
+  ],
+  "stage": -1
+}

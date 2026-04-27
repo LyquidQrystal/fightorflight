@@ -1,0 +1,15 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.3,
+  "canActivateSheerForce": true,
+  "name": "poison",
+  "move_list": [
+    "poisonsting",
+    "sludge",
+    "sludgebomb",
+    "poisonjab",
+    "gunkshot"
+  ]
+}

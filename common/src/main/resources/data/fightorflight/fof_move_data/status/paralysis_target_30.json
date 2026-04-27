@@ -1,0 +1,19 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.3,
+  "canActivateSheerForce": true,
+  "name": "paralysis",
+  "move_list": [
+    "bodyslam",
+    "thunder",
+    "lick",
+    "spark",
+    "dragonbreath",
+    "bounce",
+    "forcepalm",
+    "discharge",
+    "freezeshock"
+  ]
+}

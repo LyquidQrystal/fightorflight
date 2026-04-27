@@ -1,0 +1,24 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "pattern": [
+    " S ",
+    " W ",
+    " R "
+  ],
+  "key": {
+    "S": {
+      "item": "minecraft:stick"
+    },
+    "W": {
+      "item": "cobblemon:white_apricorn"
+    },
+    "R": {
+      "item": "cobblemon:red_apricorn"
+    }
+  },
+  "result": {
+    "id": "fightorflight:pokestaff",
+    "count": 1
+  }
+}

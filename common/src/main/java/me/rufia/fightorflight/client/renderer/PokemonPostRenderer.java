@@ -16,8 +16,6 @@ import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.phys.Vec3;
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
 
 import java.awt.*;
 
@@ -35,8 +33,8 @@ public class PokemonPostRenderer {
 
     public static void postRender(PokemonEntity entity, float entityYaw, float partialTicks, PoseStack poseStack, MultiBufferSource buffer, int packedLight) {
         LivingEntity livingEntity = entity.getTarget();
-        int attackTime = ((PokemonInterface) (Object) entity).getAttackTime();
-        boolean enabled = ((PokemonInterface) (Object) entity).usingBeam() && !entity.isBattling();
+        int attackTime = ((PokemonInterface) entity).getAttackTime();
+        boolean enabled = ((PokemonInterface) entity).usingBeam() && !entity.isBattling();
         if (livingEntity != null) {
             if (livingEntity.isAlive() && attackTime > 0 && enabled) {
                 Move move = PokemonUtils.getMove(entity);
@@ -44,17 +42,14 @@ public class PokemonPostRenderer {
                     CobblemonFightOrFlight.LOGGER.info("Trying to use a null move");
                     return;
                 }
-                //CobblemonFightOrFlight.LOGGER.info(move.getName());
-                //float f = 0.2F;//entity.getAttackAnimationScale(partialTicks);
                 float g = 40 + partialTicks + attackTime;//entity.getClientSideAttackTime() + partialTicks;
-                Color color = Color.white;
-                color = PokemonAttackEffect.getColorFromType(move.getType().getName());
+                Color color = PokemonAttackEffect.getColorFromType(move.getType().getName());
                 float h = g * 0.5F % 1.0F;
                 float i = entity.getEyeHeight();
                 poseStack.pushPose();
                 poseStack.translate(0.0F, i, 0.0F);
                 Vec3 vec3 = getPosition(livingEntity, (double) livingEntity.getBbHeight() * 0.5, partialTicks);
-                Vec3 vec32 = getPosition(entity, (double) i, partialTicks);
+                Vec3 vec32 = getPosition(entity, i, partialTicks);
                 Vec3 vec33 = vec3.subtract(vec32);
                 float j = (float) (vec33.length() + 1.0);
                 vec33 = vec33.normalize();
@@ -92,23 +87,23 @@ public class PokemonPostRenderer {
                 VertexConsumer vertexConsumer = buffer.getBuffer(BEAM_RENDER_TYPE);
                 PoseStack.Pose pose = poseStack.last();
 
-                vertex(vertexConsumer, pose,  ac, j, ad, p, q, r, 0.4999F, ao);
-                vertex(vertexConsumer, pose,  ac, 0.0F, ad, p, q, r, 0.4999F, an);
-                vertex(vertexConsumer, pose,  ae, 0.0F, af, p, q, r, 0.0F, an);
-                vertex(vertexConsumer, pose,  ae, j, af, p, q, r, 0.0F, ao);
-                vertex(vertexConsumer, pose,  ag, j, ah, p, q, r, 0.4999F, ao);
-                vertex(vertexConsumer, pose,  ag, 0.0F, ah, p, q, r, 0.4999F, an);
-                vertex(vertexConsumer, pose,  ai, 0.0F, aj, p, q, r, 0.0F, an);
-                vertex(vertexConsumer, pose,  ai, j, aj, p, q, r, 0.0F, ao);
+                vertex(vertexConsumer, pose, ac, j, ad, p, q, r, 0.4999F, ao);
+                vertex(vertexConsumer, pose, ac, 0.0F, ad, p, q, r, 0.4999F, an);
+                vertex(vertexConsumer, pose, ae, 0.0F, af, p, q, r, 0.0F, an);
+                vertex(vertexConsumer, pose, ae, j, af, p, q, r, 0.0F, ao);
+                vertex(vertexConsumer, pose, ag, j, ah, p, q, r, 0.4999F, ao);
+                vertex(vertexConsumer, pose, ag, 0.0F, ah, p, q, r, 0.4999F, an);
+                vertex(vertexConsumer, pose, ai, 0.0F, aj, p, q, r, 0.0F, an);
+                vertex(vertexConsumer, pose, ai, j, aj, p, q, r, 0.0F, ao);
                 float ap = 0.0F;
                 if (entity.tickCount % 2 == 0) {
                     ap = 0.5F;
                 }
 
-                vertex(vertexConsumer, pose,  u, j, v, p, q, r, 0.5F, ap + 0.5F);
-                vertex(vertexConsumer, pose,  w, j, x, p, q, r, 1.0F, ap + 0.5F);
-                vertex(vertexConsumer, pose,  aa, j, ab, p, q, r, 1.0F, ap);
-                vertex(vertexConsumer, pose,  y, j, z, p, q, r, 0.5F, ap);
+                vertex(vertexConsumer, pose, u, j, v, p, q, r, 0.5F, ap + 0.5F);
+                vertex(vertexConsumer, pose, w, j, x, p, q, r, 1.0F, ap + 0.5F);
+                vertex(vertexConsumer, pose, aa, j, ab, p, q, r, 1.0F, ap);
+                vertex(vertexConsumer, pose, y, j, z, p, q, r, 0.5F, ap);
                 poseStack.popPose();
             }
         }

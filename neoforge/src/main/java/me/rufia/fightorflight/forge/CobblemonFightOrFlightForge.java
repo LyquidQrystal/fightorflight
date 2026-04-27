@@ -1,69 +1,27 @@
 package me.rufia.fightorflight.forge;
 
 
-import dev.architectury.neoforge.ArchitecturyNeoForge;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.effects.FOFEffects;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
+import me.rufia.fightorflight.platform.neoforge.EffectRegisterImpl;
 import net.neoforged.bus.api.IEventBus;
 import net.neoforged.fml.ModContainer;
-import net.neoforged.fml.common.EventBusSubscriber;
+import net.neoforged.fml.ModList;
 import net.neoforged.fml.common.Mod;
-import net.neoforged.neoforge.common.NeoForge;
 
 
 @Mod(CobblemonFightOrFlight.MODID)
-//@EventBusSubscriber(bus = EventBusSubscriber.Bus.MOD)
 public final class CobblemonFightOrFlightForge {
     public CobblemonFightOrFlightForge(IEventBus modEventBus, ModContainer modContainer) {
-        CobblemonFightOrFlight.LOGGER.info("Hello neoforge");
-        //EventBusesHooks.getModEventBus(CobblemonFightOrFlight.MODID).get().;
-        //EventBuses.registerModEventBus(CobblemonFightOrFlight.MODID, FMLJavaModLoadingContext.get().getModEventBus());
+        CobblemonFightOrFlight.LOGGER.info("Hello neoforge from Fight or Flight");
         EntityFightOrFlight.bootstrap();
         ItemFightOrFlight.bootstrap();
-        CobblemonFightOrFlight.init((pokemonEntity, priority, goal) -> pokemonEntity.goalSelector.addGoal(priority, goal));
-        //NeoForge.EVENT_BUS.register(ForgeBusEvent.class);
-        NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onEntityJoined);
-
+        FOFEffects.bootstrap();
+        EffectRegisterImpl.MOB_EFFECTS.register(modEventBus);
+        CobblemonFightOrFlight.init(s -> ModList.get().isLoaded(s));
+        //NeoForge.EVENT_BUS.addListener(ForgeBusEvent::onEntityJoined);
+        modEventBus.addListener(ForgeBusEvent::onRegister);
     }
-
-    //    @SubscribeEvent
-//    public static void onEntityAttributes(EntityAttributeModificationEvent event){
-//        LOGGER.info("onEntityAttributes");
-//        event.add(CobblemonEntities.POKEMON.get(), Attributes.ATTACK_DAMAGE, 2.0D);
-//        //event.add(CobblemonEntities.POKEMON.get(), Attributes.ATTACK_KNOCKBACK, 2.0D);
-//    }
-
-
-
-//    @SubscribeEvent
-//    public void onUseEntity(PlayerInteractEvent.EntityInteract event) {
-//        LOGGER.info("onUseEntity");
-//        if (event.getTarget() instanceof PokemonEntity) {
-//            Player player = event.getEntity();
-//            ItemStack itemStack = player.getItemInHand(event.getHand());
-//            PokemonEntity pokemonEntity = (PokemonEntity)event.getTarget();
-//
-//            LOGGER.info("instanceOf PokemonEntity");
-//
-//            if (itemStack.is(Items.BUCKET)) {
-//                LOGGER.info("itemStack.is(Items.BUCKET)");
-//                LOGGER.info("pokemon of species: " + pokemonEntity.getPokemon().getSpecies().getName());
-//                if (pokemonEntity.getPokemon().getSpecies().getName().toLowerCase().equals("magmar")) {
-//                    LOGGER.info("pokemon is Magmar");
-//                    player.level.playSound(null, pokemonEntity, SoundEvents.BUCKET_FILL_LAVA, SoundSource.PLAYERS, 1.0f, 1.0f);
-//                    //ItemStack itemstackLava = new ItemStack(Items.LAVA_BUCKET, 1);
-//                    ////ItemStack itemstackLava2 = ItemUtils.createFilledResult(itemStack, player, itemstackLava1);
-//                    ItemUtils.fi.createFilledResult(itemStack, player, itemstackLava);
-//                    //if (!player.level.isClientSide) {
-//                    //    CriteriaTriggers.FILLED_BUCKET.trigger((ServerPlayer)player, itemstackLava);
-//                    //}
-//                    //p_28298_.playSound(SoundEvents.COW_MILK, 1.0F, 1.0F);
-//                    ItemStack itemstackLava = ItemUtils.createFilledResult(itemStack, player, Items.LAVA_BUCKET.getDefaultInstance());
-//                    player.setItemInHand(event.getHand(), itemstackLava);
-//
-//                }
-//            }
-//        }
-//    }
 }

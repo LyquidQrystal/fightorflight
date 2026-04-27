@@ -1,0 +1,12 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_use",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "defense",
+  "move_list": [
+    "cottonguard"
+  ],
+  "stage": 3
+}

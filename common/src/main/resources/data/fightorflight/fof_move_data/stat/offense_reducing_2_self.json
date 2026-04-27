@@ -1,0 +1,16 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "attack",
+  "move_list": [
+    "dracometeor",
+    "psychoboost",
+    "fleurcannon",
+    "overheat",
+    "leafstorm"
+  ],
+  "stage": -2
+}

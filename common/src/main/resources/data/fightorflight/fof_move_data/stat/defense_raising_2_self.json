@@ -1,0 +1,17 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_use",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "defense",
+  "move_list": [
+    "geomancy",
+    "barrier",
+    "irondefense",
+    "shelter",
+    "acidarmor",
+    "amnesia"
+  ],
+  "stage": 2
+}

@@ -1,16 +1,25 @@
 package me.rufia.fightorflight.utils;
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.MoveTemplate;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
+import com.cobblemon.mod.common.api.types.ElementalType;
+import com.cobblemon.mod.common.battles.BattleBuilder;
+import com.cobblemon.mod.common.battles.BattleFormat;
+import com.cobblemon.mod.common.battles.BattleRegistry;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.client.animation.PlayPosableAnimationPacket;
 import com.cobblemon.mod.common.net.messages.client.effect.RunPosableMoLangPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
+import dev.architectury.networking.NetworkManager;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
+import me.rufia.fightorflight.net.packet.FOFStartBattleRequestPacket;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -19,40 +28,27 @@ import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.util.DefaultRandomPos;
+import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.Vec3;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 public class PokemonUtils {
+    private static final Map<String, PokeStaffComponent.CMDMODE> CMDMODE_IDS = Arrays.stream(PokeStaffComponent.CMDMODE.values())
+            .collect(Collectors.toMap($ -> $.name().toLowerCase(), $ -> $));
+
     public static boolean shouldMelee(PokemonEntity pokemonEntity) {
-        Move move = getMeleeMove(pokemonEntity);
-        boolean b1 = pokemonEntity.getPokemon().getAttack() > pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
-        boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
-        boolean b3 = move != null;//The trainer selected a physical move.
-        if (b2) {
-            return b1 || !CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
-        } else {
-            return b3;
-        }
+        return ((PokemonInterface) pokemonEntity).getAttackMode() == 1;
     }
 
     public static boolean shouldShoot(PokemonEntity pokemonEntity) {
-        Move move = getRangeAttackMove(pokemonEntity);
-        boolean b1 = pokemonEntity.getPokemon().getAttack() < pokemonEntity.getPokemon().getSpecialAttack();//The default setting.
-        boolean b2 = pokemonEntity.getOwner() == null;//The pokemon has no trainer.
-        boolean b3 = move != null;//The trainer selected a physical move.
-        if (b2) {
-            return b1 && CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack;//wild pokemon choose the strongest way to attack
-        } else {
-            return b3;
-        }
+        return ((PokemonInterface) pokemonEntity).getAttackMode() == 2;
     }
 
     public static boolean shouldFightTarget(PokemonEntity pokemonEntity) {
@@ -62,42 +58,63 @@ public class PokemonUtils {
 
         LivingEntity owner = pokemonEntity.getOwner();
         if (owner != null) {
-            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || (pokemonEntity.getTarget() == null || pokemonEntity.getTarget() == owner)) {
+            if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || getTarget(pokemonEntity) == null || getTarget(pokemonEntity) == owner || pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
                 return false;
             }
 
-            if (pokemonEntity.getTarget() instanceof PokemonEntity targetPokemon) {
+            if (getTarget(pokemonEntity) instanceof PokemonEntity targetPokemon) {
                 LivingEntity targetOwner = targetPokemon.getOwner();
                 if (targetOwner != null) {
-                    if (targetOwner == owner) {
-                        return false;
-                    }
-                    if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
+                    if (targetOwner == owner || !CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
                         return false;
                     }
                 }
             }
-            if (pokemonEntity.getTarget() instanceof Player) {
-                if (!CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
-                    return false;
-                }
+            if (getTarget(pokemonEntity) instanceof Player && !CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
+                return false;
             }
-
         } else {
-            if (pokemonEntity.getTarget() != null) {
+            LivingEntity targetEntity = getTarget(pokemonEntity);
+            if (targetEntity != null) {
                 if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= 0) {
                     return false;
                 }
 
-                LivingEntity targetEntity = pokemonEntity.getTarget();
-                if (pokemonEntity.distanceToSqr(targetEntity.getX(), targetEntity.getY(), targetEntity.getZ()) > 400) {
+                if (pokemonEntity.distanceToSqr(targetEntity) > 400) {
                     return false;
                 }
             }
         }
-        //if (pokemonEntity.getPokemon().isPlayerOwned()) { return false; }
-
         return !pokemonEntity.isBusy();
+    }
+
+    public static Set<MoveTemplate> getAllLearnableMoveTemplates(Pokemon pokemon) {
+        Set<MoveTemplate> moves = new HashSet<>();
+        for (var move : pokemon.getBenchedMoves()) {
+            moves.add(move.getMoveTemplate());
+        }
+        moves.addAll(pokemon.getForm().getMoves().getLevelUpMovesUpTo(100));
+        moves.addAll(pokemon.getForm().getMoves().getEvolutionMoves());
+        moves.addAll(pokemon.getForm().getMoves().getTmMoves());
+        moves.addAll(pokemon.getForm().getMoves().getTutorMoves());
+        moves.addAll(pokemon.getForm().getMoves().getEggMoves());
+        //Might be a huge load for a big server?
+        return moves;
+    }
+
+    public static boolean hasType(PokemonEntity pokemonEntity, ElementalType type) {
+        return hasType(pokemonEntity.getPokemon(), type);
+    }
+
+    public static boolean hasType(Pokemon pokemon, ElementalType type) {
+        ElementalType type1 = pokemon.getPrimaryType();
+        if (type1 != type) {
+            ElementalType type2 = pokemon.getSecondaryType();
+            if (type2 != null) {
+                return type2 == type;
+            }
+        }
+        return true;
     }
 
     public static Move getMove(PokemonEntity pokemonEntity) {
@@ -105,53 +122,63 @@ public class PokemonUtils {
             CobblemonFightOrFlight.LOGGER.info("PokemonEntity is null");//This will be shown if the projectile hits the target and the pokemon is recalled
             return null;
         }
-        String moveName = !(((PokemonInterface) (Object) pokemonEntity).getCurrentMove() == null) ? (((PokemonInterface) (Object) pokemonEntity).getCurrentMove()) : pokemonEntity.getPokemon().getMoveSet().get(0).getName();
+        Move firstMove = pokemonEntity.getPokemon().getMoveSet().get(0);
+        String moveName = "";
+        if (!((PokemonInterface) pokemonEntity).getCurrentMove().isEmpty()) {
+            moveName = ((PokemonInterface) pokemonEntity).getCurrentMove();
+        } else if (firstMove != null) {
+            moveName = firstMove.getName();
+        }
+
+        Move move = findMove(pokemonEntity, moveName);
+
+        if (move == null) {
+            if (!pokemonEntity.level().isClientSide) {
+                CobblemonFightOrFlight.LOGGER.warn("Can't get the move/Trying to return a null move. Move name:{}", moveName);//Will appear in the log when you send a pokemon out for a short period of time in the client environment, so I remove it from the client environment.
+            }
+        }
+        return move;
+    }
+
+    public static Move findMove(PokemonEntity pokemonEntity, String moveName) {
         Move move = null;
         boolean flag = false;
-        if (moveName == null) {
-            return null;
-        }
-        for (MoveTemplate m : pokemonEntity.getPokemon().getAllAccessibleMoves()) {
-            move = m.create();
-            if (m.getName().equals(moveName)) {
-                flag = true;
-                break;
+        if (!moveName.isEmpty()) {
+            for (MoveTemplate m : getAllLearnableMoveTemplates(pokemonEntity.getPokemon())) {
+                move = m.create();
+                if (m.getName().equals(moveName)) {
+                    flag = true;
+                    break;
+                }
             }
         }
         if (!flag) {
             move = pokemonEntity.getPokemon().getMoveSet().get(0);
         }
-        if (move == null) {
-            CobblemonFightOrFlight.LOGGER.warn("Returning a null move for no reason");
-        }
         return move;
-    }
-
-    @Deprecated
-    public static Move getMove(PokemonEntity pokemonEntity, boolean getSpecial) {
-        Move move = getMove(pokemonEntity);
-        if (move == null) {
-            return null;
-        }
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
-
-        if ((isSpecial && getSpecial) || (isPhysical && !getSpecial)) {
-            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
-            return move;
-        }
-        return null;
     }
 
     public static boolean isMeleeAttackMove(Move move) {
         if (move == null) {
-            return true;
+            return false;
         }
         String moveName = move.getName();
-        boolean isSpecial = move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
-        boolean isPhysical = move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
-        boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName));
+        boolean isSpecial = isSpecialMove(move);
+        boolean isPhysical = isPhysicalMove(move);
+        boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName));
         boolean b2 = isSpecial && (Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
+        return b1 || b2;
+    }
+
+    public static boolean isRangeAttackMove(Move move) {
+        if (move == null) {
+            return false;
+        }
+        String moveName = move.getName();
+        boolean isSpecial = isSpecialMove(move);
+        boolean isPhysical = isPhysicalMove(move);
+        boolean b1 = isPhysical && (Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName));
+        boolean b2 = isSpecial && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
         return b1 || b2;
     }
 
@@ -162,7 +189,6 @@ public class PokemonUtils {
         }
 
         if (isMeleeAttackMove(move)) {
-            ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
@@ -173,19 +199,49 @@ public class PokemonUtils {
         if (move == null) {
             return null;
         }
-        if (!isMeleeAttackMove(move)) {
+        if (isRangeAttackMove(move)) {
+            return move;
+        }
+        return null;
+    }
+
+    public static Move getStatusMove(PokemonEntity pokemonEntity) {
+        Move move = getMove(pokemonEntity);
+        if (move == null) {
+            return null;
+        }
+        boolean b = isStatusMove(move);
+        boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().self_targeting_status_move).toList().contains(move.getName());
+        boolean b2 = MoveData.moveData.containsKey(move.getName());
+        if (b && (b1 || b2)) {
             ((PokemonInterface) pokemonEntity).setCurrentMove(move);
             return move;
         }
         return null;
     }
 
+    public static boolean findMoveEffectData(String effect) {
+        var l = MoveData.moveData.get(effect);
+        if (l != null) {
+            for (MoveData data : l) {
+                if (Objects.equals(data.getName(), effect)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
     public static boolean isSpecialMove(Move move) {
-        return move.getDamageCategory() == DamageCategories.INSTANCE.getSPECIAL();
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getSPECIAL());
     }
 
     public static boolean isPhysicalMove(Move move) {
-        return move.getDamageCategory() == DamageCategories.INSTANCE.getPHYSICAL();
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getPHYSICAL());
+    }
+
+    public static boolean isStatusMove(Move move) {
+        return Objects.equals(move.getDamageCategory(), DamageCategories.INSTANCE.getSTATUS());
     }
 
     public static void makeParticle(int particleAmount, Entity entity, SimpleParticleType particleType) {
@@ -209,7 +265,6 @@ public class PokemonUtils {
         if (owner instanceof Player player) {
             if (target instanceof LivingEntity livingEntity) {
                 livingEntity.setLastHurtByPlayer(player);
-                //CobblemonFightOrFlight.LOGGER.info("Hurt by player's cobblemon");
             }
         }
     }
@@ -250,16 +305,15 @@ public class PokemonUtils {
         }
     }
 
-
     public static void sendAnimationPacket(PokemonEntity pokemonEntity, String mode) {
-        if (!((LivingEntity) pokemonEntity).level().isClientSide) {
+        if (!pokemonEntity.level().isClientSide) {
             var pkt = new PlayPosableAnimationPacket(pokemonEntity.getId(), Set.of(mode), List.of());
             pokemonEntity.level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(pokemonEntity.position(), 64.0, 64.0, 64.0), (livingEntity) -> true).forEach((pkt::sendToPlayer));
         }
     }
 
     public static void updateMoveEvolutionProgress(Pokemon pokemon, MoveTemplate move) {
-        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move) && CobblemonFightOrFlight.commonConfig().can_progress_use_move_evoluiton) {
+        if (UseMoveEvolutionProgress.Companion.supports(pokemon, move) && CobblemonFightOrFlight.commonConfig().can_progress_use_move_evolution) {
             UseMoveEvolutionProgress progress = pokemon.getEvolutionProxy().current().progressFirstOrCreate(evolutionProgress -> {
                         if (evolutionProgress instanceof UseMoveEvolutionProgress umep) {
                             return umep.currentProgress().getMove().equals(move);
@@ -272,8 +326,8 @@ public class PokemonUtils {
     }
 
     public static boolean shouldRetreat(PokemonEntity pokemonEntity) {
-        ItemStack i = pokemonEntity.getPokemon().heldItem();
-        return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
+        //TODO Eject Button
+        return pokemonEntity.getOwner() != null && pokemonEntity.getHealth() < pokemonEntity.getMaxHealth() * 0.5 && Arrays.stream(CobblemonFightOrFlight.moveConfig().emergency_exit_like_abilities).toList().contains(pokemonEntity.getPokemon().getAbility().getName());
     }
 
     public static void makeCobblemonParticle(Entity entity, String particleName) {
@@ -298,8 +352,20 @@ public class PokemonUtils {
         return pokemon.heldItem();
     }
 
+    public static boolean tryToAvoidWildShiny(PokemonEntity pokemonEntity){
+        return pokemonEntity.getPokemon().getShiny() && !pokemonEntity.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny;
+    }
+
     public static boolean isUsingNewHealthMechanic() {
-        return CobblemonFightOrFlight.commonConfig().shouldOverrideUpdateMaxHealth;
+        return CobblemonFightOrFlight.commonConfig().shouldOverrideHealthMechanic;
+    }
+
+    public static String getNatureName(PokemonEntity pokemonEntity) {
+        return getNatureName(pokemonEntity.getPokemon());
+    }
+
+    public static String getNatureName(Pokemon pokemon) {
+        return pokemon.getNature().getDisplayName().toLowerCase().replace("cobblemon.nature.", "");
     }
 
     public static int getMaxHealth(PokemonEntity pokemonEntity) {
@@ -319,58 +385,89 @@ public class PokemonUtils {
         int minHealth = CobblemonFightOrFlight.commonConfig().min_HP;
         int midHealth = CobblemonFightOrFlight.commonConfig().mid_HP;
         int maxHealth = CobblemonFightOrFlight.commonConfig().max_HP;
-        int health = minHealth;
-        health = Math.round(
+        return Math.round(
                 stat < midStat ?
                         Mth.lerp((float) (stat - minStat) / (midStat - minStat), minHealth, midHealth) :
-                        Mth.lerp((float) (stat - midStat) / (maxStat - midStat), midHealth, maxHealth));
-        return health;//The return value is a mathematical integer,but some calculation needs a float.
+                        Mth.lerp((float) (stat - midStat) / (maxStat - midStat), midHealth, maxHealth));//The return value is a mathematical integer,but some calculation needs a float.
     }
 
     public static void entityHpToPokemonHp(PokemonEntity pokemonEntity, float amount, boolean isHealing) {
         Pokemon pokemon = pokemonEntity.getPokemon();
-        if (pokemon.getCurrentHealth() == 0) {
+        if (pokemon.getCurrentHealth() == 0 || pokemonEntity.isBattling() || pokemonEntity.getOwner() == null && !CobblemonFightOrFlight.commonConfig().enable_health_sync_for_wild_pokemon) {
             return;
         }
-        float ratio = amount / getMaxHealth(pokemonEntity);
+        //float ratio = amount / getMaxHealth(pokemonEntity);
+        float ratio = amount / pokemonEntity.getMaxHealth();
         int val = pokemon.getCurrentHealth() + (int) Math.floor(ratio * getHPStat(pokemon)) * (isHealing ? 1 : -1);
         pokemon.setCurrentHealth(val);
     }
 
-    public static boolean isSheerForce(PokemonEntity pokemonEntity) {
-        return pokemonEntity.getPokemon().getAbility().getName().equals("sheerforce");
-    }
-
-    public static PokeStaffComponent.CMDMODE getCommandMode(PokemonEntity pokemon) {
-        try {
-            return PokeStaffComponent.CMDMODE.valueOf(((PokemonInterface) (Object) pokemon).getCommand());
-        } catch (IllegalArgumentException e) {
-            return PokeStaffComponent.CMDMODE.NOCMD;
+    public static void taunt(PokemonEntity pokemonEntity) {
+        if (pokemonEntity.getOwner() instanceof Player player) {
+            var entities = pokemonEntity.level().getEntitiesOfClass(Mob.class, pokemonEntity.getBoundingBox().inflate(10, 2, 10), (mob -> mob.getTarget() == player));
+            for (Mob mob : entities) {
+                mob.setTarget(pokemonEntity);
+            }
         }
     }
 
-    public static String getCommandData(PokemonEntity pokemonEntity) {
-        return ((PokemonInterface) (Object) pokemonEntity).getCommandData();
+    public static boolean isSheerForce(PokemonEntity pokemonEntity) {
+        return abilityIs(pokemonEntity, "sheerforce");
     }
 
+    public static boolean abilityIs(PokemonEntity pokemonEntity, String abilityName) {
+        return pokemonEntity.getPokemon().getAbility().getName().equals(abilityName);
+    }
+
+    public static boolean canActivateSheerForce(PokemonEntity pokemonEntity) {
+        if (pokemonEntity != null && isSheerForce(pokemonEntity)) {
+            Move move = getMove(pokemonEntity);
+            if (move != null && MoveData.moveData.containsKey(move.getName())) {
+                for (MoveData data : MoveData.moveData.get(move.getName())) {
+                    if (data.canActivateSheerForce()) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    public static PokeStaffComponent.CMDMODE getCommandMode(PokemonEntity pokemon) {
+        if (!CobblemonFightOrFlight.commonConfig().can_use_poke_staff) {
+            return PokeStaffComponent.CMDMODE.NOCMD;
+        }
+        return CMDMODE_IDS.getOrDefault(((PokemonInterface) pokemon).getCommand().toLowerCase(), PokeStaffComponent.CMDMODE.NOCMD);
+    }
+
+    public static boolean WildPokemonCanPerformUnprovokedAttack(PokemonEntity pokemonEntity) {//It doesn't include the aggro check.
+        return pokemonEntity != null && CobblemonFightOrFlight.commonConfig().do_pokemon_attack_unprovoked && !pokemonEntity.getPokemon().isPlayerOwned() && pokemonEntity.getPokemon().getLevel() >= CobblemonFightOrFlight.commonConfig().minimum_attack_unprovoked_level;
+    }
+
+    public static String getCommandData(PokemonEntity pokemonEntity) {
+        return ((PokemonInterface) pokemonEntity).getCommandData();
+    }
 
     public static boolean moveCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.MOVE == getCommandMode(pokemonEntity);
+        return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.MOVE == getCommandMode(pokemonEntity);
     }
 
     public static boolean moveAttackCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.MOVE_ATTACK == getCommandMode(pokemonEntity);
+        return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.MOVE_ATTACK == getCommandMode(pokemonEntity);
     }
 
     public static boolean stayCommandAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.STAY == getCommandMode(pokemonEntity);
+        return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.STAY == getCommandMode(pokemonEntity);
     }
 
     public static boolean attackPositionAvailable(PokemonEntity pokemonEntity) {
-        return PokeStaffComponent.CMDMODE.STAY == getCommandMode(pokemonEntity);
+        return pokemonEntity.getOwner() != null && PokeStaffComponent.CMDMODE.ATTACK_POSITION == getCommandMode(pokemonEntity);
     }
 
     public static boolean shouldDisableFollowOwner(PokemonEntity pokemon) {
+        if (pokemon.getOwner() == null) {
+            return false;
+        }
         PokeStaffComponent.CMDMODE cmd = getCommandMode(pokemon);
         switch (cmd) {
             case ATTACK, ATTACK_POSITION, MOVE_ATTACK, STAY, MOVE -> {
@@ -383,46 +480,154 @@ public class PokemonUtils {
     }
 
     public static void clearCommand(PokemonEntity pokemonEntity) {
-        ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
-        ((PokemonInterface) (Object) pokemonEntity).setCommandData("");
+        ((PokemonInterface) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.NOCMD.name());
+        ((PokemonInterface) pokemonEntity).setCommandData("");
     }
 
     public static void finishMoving(PokemonEntity pokemonEntity) {
         if (CobblemonFightOrFlight.commonConfig().stay_after_move_command) {
-            ((PokemonInterface) (Object) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.STAY.name());
+            if (moveCommandAvailable(pokemonEntity)) {
+                ((PokemonInterface) pokemonEntity).setCommand(PokeStaffComponent.CMDMODE.STAY.name());
+            }
         } else {
             clearCommand(pokemonEntity);
         }
     }
 
     public static void pokemonEntityApproachPos(PokemonEntity pokemonEntity, BlockPos pos, double speedModifier) {
-        if (pos != BlockPos.ZERO) {
-            //CobblemonFightOrFlight.LOGGER.info("Pathfinding");
-            if (pokemonEntity.getNavigation().isDone()) {
-                Vec3 vec3 = Vec3.atBottomCenterOf(pos);
-                Vec3 vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 8, 3, vec3, 0.3141592741012573);
-                if (vec32 == null) {
-                    vec32 = DefaultRandomPos.getPosTowards(pokemonEntity, 4, 7, vec3, 1.5707963705062866);
-                }
-
-                if (vec32 != null) {
-                    int i = Mth.floor(vec32.x);
-                    int j = Mth.floor(vec32.z);
-                    if (!((LivingEntity) pokemonEntity).level().hasChunksAt(i - 34, j - 34, i + 34, j + 34)) {
-                        vec32 = null;
-                    }
-                }
-
-                if (vec32 == null) {
-                    return;
-                }
-
-                pokemonEntity.getNavigation().moveTo(vec32.x, vec32.y, vec32.z, speedModifier);
-            }
+        if (pos != BlockPos.ZERO && pokemonEntity.getNavigation().isDone()) {
+            pokemonEntity.getNavigation().moveTo(pos.getX(), pos.getY(), pos.getZ(), speedModifier);
         }
     }
 
     public static float getAttackRadius() {
         return 16.0f;
+    }
+
+    public static boolean shouldStopRunningAfterHurt(PokemonEntity pokemonEntity) {
+        if (CobblemonFightOrFlight.commonConfig().stop_running_after_hurt) {
+            return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth();
+        }
+        return false;
+    }
+
+    public static boolean pokemonTryForceEncounter(PokemonEntity attackingPokemon, Entity hurtTarget) {
+        if (attackingPokemon == null || hurtTarget == null) {
+            return false;
+        }
+        if (hurtTarget instanceof PokemonEntity defendingPokemon) {
+            if (attackingPokemon.getPokemon().isPlayerOwned()) {
+                if (defendingPokemon.getPokemon().isPlayerOwned()) {
+                    if (CobblemonFightOrFlight.commonConfig().force_player_battle_on_pokemon_hurt && !(CobblemonFightOrFlight.commonConfig().force_player_battle_check_team && FOFUtils.teamCheck(attackingPokemon, defendingPokemon))) {
+                        return pokemonForceEncounterPvP(attackingPokemon, defendingPokemon);
+                    }
+                } else {
+                    if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt) {
+                        return pokemonForceEncounterPvE(attackingPokemon, defendingPokemon);
+                    }
+                }
+            } else if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_pokemon_hurt && defendingPokemon.getPokemon().isPlayerOwned()) {
+                return pokemonForceEncounterPvE(defendingPokemon, attackingPokemon);
+            }
+        } else if (hurtTarget instanceof ServerPlayer player) {
+            if (attackingPokemon.getPokemon().isPlayerOwned()) {
+                if (CobblemonFightOrFlight.commonConfig().force_player_battle_on_player_hurt) {
+                    return pokemonForceEncounterPvP(player, attackingPokemon);
+                }
+            } else {
+                if (CobblemonFightOrFlight.commonConfig().force_wild_battle_on_player_hurt) {
+                    return pokemonForceEncounterPvE(player, attackingPokemon);
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean pokemonForceEncounterPvP(PokemonEntity playerPokemon, PokemonEntity opponentPokemon) {
+        if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer) {
+            return pokemonForceEncounterPvP(serverPlayer, opponentPokemon);
+        }
+        return false;
+    }
+
+    public static boolean pokemonForceEncounterPvP(ServerPlayer serverPlayer, PokemonEntity opponentPokemon) {
+        if (serverPlayer != null && opponentPokemon.getOwner() instanceof ServerPlayer serverOpponent) {
+            if (serverPlayer == serverOpponent // I don't see why this should ever happen, but probably best to account for it
+                    || !canBattlePlayer(serverPlayer)
+                    || !canBattlePlayer(serverOpponent)) {
+                return false;
+            }
+
+            BattleBuilder.INSTANCE.pvp1v1(serverPlayer,
+                    serverOpponent,
+                    null,
+                    null,
+                    BattleFormat.Companion.getGEN_9_SINGLES()
+            );
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean pokemonForceEncounterPvE(ServerPlayer serverPlayer, PokemonEntity wildPokemon) {
+        if (serverPlayer != null) {
+            if (!canBattlePlayer(serverPlayer)) {
+                return false;
+            }
+
+            FOFStartBattleRequestPacket packet = new FOFStartBattleRequestPacket(wildPokemon.getId());
+            NetworkManager.sendToPlayer(serverPlayer, packet);
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean pokemonForceEncounterPvE(PokemonEntity playerPokemon, PokemonEntity wildPokemon) {
+        if (playerPokemon.getOwner() instanceof ServerPlayer serverPlayer) {
+            if (!canBattlePlayer(serverPlayer)) {
+                return false;
+            }
+
+            BattleBuilder.INSTANCE.pve(serverPlayer,
+                    wildPokemon,
+                    playerPokemon.getPokemon().getUuid(),
+                    BattleFormat.Companion.getGEN_9_SINGLES());
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean canBattlePlayer(ServerPlayer serverPlayer) {
+        boolean playerHasAlivePokemon = false;
+        for (Pokemon pokemon : Cobblemon.INSTANCE.getStorage().getParty(serverPlayer)) {
+            if (!pokemon.isFainted()) {
+                playerHasAlivePokemon = true;
+                break;
+            }
+        }
+
+        return BattleRegistry.getBattleByParticipatingPlayer(serverPlayer) == null
+                && playerHasAlivePokemon
+                && serverPlayer.isAlive();
+    }
+
+    public static boolean shouldCheckPokeStaff() {
+        return CobblemonFightOrFlight.commonConfig().should_check_poke_staff;
+    }
+
+    public static LivingEntity getTarget(PokemonEntity pokemonEntity) {
+        var targetOpt = pokemonEntity.getBrain().getMemory(MemoryModuleType.ATTACK_TARGET);
+        return targetOpt.orElse(null);
+    }
+
+    public static float calculateExtraSpeed(PokemonEntity pokemonEntity) {
+        if (pokemonEntity == null) {
+            return 1f;
+        }
+        float minimum_movement_speed = CobblemonFightOrFlight.commonConfig().minimum_movement_speed;
+        float maximum_movement_speed = CobblemonFightOrFlight.commonConfig().maximum_movement_speed;
+        float speed_limit = CobblemonFightOrFlight.commonConfig().speed_stat_limit;
+        float speed = pokemonEntity.getPokemon().getSpeed();
+        return Mth.lerp(speed / speed_limit, minimum_movement_speed, maximum_movement_speed);
     }
 }

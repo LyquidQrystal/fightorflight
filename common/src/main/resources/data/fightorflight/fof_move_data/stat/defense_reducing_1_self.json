@@ -1,0 +1,22 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "defense",
+  "move_list": [
+    "hyperspacefury",
+    "dragonascent",
+    "headlongrush",
+    "superpower",
+    "closecombat",
+    "armorcannon",
+    "clangingscales",
+    "scaleshot",
+    "vcreate",
+
+    "shellsmash"
+  ],
+  "stage": -1
+}

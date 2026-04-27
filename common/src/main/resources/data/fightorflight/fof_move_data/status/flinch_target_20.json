@@ -1,0 +1,16 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.2,
+  "canActivateSheerForce": true,
+  "name": "flinch",
+  "move_list": [
+    "darkpulse",
+    "zenheadbutt",
+    "waterfall",
+    "twister",
+    "dragonrush",
+    "fierywrath"
+  ]
+}

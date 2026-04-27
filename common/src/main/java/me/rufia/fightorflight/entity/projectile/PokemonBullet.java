@@ -1,20 +1,13 @@
 package me.rufia.fightorflight.entity.projectile;
 
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.EntityFightOrFlight;
 import me.rufia.fightorflight.entity.projectile.AbstractPokemonProjectile;
-import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
-import net.minecraft.world.damagesource.DamageSource;
-import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
@@ -26,14 +19,9 @@ public class PokemonBullet extends ExplosivePokemonProjectile{
         this.noPhysics = true;
     }
 
-    public PokemonBullet(Level level, LivingEntity shooter, Entity finalTarget) {
+    public PokemonBullet(Level level, LivingEntity shooter) {
         super(EntityFightOrFlight.BULLET.get(), level);
         initPosition(shooter);
-    }
-
-    public void lerpTo(double x, double y, double z, float yRot, float xRot, int lerpSteps, boolean teleport) {
-        this.setPos(x, y, z);
-        this.setRot(yRot, xRot);
     }
 
     public void tick() {
@@ -72,10 +60,6 @@ public class PokemonBullet extends ExplosivePokemonProjectile{
             }
         }
 
-        if (!this.isNoGravity() && !this.noPhysics) {
-            Vec3 vec34 = this.getDeltaMovement();
-            this.setDeltaMovement(vec34.x, vec34.y - 0.05, vec34.z);
-        }
         HitResult hitResult = ProjectileUtil.getHitResultOnMoveVector(this, this::canHitEntity);
         if (hitResult.getType() != HitResult.Type.MISS) {
             this.onHit(hitResult);

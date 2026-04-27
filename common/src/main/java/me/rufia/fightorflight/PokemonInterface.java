@@ -1,9 +1,9 @@
 package me.rufia.fightorflight;
 
 import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import net.minecraft.core.BlockPos;
-import org.spongepowered.asm.mixin.Mixin;
+import net.minecraft.world.entity.LivingEntity;
+import org.jetbrains.annotations.Nullable;
 
 
 public interface PokemonInterface {
@@ -11,18 +11,22 @@ public interface PokemonInterface {
         return 0;
     }
 
-    ;
 
     default void setAttackTime(int val) {
     }
 
-    ;
+    default int getMaxAttackTime() {
+        return 0;
+    }
+
+
+    default void setMaxAttackTime(int val) {
+    }
 
     default boolean usingBeam() {
         return false;
     }
 
-    ;
 
     default boolean usingSound() {
         return false;
@@ -35,13 +39,11 @@ public interface PokemonInterface {
     default void setCurrentMove(Move move) {
     }
 
-    ;
 
     default String getCurrentMove() {
         return null;
     }
 
-    ;
 
     default int getNextCryTime() {
         return 0;
@@ -69,5 +71,47 @@ public interface PokemonInterface {
     }
 
     default void setTargetBlockPos(BlockPos blockPos) {
+    }
+
+    default int getCapturedBy() {
+        return 0;
+    }
+
+    default void setCapturedBy(int id) {
+
+    }
+
+    default void refreshMovesList() {
+    }
+
+    default void switchMove(Move move) {
+    }
+
+    default void tryUsingStatusMoves() {
+    }
+
+    default int getAttackMode() {
+        return 0;
+    }
+
+    default void setAttackMode(int attackMode) {
+    }
+
+    default int getMoveDuration() {
+        return -1;
+    }
+
+    default void setMoveDuration(int duration) {
+    }
+
+    default LivingEntity getOwnerLastHurt() {
+        return null;
+    }
+
+    default void setOwnerLastHurt(@Nullable LivingEntity livingEntity) {
+    }
+
+    default int getOwnerLastHurtTick() {
+        return -1;
     }
 }

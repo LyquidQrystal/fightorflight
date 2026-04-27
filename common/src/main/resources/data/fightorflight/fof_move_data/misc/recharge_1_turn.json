@@ -1,0 +1,19 @@
+{
+  "type": "misc",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "recharge_1_turn",
+  "move_list": [
+    "hyperbeam",
+    "blastburn",
+    "frenzyplant",
+    "gigaimpact",
+    "hydrocannon",
+    "meteorassault",
+    "prismaticlaser",
+    "roaroftime",
+    "rockwrecker"
+  ]
+}

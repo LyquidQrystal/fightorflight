@@ -1,10 +1,8 @@
 package me.rufia.fightorflight.entity.projectile;
 
 import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.pokemon.Pokemon;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.entity.IPokemonAttack;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.core.BlockPos;
@@ -12,22 +10,19 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
 import net.minecraft.network.syncher.SynchedEntityData;
-import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.projectile.ThrowableProjectile;
 import net.minecraft.world.level.Level;
-import net.minecraft.world.level.gameevent.GameEvent;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.EntityHitResult;
 
-import java.util.Iterator;
-import java.util.List;
 import java.util.Objects;
 
-public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
-
+public abstract class AbstractPokemonProjectile extends ThrowableProjectile implements IPokemonAttack {
+    private static final EntityDataAccessor<String> type = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.STRING);
+    private static final EntityDataAccessor<Float> damage = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.FLOAT);
 
     public AbstractPokemonProjectile(EntityType<? extends AbstractPokemonProjectile> entityType, Level level) {
         super(entityType, level);
@@ -45,22 +40,25 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         this.moveTo(d, e, f, this.getYRot(), this.getXRot());
     }
 
+    public void tick() {
+        super.tick();
+        if (shoudlCreateParticle()) {
+            makeParticle(2);
+        }
+    }
 
-    private static final EntityDataAccessor<String> type = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.STRING);
-    private static final EntityDataAccessor<Float> damage = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.FLOAT);
-    //private static final EntityDataAccessor<Integer> category = SynchedEntityData.defineId(AbstractPokemonProjectile.class, EntityDataSerializers.INT);
+    protected boolean shoudlCreateParticle() {
+        return true;
+    }
 
+    @Override
     protected void addAdditionalSaveData(CompoundTag compound) {
         super.addAdditionalSaveData(compound);
         compound.putString("Type", this.entityData.get(type));
         compound.putFloat("Damage", this.entityData.get(damage));
     }
 
-    public void tick() {
-        super.tick();
-        makeParticle(4);
-    }
-
+    @Override
     protected void readAdditionalSaveData(CompoundTag compound) {
         super.readAdditionalSaveData(compound);
         this.entityData.set(type, compound.getString("Type"));
@@ -82,10 +80,12 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         this.entityData.set(damage, Damage);
     }
 
+    @Override
     public String getElementalType() {
         return this.entityData.get(type);
     }
 
+    @Override
     public void setElementalType(String Type) {
         this.entityData.set(type, Type);
     }
@@ -108,9 +108,11 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         super.onHitEntity(result);
         Entity owner = getOwner();
         Entity target = result.getEntity();
-        if (owner instanceof PokemonEntity pokemonEntity) {
+        if (owner instanceof PokemonEntity pokemonEntity && target instanceof LivingEntity) {
+            Move move = PokemonUtils.getMove(pokemonEntity);
             PokemonUtils.setHurtByPlayer(pokemonEntity, target);
-            PokemonAttackEffect.applyOnHitEffect(pokemonEntity, target, PokemonUtils.getMove(pokemonEntity));
+            PokemonAttackEffect.applyOnHitVisualEffect(pokemonEntity, target, move);
+            PokemonAttackEffect.applySFX(pokemonEntity.level(),move,pokemonEntity.blockPosition());
         }
     }
 
@@ -127,9 +129,10 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile {
         double horizontalDistance = Math.sqrt(x * x + z * z);
         float g = (float) getGravity();
         double v2 = velocity * velocity;
-        double delta = Math.sqrt(2 * v2 * g * y + v2 * v2 - g * g * horizontalDistance * horizontalDistance);
-        double t = Math.sqrt(2 * (g * y + v2 - delta)) / g;
-        double result = y + 0.5 * g * t * t;
-        this.shoot(x, result, z, velocity, inaccuracy);
+        double sqrtDelta = Math.sqrt(v2 * v2 - 2 * v2 * g * y - g * g * horizontalDistance * horizontalDistance);
+        double t = Math.sqrt(2 * (v2 - g * y - sqrtDelta)) / g;
+        double vy = 0.5 * g * t + y;
+        //CobblemonFightOrFlight.LOGGER.info("{},{},{},{}", x, vy, z, t);
+        this.shoot(x, y, z, velocity, inaccuracy);
     }
 }

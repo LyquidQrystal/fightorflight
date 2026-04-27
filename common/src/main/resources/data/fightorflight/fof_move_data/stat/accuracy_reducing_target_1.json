@@ -1,0 +1,13 @@
+{
+  "type": "stat",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "accuracy",
+  "move_list": [
+    "mudslap"
+
+  ],
+  "stage": -1
+}

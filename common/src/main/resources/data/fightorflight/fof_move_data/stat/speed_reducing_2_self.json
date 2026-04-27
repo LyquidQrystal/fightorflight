@@ -1,0 +1,12 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "speed",
+  "move_list": [
+    "spinout"
+  ],
+  "stage": -2
+}

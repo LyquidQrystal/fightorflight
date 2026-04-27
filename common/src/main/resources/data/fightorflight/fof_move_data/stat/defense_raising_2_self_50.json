@@ -1,0 +1,12 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 0.5,
+  "canActivateSheerForce": true,
+  "name": "defense",
+  "move_list": [
+    "diamondstorm"
+  ],
+  "stage": 2
+}

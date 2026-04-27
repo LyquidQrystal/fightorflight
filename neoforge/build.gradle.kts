@@ -18,7 +18,7 @@ configurations {
 }
 
 loom {
-    neoForge{
+    neoForge {
 
     }
     enableTransitiveAccessWideners.set(true)
@@ -35,7 +35,7 @@ repositories {
     maven("https://maven.impactdev.net/repository/development/")
     maven("https://hub.spigotmc.org/nexus/content/groups/public/")
     maven("https://thedarkcolour.github.io/KotlinForForge/")
-    maven("https://maven.neoforged.net/releases/")
+    maven("https://neoforged.forgecdn.net/releases")
 }
 
 dependencies {
@@ -49,6 +49,7 @@ dependencies {
 
     include(modApi("me.shedaniel.cloth:cloth-config-neoforge:${project.properties["cloth_config_version"]}")!!)
     modImplementation("com.cobblemon:neoforge:${project.properties["cobblemon_version"]}")
+    modImplementation("maven.modrinth:cobblemon-size-variations:${project.properties["cobblemon_size_variations_version"]}-neoforge")
 }
 
 tasks {
@@ -80,7 +81,7 @@ tasks {
 
     sourcesJar {
         val commonSources = project(":common").tasks.sourcesJar
-        duplicatesStrategy=DuplicatesStrategy.EXCLUDE
+        duplicatesStrategy = DuplicatesStrategy.EXCLUDE
         dependsOn(commonSources)
         from(commonSources.get().archiveFile.map { zipTree(it) })
     }

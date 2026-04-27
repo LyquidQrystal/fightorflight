@@ -1,0 +1,15 @@
+{
+  "type": "stat",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.3,
+  "canActivateSheerForce": true,
+  "name": "accuracy",
+  "move_list": [
+    "muddywater",
+    "mudbomb",
+    "mirrorshot"
+
+  ],
+  "stage": -1
+}

@@ -1,0 +1,16 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "freeze",
+  "move_list": [
+    "icepunch",
+    "icebeam",
+    "blizzard",
+    "powdersnow",
+    "freeze-dry",
+    "freezing-glare"
+  ]
+}

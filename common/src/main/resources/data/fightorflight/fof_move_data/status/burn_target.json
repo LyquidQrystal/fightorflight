@@ -1,0 +1,11 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "burn",
+  "move_list": [
+    "inferno"
+  ]
+}

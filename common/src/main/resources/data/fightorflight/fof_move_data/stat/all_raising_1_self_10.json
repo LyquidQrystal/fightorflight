@@ -1,0 +1,14 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "all",
+  "move_list": [
+    "ancienpower",
+    "ominouswind",
+    "sliverwind"
+  ],
+  "stage": 1
+}

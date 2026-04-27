@@ -1,0 +1,28 @@
+{
+  "type": "misc",
+  "target": "self",
+  "triggerEvent": "on_use",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "charge_1_turn",
+  "move_list": [
+    "bounce",
+    "dig",
+    "dive",
+    "electroshot",
+    "fly",
+    "freezeshock",
+    "geomancy",
+    "iceburn",
+    "meteorbeam",
+    "phantomforce",
+    "razorwind",
+    "shadowforce",
+    "skullbash",
+    "skyattack",
+    "skydrop",
+    "solarbeam",
+    "solarblade"
+
+  ]
+}

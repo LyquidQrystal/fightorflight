@@ -28,12 +28,12 @@ public class PokemonGoToPosGoal extends Goal {
 
     @Override
     public boolean canUse() {
-        return moveCommand() && !isCloseEnough() || stayCommand();
+        return (moveCommand() && !isCloseEnough()) || stayCommand();
     }
 
     @Override
     public boolean canContinueToUse() {
-        return moveCommand() && !isCloseEnough() || stayCommand();
+        return canUse();
     }
 
     public void start() {
@@ -59,10 +59,10 @@ public class PokemonGoToPosGoal extends Goal {
     }
 
     protected BlockPos getBlockPos() {
-        return ((PokemonInterface) (Object) pokemonEntity).getTargetBlockPos();
+        return ((PokemonInterface) pokemonEntity).getTargetBlockPos();
     }
 
     protected boolean isCloseEnough() {
-        return getBlockPos().closerToCenterThan(pokemonEntity.position(), 4);
+        return getBlockPos().closerToCenterThan(pokemonEntity.position(), 2);
     }
 }

@@ -1,0 +1,14 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "speed",
+  "move_list": [
+    "icehammer",
+    "hammerarm",
+    "vcreate"
+  ],
+  "stage": -1
+}

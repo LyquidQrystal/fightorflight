@@ -1,0 +1,13 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.2,
+  "canActivateSheerForce": true,
+  "name": "burn",
+  "move_list": [
+    "blueflare",
+    "sandsearstorm",
+    "matchagotcha"
+  ]
+}

@@ -1,0 +1,15 @@
+{
+  "name": "fightorflight.behaviour.fights_range.name",
+  "description": "fightorflight.behaviour.fights_range.desc",
+  "configurations": [
+    {
+      "type": "add_tasks_to_activity",
+      "activity": "fight",
+      "tasksByPriority": {
+        "1": [
+          "range_attack"
+        ]
+      }
+    }
+  ]
+}

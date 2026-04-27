@@ -2,8 +2,8 @@ import net.fabricmc.loom.api.LoomGradleExtensionAPI
 
 plugins {
     id("architectury-plugin") version "3.4-SNAPSHOT"
-    kotlin("jvm") version ("1.9.24")
-    id("dev.architectury.loom") version "1.7-SNAPSHOT" apply false
+    kotlin("jvm") version ("2.2.21")
+    id("dev.architectury.loom") version "1.11-SNAPSHOT" apply false
     idea
     java
 }
@@ -21,10 +21,11 @@ subprojects {
         "minecraft"("com.mojang:minecraft:$minecraftVersion")
         "mappings"(loom.layered{
             officialMojangMappings()
-            parchment("org.parchmentmc.data:parchment-${project.properties["minecraft_version_major"]}:${project.properties["parchment"]}@zip")
+            parchment("org.parchmentmc.data:parchment-${project.properties["minecraft_version"]}:${project.properties["parchment"]}@zip")
         })
 
         compileOnly("org.jetbrains:annotations:24.0.1")
+        implementation("com.bedrockk:molang:1.1.20")
     }
     //loom.silentMojangMappingsLicense()
 }
@@ -46,6 +47,7 @@ allprojects {
         maven("https://jitpack.io")
         maven("https://maven.impactdev.net/repository/development/")
         maven("https://maven.parchmentmc.org")
+        //maven("https://maven.pkg.github.com/bedrockk/MoLang")
         exclusiveContent {
             forRepository {
                 maven("https://api.modrinth.com/maven")

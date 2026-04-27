@@ -4,11 +4,13 @@ import dev.architectury.registry.level.entity.EntityAttributeRegistry;
 import dev.architectury.registry.registries.DeferredRegister;
 import dev.architectury.registry.registries.RegistrySupplier;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
-import me.rufia.fightorflight.entity.projectile.PokemonArrow;
-import me.rufia.fightorflight.entity.projectile.PokemonBullet;
-import me.rufia.fightorflight.entity.projectile.PokemonTracingBullet;
+import me.rufia.fightorflight.entity.areaeffect.PokemonAreaEffectMagic;
+import me.rufia.fightorflight.entity.areaeffect.PokemonTornado;
+import me.rufia.fightorflight.entity.areaeffect.PokemonWhirlPool;
+import me.rufia.fightorflight.entity.projectile.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MobCategory;
@@ -25,8 +27,21 @@ public interface EntityFightOrFlight {
     RegistrySupplier<EntityType<PokemonArrow>> ARROW_PROJECTILE = registerProjectile("arrow_projectile",
             EntityType.Builder.<PokemonArrow>of(PokemonArrow::new
                     , MobCategory.MISC).sized(0.5F, 0.5F).clientTrackingRange(4).updateInterval(20));
-    RegistrySupplier<EntityType<PokemonBullet>> BULLET=registerProjectile("bullet_projectile",
-            EntityType.Builder.<PokemonBullet>of(PokemonBullet::new,MobCategory.MISC).sized(0.3125f,0.3125f));
+    RegistrySupplier<EntityType<PokemonBullet>> BULLET = registerProjectile("bullet_projectile",
+            EntityType.Builder.<PokemonBullet>of(PokemonBullet::new, MobCategory.MISC).sized(0.3125f, 0.3125f));
+    RegistrySupplier<EntityType<PokemonSpike>> SPIKE = registerProjectile("spike_projectile",
+            EntityType.Builder.<PokemonSpike>of(PokemonSpike::new, MobCategory.MISC).sized(0.5f, 0.5f));
+    RegistrySupplier<EntityType<PokemonFloatingSpike>> FLOATING_SPIKE = registerProjectile("floating_spike_projectile",
+            EntityType.Builder.<PokemonFloatingSpike>of(PokemonFloatingSpike::new, MobCategory.MISC).sized(0.5f, 0.5f));
+    RegistrySupplier<EntityType<PokemonStickyWeb>> STICKY_WEB = registerProjectile("sticky_web",
+            EntityType.Builder.<PokemonStickyWeb>of(PokemonStickyWeb::new, MobCategory.MISC).sized(0.5f, 0.5f));
+    RegistrySupplier<EntityType<PokemonTornado>> TORNADO = registerMiscEntity("tornado",
+            EntityType.Builder.<PokemonTornado>of(PokemonTornado::new, MobCategory.MISC).sized(0.1f, 0.1f));
+    RegistrySupplier<EntityType<PokemonWhirlPool>> WHIRLPOOL = registerMiscEntity("whirlpool",
+            EntityType.Builder.<PokemonWhirlPool>of(PokemonWhirlPool::new, MobCategory.MISC).sized(0.1f, 0.1f));
+    RegistrySupplier<EntityType<PokemonAreaEffectMagic>> MAGIC_EFFECT = registerMiscEntity("magic_effect",
+            EntityType.Builder.<PokemonAreaEffectMagic>of(PokemonAreaEffectMagic::new, MobCategory.MISC).sized(0.1f, 0.1f));
+
     static void bootstrap() {
         ENTITY_TYPES.register();
     }
@@ -43,9 +58,11 @@ public interface EntityFightOrFlight {
 
     static <T extends Projectile> RegistrySupplier<EntityType<T>> registerProjectile(String name, EntityType.Builder<T> builder) {
         ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, name);
-        return ENTITY_TYPES.register(id, () -> {
-            EntityType<T> result = builder.build(id.toString());
-            return result;
-        });
+        return ENTITY_TYPES.register(id, () -> builder.build(id.toString()));
+    }
+
+    static <T extends Entity> RegistrySupplier<EntityType<T>> registerMiscEntity(String name, EntityType.Builder<T> builder) {
+        ResourceLocation id = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, name);
+        return ENTITY_TYPES.register(id, () -> builder.build(id.toString()));
     }
 }

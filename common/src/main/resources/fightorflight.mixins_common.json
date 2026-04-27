@@ -9,8 +9,17 @@
   ],
   "mixins": [
     "PokemonEntityMixin",
+    "EmptyPokeBallEntityMixin",
+    "LivingEntityMixin",
+    "EnderDragonMixin",
     "PokemonServerDelegateMixin",
-    "PokemonFollowOwnerGoalMixin"
+    "MeleeAttackTaskMixin",
+    "DefendOwnerTaskMixin",
+    "MoveToAttackTargetTaskMixin",
+    "ActivityConfigurationContextMixin",
+    "BehaviourConfigurationContextMixin",
+    "TaskConfigMixin",
+    "PokemonBrainMixin"
   ],
   "injectors": {
     "defaultRequire": 1

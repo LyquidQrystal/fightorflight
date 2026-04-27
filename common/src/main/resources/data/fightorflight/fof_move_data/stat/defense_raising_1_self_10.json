@@ -1,0 +1,12 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "defense",
+  "move_list": [
+    "steelwing"
+  ],
+  "stage": 1
+}

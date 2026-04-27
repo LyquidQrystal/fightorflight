@@ -1,0 +1,14 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.2,
+  "canActivateSheerForce": true,
+  "name": "confusion",
+  "move_list": [
+    "waterpulse",
+    "dizzypunch",
+    "rockclimb",
+    "strangesteam"
+  ]
+}

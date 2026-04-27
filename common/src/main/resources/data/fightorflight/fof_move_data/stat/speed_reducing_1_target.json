@@ -1,0 +1,21 @@
+{
+  "type": "stat",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "speed",
+  "move_list": [
+    "lowsweep",
+    "icywind",
+    "glaciate",
+    "rocktomb",
+    "tarshot",
+    "mudshot",
+    "electroweb",
+    "pounce",
+    "bulldoze",
+    "drumbeating"
+  ],
+  "stage": -1
+}

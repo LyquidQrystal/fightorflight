@@ -1,0 +1,13 @@
+{
+  "type": "stat",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.4,
+  "canActivateSheerForce": true,
+  "name": "defense",
+  "move_list": [
+    "seedflare"
+
+  ],
+  "stage": -2
+}

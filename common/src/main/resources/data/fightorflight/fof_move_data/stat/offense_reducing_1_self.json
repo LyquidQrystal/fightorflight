@@ -1,0 +1,13 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": false,
+  "name": "attack",
+  "move_list": [
+    "superpower",
+    "makeitrain"
+  ],
+  "stage": -1
+}

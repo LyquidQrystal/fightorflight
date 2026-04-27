@@ -1,0 +1,12 @@
+{
+  "type": "stat",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.3,
+  "canActivateSheerForce": true,
+  "name": "speed",
+  "move_list": [
+    "bleakwindstorm"
+  ],
+  "stage": -1
+}

@@ -1,0 +1,23 @@
+{
+  "type": "stat",
+  "target": "self",
+  "triggerEvent": "on_hit",
+  "chance": 1.0,
+  "canActivateSheerForce": true,
+  "name": "speed",
+  "move_list": [
+    "esperwing",
+    "aquastep",
+    "flamecharge",
+    "trailblaze",
+    "rapidspin",
+    "scaleshot",
+    "aurawheel",
+
+    "tidyup",
+    "dragondance",
+    "victorydance",
+    "quiverdance"
+  ],
+  "stage": 1
+}

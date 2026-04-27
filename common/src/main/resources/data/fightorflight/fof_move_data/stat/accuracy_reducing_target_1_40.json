@@ -1,0 +1,13 @@
+{
+  "type": "stat",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.4,
+  "canActivateSheerForce": true,
+  "name": "accuracy",
+  "move_list": [
+    "nightdaze"
+
+  ],
+  "stage": -1
+}

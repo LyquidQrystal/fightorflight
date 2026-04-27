@@ -1,0 +1,13 @@
+{
+  "type": "status",
+  "target": "target",
+  "triggerEvent": "on_hit",
+  "chance": 0.1,
+  "canActivateSheerForce": true,
+  "name": "poison",
+  "move_list": [
+    "poisontail",
+    "crosspoison",
+    "sludgewave"
+  ]
+}

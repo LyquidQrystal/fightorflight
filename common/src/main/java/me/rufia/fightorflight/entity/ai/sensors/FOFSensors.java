@@ -1,0 +1,24 @@
+package me.rufia.fightorflight.entity.ai.sensors;
+
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.ai.sensing.Sensor;
+import net.minecraft.world.entity.ai.sensing.SensorType;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Supplier;
+
+public class FOFSensors {
+    public static final Map<String, SensorType<?>> sensors = new HashMap<>();
+    public static final SensorType<Sensor<PokemonEntity>> POKEMON_HELP_OWNER = register("pokemon_help_owner_fof", PokemonHelpOwnerSensor::new);
+    public static final SensorType<Sensor<PokemonEntity>> POKEMON_WILD_PROACTIVE = register("pokemon_wild_proactive_fof", PokemonWildProactiveSensor::new);
+    public static final SensorType<Sensor<PokemonEntity>> POKEMON_CAUGHT_BY = register("pokemon_caught_by_fof", PokemonCaughtBySensor::new);
+    public static final SensorType<Sensor<PokemonEntity>> POKESTAFF_ATTACK_TARGET = register("pokestaff_attack_target_fof", PokeStaffAttackTargetSensor::new);
+    public static final SensorType<Sensor<PokemonEntity>> POKESTAFF_WALK_TARGET=register("pokestaff_walk_target_fof", PokeStaffWalkTargetSensor::new);
+    public static <E extends LivingEntity, U extends Sensor<E>> SensorType<U> register(String id, Supplier<U> supplier) {
+        var sensorType = new SensorType<>(supplier);
+        sensors.putIfAbsent(id, sensorType);
+        return sensorType;
+    }
+}

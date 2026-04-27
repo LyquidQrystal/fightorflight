@@ -17,11 +17,8 @@ public class RayTrace {
         LivingEntity livingEntity = null;
         float minDistance = -1;
         for (LivingEntity entity : level.getEntitiesOfClass(LivingEntity.class, area, e -> canChooseAsTarget(e, viewer))) {
-            Vec3 vec32 = new Vec3(entity.getX() - viewer.getX(), entity.getEyeY() - viewer.getEyeY(), entity.getZ() - viewer.getZ());
-            double d = vec32.length();
-            vec32 = vec32.normalize();
-            double e = viewVector.dot(vec32);
-            if (e > 1.0 - 0.025 / d && viewer.hasLineOfSight(entity)) {
+            var optional = entity.getBoundingBox().clip(eyePosition, eyePosition.add(extendedViewVector));
+            if (optional.isPresent()) {
                 var dis = entity.distanceTo(viewer);
                 if (minDistance < 0 || minDistance > dis) {
                     livingEntity = entity;
@@ -29,12 +26,6 @@ public class RayTrace {
                 }
             }
         }
-        /*
-        if (livingEntity != null) {
-            livingEntity.addEffect(new MobEffectInstance(MobEffects.GLOWING, 100, 0));
-        }//DEBUG ONLY
-        */
-
         return livingEntity;
     }
 
