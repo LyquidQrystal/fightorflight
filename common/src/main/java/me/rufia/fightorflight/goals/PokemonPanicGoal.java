@@ -22,6 +22,7 @@ public class PokemonPanicGoal extends PanicGoal {
 
 
     protected boolean shouldPanic() {
+        /*
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
         if (pokemonEntity.isBusy()) {
             return false;
@@ -36,7 +37,7 @@ public class PokemonPanicGoal extends PanicGoal {
         }
         if (this.mob.getLastHurtByMob() != null) {
             return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) > CobblemonFightOrFlight.commonConfig().neutral_threshold) || Arrays.stream(CobblemonFightOrFlight.commonConfig().always_flee).toList().contains(pokemonEntity.getPokemon().getSpecies().getName().toLowerCase());
-        }
+        }*/
         return false;
         //return super.shouldPanic();
     }

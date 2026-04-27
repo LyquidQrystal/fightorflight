@@ -289,6 +289,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean force_enable_defend_owner = true;
     @Comment("If you want to set willDefendSelf to true in Pokemon's combat behaviour of Cobblemon, should be useful for solving the problem that wild Pokemon added by the datapacks can't attack.")
     public boolean force_enable_defend_self = true;
+    @Comment("If you want to set willFlee to true in Pokemon's combat behaviour of Cobblemon. Will only be enabled to Pokemon that won't attack.(Not aggressive enough/not allowed to attack by the config.")
+    public boolean force_enable_flee = true;
     @ConfigEntry.Category("Mod Compat")
     @Comment("Sizes that will be recognized as S for FOF when you are using the basic sizer.(The default sizer)")
     public String[] size_S_basic_sizer = {"Tiny", "Small"};

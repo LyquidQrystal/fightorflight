@@ -427,7 +427,7 @@ public class PokemonAttackEffect {
         String moveName = move.getName();
         //These effects might stack, so a chain of ifs might be needed.
         boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().switch_moves).toList().contains(moveName);
-        boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().explosive_moves).toList().contains(moveName);
+        boolean b2 = PokemonUtils.isExplosiveMove(moveName);
         boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().recoil_moves_allHP).toList().contains(moveName);
         boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(moveName);
         boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(moveName);

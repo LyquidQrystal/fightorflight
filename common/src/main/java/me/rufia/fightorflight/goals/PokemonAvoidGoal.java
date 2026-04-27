@@ -42,6 +42,7 @@ public class PokemonAvoidGoal extends Goal {
     }
 
     public boolean canUse() {
+        /*
         PokemonEntity pokemonEntity = (PokemonEntity) this.mob;
         if (pokemonEntity.getPokemon().isPlayerOwned()) {
             return false;
@@ -84,7 +85,8 @@ public class PokemonAvoidGoal extends Goal {
                 this.path = this.pathNav.createPath(vec3.x, vec3.y, vec3.z, 0);
                 return this.path != null;
             }
-        }
+        }*/
+        return false;
     }
 
 

@@ -352,7 +352,7 @@ public class PokemonUtils {
         return pokemon.heldItem();
     }
 
-    public static boolean tryToAvoidWildShiny(PokemonEntity pokemonEntity){
+    public static boolean tryToAvoidWildShiny(PokemonEntity pokemonEntity) {
         return pokemonEntity.getPokemon().getShiny() && !pokemonEntity.getPokemon().isPlayerOwned() && CobblemonFightOrFlight.commonConfig().not_attacking_wild_shiny;
     }
 
@@ -504,11 +504,24 @@ public class PokemonUtils {
         return 16.0f;
     }
 
-    public static boolean shouldStopRunningAfterHurt(PokemonEntity pokemonEntity) {
-        if (CobblemonFightOrFlight.commonConfig().stop_running_after_hurt) {
-            return pokemonEntity.getHealth() < pokemonEntity.getMaxHealth();
+    public static boolean shouldStopRunningAfterHurt() {
+        return CobblemonFightOrFlight.commonConfig().stop_running_after_hurt;
+    }
+
+    public static boolean shouldAvoid(PokemonEntity pokemonEntity) {
+        if (pokemonEntity.getOwner() != null || pokemonEntity.isBusy()) {
+            return false;
         }
-        return false;
+        if (shouldStopRunningAfterHurt()) {
+            if (pokemonEntity.getMaxHealth() > pokemonEntity.getHealth()) {
+                return false;
+            }
+        }
+        String species = pokemonEntity.getPokemon().getSpecies().getName().toLowerCase();
+        if(CobblemonFightOrFlight.SpeciesAlwaysFlee(species)){
+            return true;
+        }
+        return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) >= FOFAggressionCalculator.getNeutralValue());
     }
 
     public static boolean pokemonTryForceEncounter(PokemonEntity attackingPokemon, Entity hurtTarget) {
