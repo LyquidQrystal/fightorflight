@@ -518,10 +518,10 @@ public class PokemonUtils {
             }
         }
         String species = pokemonEntity.getPokemon().getSpecies().getName().toLowerCase();
-        if(CobblemonFightOrFlight.SpeciesAlwaysFlee(species)){
+        if (CobblemonFightOrFlight.SpeciesAlwaysFlee(species)) {
             return true;
         }
-        return !(CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) >= FOFAggressionCalculator.getNeutralValue());
+        return CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) < FOFAggressionCalculator.getNeutralValue();
     }
 
     public static boolean pokemonTryForceEncounter(PokemonEntity attackingPokemon, Entity hurtTarget) {

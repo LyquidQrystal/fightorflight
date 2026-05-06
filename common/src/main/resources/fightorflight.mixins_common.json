@@ -16,7 +16,6 @@
     "MeleeAttackTaskMixin",
     "DefendOwnerTaskMixin",
     "MoveToAttackTargetTaskMixin",
-    "FleeFromAttackerTaskMixin",
     "ActivityConfigurationContextMixin",
     "BehaviourConfigurationContextMixin",
     "TaskConfigMixin",

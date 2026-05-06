@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.util.MiscUtilsKt;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.ai.config.task.FOFPokemonRangeTaskConfig;
 import net.minecraft.resources.ResourceLocation;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -16,6 +17,7 @@ import java.util.Map;
 @Mixin(TaskConfig.Companion.class)
 public class TaskConfigMixin {
 
+    @Final
     @Shadow(remap = false)
     private static Map<ResourceLocation, Class<? extends TaskConfig>> types;
 

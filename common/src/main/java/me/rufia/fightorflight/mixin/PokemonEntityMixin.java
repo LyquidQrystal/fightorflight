@@ -35,6 +35,7 @@ import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
@@ -189,7 +190,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     }
 
     @ModifyVariable(method = "assignNewBrainWithMemoriesAndSensors", at = @At("HEAD"), argsOnly = true, index = 3)
-    private Set<SensorType<?>> assignNewBrainWithMemoriesAndSensorsMixin(Set<SensorType<?>> sensors) {
+    private Set<SensorType<?>> sensorInject(Set<SensorType<?>> sensors) {
         HashSet<SensorType<?>> hashSet = new HashSet<>(sensors);
         hashSet.add(FOFSensors.POKEMON_HELP_OWNER);
         hashSet.add(FOFSensors.POKEMON_WILD_PROACTIVE);
@@ -199,6 +200,14 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         hashSet.add(SensorType.HURT_BY);
         return Set.copyOf(hashSet);
     }
+
+    @ModifyVariable(method = "assignNewBrainWithMemoriesAndSensors", at = @At("HEAD"), argsOnly = true, index = 2)
+    private Set<MemoryModuleType<?>> memoryInject(Set<MemoryModuleType<?>> memoryModuleTypes) {
+        var hashSet = new HashSet<>(memoryModuleTypes);
+        hashSet.add(MemoryModuleType.AVOID_TARGET);
+        return Set.copyOf(hashSet);
+    }
+
 
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
