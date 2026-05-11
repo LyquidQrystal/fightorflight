@@ -46,7 +46,6 @@ public abstract class ActivityConfigurationContextMixin {
                     idleTasks(entity);
                     break;
             }
-
         }
     }
 
@@ -65,16 +64,16 @@ public abstract class ActivityConfigurationContextMixin {
         }
         if (CobblemonFightOrFlight.commonConfig().force_enable_flee) {
             tasks.add(new Pair<>(1, FOFFleeFromAttackerTask.create(MoLangExtensionsKt.asExpression(600))));
+            tasks.add(new Pair<>(0, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.AVOID_TARGET, Activity.PANIC)));
         }
     }
 
     private void idleTasks(LivingEntity entity) {
         tasks.add(new Pair<>(0, FOFDefendSelfTask.create()));
-        tasks.add(new Pair<>(0, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.AVOID_TARGET, Activity.AVOID)));
-    }
-
-    private void avoidTasks(LivingEntity entity) {
-        tasks.add(new Pair<>(0, SwapActivityTask.INSTANCE.lacking(MemoryModuleType.AVOID_TARGET, Activity.IDLE)));
-        //tasks.add(new Pair<Integer, BehaviorControl<? super LivingEntity>>(0, SetWalkTargetAwayFrom.entity(MemoryModuleType.AVOID_TARGET,0.55f,15,false)));
+        if (CobblemonFightOrFlight.commonConfig().force_enable_flee) {
+            tasks.add(new Pair<>(0, FOFFleeFromAttackerTask.create(MoLangExtensionsKt.asExpression(600))));
+        }
+        tasks.add(new Pair<>(10, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.HURT_BY, Activity.PANIC)));
+        //tasks.add(new Pair<>(0, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.AVOID_TARGET, Activity.PANIC)));
     }
 }

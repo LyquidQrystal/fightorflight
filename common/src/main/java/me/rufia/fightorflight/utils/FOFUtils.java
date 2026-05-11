@@ -1,5 +1,6 @@
 package me.rufia.fightorflight.utils;
 
+import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
@@ -10,6 +11,7 @@ import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.AABB;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
@@ -136,5 +138,16 @@ public class FOFUtils {
 
     public static boolean multiSamplingCollisionCheckBlock(LivingEntity viewer, LivingEntity target, int verticalSampleCount, int horizontalSampleCount) {
         return multiSamplingCollisionCheckBlock(viewer, target, verticalSampleCount, horizontalSampleCount, 0);
+    }
+
+    //Debug tool, output a Pokemon Entity's current activity.
+    public static void checkEntityActivity(LivingEntity livingEntity) {
+        if (livingEntity instanceof PokemonEntity pokemonEntity) {
+            var opt = pokemonEntity.getBrain().getActiveNonCoreActivity();
+            var players = pokemonEntity.level().getEntitiesOfClass(Player.class, AABB.ofSize(livingEntity.position(), 8, 8, 8));
+            if (!players.isEmpty()) {
+                opt.ifPresent(activity -> CobblemonFightOrFlight.LOGGER.info("[{}] current activity:{}", PokemonUtils.getPokemonName(pokemonEntity), activity.getName()));
+            }
+        }
     }
 }

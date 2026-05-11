@@ -30,13 +30,15 @@ public class CobblemonSizeVariationCompat extends AbstractModCompat {
     }
 
     protected float checkSize(Size size, String[] smallSizes, String[] mediumSizes, String[] largeSizes) {
-        String sizeName = size.name();
-        if (Arrays.stream(smallSizes).toList().contains(sizeName)) {
-            return CobblemonFightOrFlight.commonConfig().aggression_size_S_value;
-        } else if (Arrays.stream(mediumSizes).toList().contains(sizeName)) {
-            return CobblemonFightOrFlight.commonConfig().aggression_size_M_value;
-        } else if (Arrays.stream(largeSizes).toList().contains(sizeName)) {
-            return CobblemonFightOrFlight.commonConfig().aggression_size_L_value;
+        if (size != null) {
+            String sizeName = size.name();
+            if (Arrays.stream(smallSizes).toList().contains(sizeName)) {
+                return CobblemonFightOrFlight.commonConfig().aggression_size_S_value;
+            } else if (Arrays.stream(mediumSizes).toList().contains(sizeName)) {
+                return CobblemonFightOrFlight.commonConfig().aggression_size_M_value;
+            } else if (Arrays.stream(largeSizes).toList().contains(sizeName)) {
+                return CobblemonFightOrFlight.commonConfig().aggression_size_L_value;
+            }
         }
         return 0f;
     }

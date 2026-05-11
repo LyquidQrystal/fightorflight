@@ -4,7 +4,6 @@ import com.bedrockk.molang.Expression;
 import com.cobblemon.mod.common.api.molang.MoLangFunctions;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.util.MoLangExtensionsKt;
-import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.OneShot;
@@ -26,7 +25,7 @@ public class FOFFleeFromAttackerTask {
                             if (avoidTarget != null && avoidTarget == hurtByEntity) {
                                 return false;
                             }
-                            CobblemonFightOrFlight.LOGGER.info("Trying to let {} flee", pokemonEntity.getPokemon().getDisplayName(true));
+                            //CobblemonFightOrFlight.LOGGER.info("Trying to let {} flee", PokemonUtils.getPokemonName(pokemonEntity));
                             MoLangExtensionsKt.withQueryValue(MoLangExtensionsKt.getMainThreadRuntime(), "entity", MoLangFunctions.INSTANCE.asMostSpecificMoLangValue(pokemonEntity));
                             int avoidDurationTicks = MoLangExtensionsKt.resolveInt(MoLangExtensionsKt.getMainThreadRuntime(), avoidDurationTicksExp, MoLangExtensionsKt.getContextOrEmpty(MoLangExtensionsKt.getMainThreadRuntime()));
                             pokemonEntity.getBrain().setMemoryWithExpiry(MemoryModuleType.AVOID_TARGET, hurtByEntity, avoidDurationTicks);

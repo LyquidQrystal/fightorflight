@@ -1,13 +1,14 @@
 # V0.10.8:
 ### New Features:
 * Add support for Cobblemon Size Variation
+### Changes:
+* Added back the flight mechanic, it might be working differently due to the changes of the Cobblemon's Pokemon AI.
 ## TODO list:
-* Adjust Cobblemon's flight mechanic to make sure Pokemon fight or flight when attacked.
 * Test if the angry particle is created incorrectly again.
 * Fix the bug that wild pokemons don't attack the mob that hit them when they're chasing a player that haven't hit them.(An easier way to understand is adding a priority system.)
 * Adjust the XP mechanic
-## WIP(It is written here to remind what I was trying to do before committing the code):
-* I need to add some tasks to the avoid activity. However, the old way doesn't support some necessary tasks. So I need to find a new way.
+## WIP(It is written here to remind me what I was trying to do before committing the code):
+
 
 # V0.10.7:
 ### New Features:

@@ -14,12 +14,15 @@ import com.cobblemon.mod.common.net.messages.client.effect.RunPosableMoLangPacke
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.activestate.ShoulderedState;
 import com.cobblemon.mod.common.pokemon.evolution.progress.UseMoveEvolutionProgress;
+import com.google.common.collect.ImmutableList;
+import com.mojang.datafixers.util.Pair;
 import dev.architectury.networking.NetworkManager;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.net.packet.FOFStartBattleRequestPacket;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
@@ -29,6 +32,10 @@ import net.minecraft.util.Mth;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.Mob;
+import net.minecraft.world.entity.ai.behavior.DoNothing;
+import net.minecraft.world.entity.ai.behavior.RandomStroll;
+import net.minecraft.world.entity.ai.behavior.RunOne;
+import net.minecraft.world.entity.ai.behavior.SetWalkTargetFromLookTarget;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
@@ -642,5 +649,21 @@ public class PokemonUtils {
         float speed_limit = CobblemonFightOrFlight.commonConfig().speed_stat_limit;
         float speed = pokemonEntity.getPokemon().getSpeed();
         return Mth.lerp(speed / speed_limit, minimum_movement_speed, maximum_movement_speed);
+    }
+
+    //A Java version of the method from PokeBrain, the original function is a private function, just copy it over is easier to use
+    public static RunOne<PokemonEntity> makeRandomWalkTask() {
+        return new RunOne<>(ImmutableList.of(Pair.of(RandomStroll.stroll(0.4f), 2), Pair.of(SetWalkTargetFromLookTarget.create(0.4f, 3), 2), Pair.of(new DoNothing(30, 60), 1)));
+    }
+
+    public static String getPokemonName(PokemonEntity pokemonEntity) {
+        return getPokemonName(pokemonEntity.getPokemon());
+    }
+
+    public static String getPokemonName(Pokemon pokemon) {
+        if (pokemon == null) {
+            return "ERROR:Pokemon is null";
+        }
+        return ChatFormatting.stripFormatting(pokemon.getDisplayName(false).getString());
     }
 }

@@ -516,10 +516,11 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
 
     @Unique
     private void slowTick(int ticks, int sec) {
-        //CobblemonFightOrFlight.LOGGER.info("slowTick...");//It works
         if (ticks == 11) {
             updateAttackMode();
             backendMoveCooldown();
+
+            FOFUtils.checkEntityActivity(this);
         }
         if (sec % 5 == 4 && ticks == 17) {
             turnBasedHeldItemTrigger();
