@@ -12,7 +12,6 @@ import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 
 public class FOFFleeFromAttackerTask {
     public static OneShot<LivingEntity> create(Expression avoidDurationTicksExp) {
-        //CobblemonFightOrFlight.LOGGER.info("Trying to create a flee task.");
         return BehaviorBuilder.create(context ->
                 context.group(
                         context.present(MemoryModuleType.HURT_BY_ENTITY),
@@ -25,7 +24,6 @@ public class FOFFleeFromAttackerTask {
                             if (avoidTarget != null && avoidTarget == hurtByEntity) {
                                 return false;
                             }
-                            //CobblemonFightOrFlight.LOGGER.info("Trying to let {} flee", PokemonUtils.getPokemonName(pokemonEntity));
                             MoLangExtensionsKt.withQueryValue(MoLangExtensionsKt.getMainThreadRuntime(), "entity", MoLangFunctions.INSTANCE.asMostSpecificMoLangValue(pokemonEntity));
                             int avoidDurationTicks = MoLangExtensionsKt.resolveInt(MoLangExtensionsKt.getMainThreadRuntime(), avoidDurationTicksExp, MoLangExtensionsKt.getContextOrEmpty(MoLangExtensionsKt.getMainThreadRuntime()));
                             pokemonEntity.getBrain().setMemoryWithExpiry(MemoryModuleType.AVOID_TARGET, hurtByEntity, avoidDurationTicks);
@@ -35,5 +33,9 @@ public class FOFFleeFromAttackerTask {
                     return false;
                 }
                 )));
+    }
+
+    public static OneShot<LivingEntity> create() {
+        return create(MoLangExtensionsKt.asExpression(600));
     }
 }

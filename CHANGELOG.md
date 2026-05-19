@@ -2,13 +2,14 @@
 ### New Features:
 * Add support for Cobblemon Size Variation
 ### Changes:
-* Added back the flight mechanic, it might be working differently due to the changes of the Cobblemon's Pokemon AI.
+* Added back the flight mechanic, it's not working very well currently due to the changes of the Cobblemon's Pokemon AI.
 ## TODO list:
-* Test if the angry particle is created incorrectly again.
+* Test if the angry particle is created incorrectly again.(Idk, it seems quite normal for the Pokemon that is not angry)
 * Fix the bug that wild pokemons don't attack the mob that hit them when they're chasing a player that haven't hit them.(An easier way to understand is adding a priority system.)
 * Adjust the XP mechanic
 ## WIP(It is written here to remind me what I was trying to do before committing the code):
-
+* I tested that the Piglin tries to attack the last mob that hurt it. It's ok to use it for the Pokemon.
+* A new bug made some aggressive Pokemon scared if the Pokemon is hit. It's an interesting bug, I will try to figure out the reason and make it a stable feature if possible.
 
 # V0.10.7:
 ### New Features:

@@ -3,7 +3,6 @@ package me.rufia.fightorflight.mixin;
 import com.cobblemon.mod.common.api.ai.ActivityConfigurationContext;
 import com.cobblemon.mod.common.entity.ai.SwapActivityTask;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
-import com.cobblemon.mod.common.util.MoLangExtensionsKt;
 import com.mojang.datafixers.util.Pair;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.entity.ai.tasks.FOFBackUpIfTooClose;
@@ -63,7 +62,7 @@ public abstract class ActivityConfigurationContextMixin {
             tasks.add(new Pair<>(1, new FOFPokemonRangeTask()));
         }
         if (CobblemonFightOrFlight.commonConfig().force_enable_flee) {
-            tasks.add(new Pair<>(1, FOFFleeFromAttackerTask.create(MoLangExtensionsKt.asExpression(600))));
+            tasks.add(new Pair<>(1, FOFFleeFromAttackerTask.create()));
             tasks.add(new Pair<>(0, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.AVOID_TARGET, Activity.PANIC)));
         }
     }
@@ -71,9 +70,8 @@ public abstract class ActivityConfigurationContextMixin {
     private void idleTasks(LivingEntity entity) {
         tasks.add(new Pair<>(0, FOFDefendSelfTask.create()));
         if (CobblemonFightOrFlight.commonConfig().force_enable_flee) {
-            tasks.add(new Pair<>(0, FOFFleeFromAttackerTask.create(MoLangExtensionsKt.asExpression(600))));
+            tasks.add(new Pair<>(0, FOFFleeFromAttackerTask.create()));
+            tasks.add(new Pair<>(10, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.HURT_BY, Activity.PANIC)));
         }
-        tasks.add(new Pair<>(10, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.HURT_BY, Activity.PANIC)));
-        //tasks.add(new Pair<>(0, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.AVOID_TARGET, Activity.PANIC)));
     }
 }

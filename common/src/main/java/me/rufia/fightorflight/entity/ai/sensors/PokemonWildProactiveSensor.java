@@ -41,8 +41,8 @@ public class PokemonWildProactiveSensor extends Sensor<PokemonEntity> {
             }
             return false;
         });
-        if (pokemonEntity.getBrain().checkMemory(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT))
+        if (pokemonEntity.getBrain().checkMemory(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT)) {
             nearestPlayer.ifPresent(player -> pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, player));
+        }
     }
-
 }

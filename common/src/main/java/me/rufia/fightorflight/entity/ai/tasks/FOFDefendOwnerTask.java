@@ -24,6 +24,5 @@ public class FOFDefendOwnerTask {
                             attackTargetAccessor.set(attacker);
                             return true;
                         })));
-
     }
 }

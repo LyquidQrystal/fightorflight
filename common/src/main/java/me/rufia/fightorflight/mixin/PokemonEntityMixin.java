@@ -455,7 +455,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         PokemonEntity thisEntity = (PokemonEntity) (Object) this;
         var targetEntity = PokemonUtils.getTarget(thisEntity);
         int nextCryTime = getNextCryTime();
-        if (!getPokemon().isPlayerOwned() && PokemonUtils.shouldFightTarget(thisEntity)) {
+        if (!getPokemon().isPlayerOwned() && PokemonUtils.shouldFightTarget(thisEntity) && FOFAggressionCalculator.calc(thisEntity) >= FOFAggressionCalculator.getNeutralValue()) {
             boolean targetAvailable = targetEntity != null && targetEntity.isAlive();
             if (nextCryTime > 0) {
                 setNextCryTime(nextCryTime - 1);
