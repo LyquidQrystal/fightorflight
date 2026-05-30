@@ -72,10 +72,8 @@ public class PokemonUtils {
 
             if (targetEntity instanceof PokemonEntity targetPokemon) {
                 LivingEntity targetOwner = targetPokemon.getOwner();
-                if (targetOwner != null) {
-                    if (targetOwner == owner || !CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon) {
-                        return false;
-                    }
+                if (targetOwner != null && (targetOwner == owner || !CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_player_pokemon)) {
+                    return false;
                 }
             }
             if (targetEntity instanceof Player && !CobblemonFightOrFlight.commonConfig().do_player_pokemon_attack_other_players) {
@@ -83,7 +81,7 @@ public class PokemonUtils {
             }
         } else {
             if (targetEntity != null) {
-                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) <= 0 || pokemonEntity.distanceToSqr(targetEntity) > 400) {
+                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) < CobblemonFightOrFlight.commonConfig().neutral_threshold || pokemonEntity.distanceToSqr(targetEntity) > 400) {
                     return false;
                 }
             }
@@ -104,7 +102,7 @@ public class PokemonUtils {
         if (CobblemonFightOrFlight.SpeciesAlwaysFlee(species)) {
             return true;
         }
-        return CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) < FOFAggressionCalculator.getNeutralValue();
+        return CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) < CobblemonFightOrFlight.commonConfig().neutral_threshold;
     }
 
     public static Set<MoveTemplate> getAllLearnableMoveTemplates(Pokemon pokemon) {

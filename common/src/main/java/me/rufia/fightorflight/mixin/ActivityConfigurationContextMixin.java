@@ -61,6 +61,7 @@ public abstract class ActivityConfigurationContextMixin {
             )));
             tasks.add(new Pair<>(1, new FOFPokemonRangeTask()));
         }
+        tasks.add(new Pair<>(0, FOFDefendSelfTask.create()));
         if (CobblemonFightOrFlight.commonConfig().force_enable_flee) {
             tasks.add(new Pair<>(1, FOFFleeFromAttackerTask.create()));
             tasks.add(new Pair<>(0, SwapActivityTask.INSTANCE.possessing(MemoryModuleType.AVOID_TARGET, Activity.PANIC)));

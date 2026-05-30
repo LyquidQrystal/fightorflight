@@ -25,7 +25,7 @@ public class FOFDefendSelfTask {
                                     return false;
                                 }
                                 String cmdData = ((PokemonInterface) pokemonEntity).getCommandData();
-                                if (cmdData.isEmpty()) {
+                                if (pokemonEntity.getOwner() == null || pokemonEntity.getOwner() != null && cmdData.isEmpty()) {
                                     attackTargetAccessor.set(hurtByEntity);
                                     return true;
                                 }

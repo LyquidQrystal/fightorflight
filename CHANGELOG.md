@@ -1,14 +1,18 @@
 # V0.10.8:
 ### New Features:
-* Add support for Cobblemon Size Variation
+* Add support for Cobblemon Size Variation, the size of the Pokemon can influence the Pokemon's aggression. The bigger Pokemon will be more aggressive by default.
 ### Changes:
 * Added back the flight mechanic, it's not working very well currently due to the changes of the Cobblemon's Pokemon AI.
-## TODO list:
-* Test if the angry particle is created incorrectly again.(Idk, it seems quite normal for the Pokemon that is not angry)
+### Bug fixes:
+* Fix the bug that friendly_fire_immunity_owner and some other related configs is not working currently.
+* Fix the bug that the angry particle is created for a passive Pokemon.
 * Fix the bug that wild pokemons don't attack the mob that hit them when they're chasing a player that haven't hit them.(An easier way to understand is adding a priority system.)
+## TODO list:
 * Adjust the XP mechanic
+  * Allow the Pokemon that tries to attack another Pokemon to gain xp without dealing the last hit. 
+  * Add a config option to share the xp for all the party members.(If this is enabled, the feature above should not be working.)
+  * Add multiplier, min value, max value for the Lvl. gap when calculating the experience the Pokemon should get.
 ## WIP(It is written here to remind me what I was trying to do before committing the code):
-* I tested that the Piglin tries to attack the last mob that hurt it. It's ok to use it for the Pokemon.
 * A new bug made some aggressive Pokemon scared if the Pokemon is hit. It's an interesting bug, I will try to figure out the reason and make it a stable feature if possible.
 
 # V0.10.7:

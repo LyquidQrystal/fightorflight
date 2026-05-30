@@ -853,14 +853,14 @@ public class PokemonAttackEffect {
             return true;
         }
         if (pokemonEntity.getOwner() instanceof Player owner) {
-            if (CobblemonFightOrFlight.commonConfig().pvp_immunity) {
-                return !(attacker instanceof Player);
+            if (CobblemonFightOrFlight.commonConfig().pvp_immunity && attacker instanceof Player) {
+                return false;
             }
-            if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team) {
-                return !FOFUtils.teamCheck(pokemonEntity, attacker);
+            if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner && owner.equals(attacker)) {
+                return false;
             }
-            if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_owner) {
-                return !owner.equals(attacker);
+            if (CobblemonFightOrFlight.commonConfig().friendly_fire_immunity_team && FOFUtils.teamCheck(pokemonEntity, attacker)) {
+                return false;
             }
         }
         return true;

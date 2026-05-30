@@ -162,7 +162,7 @@ public class CobblemonFightOrFlight {
         return Arrays.stream(commonConfig().always_flee).toList().contains(speciesName);
     }
 
-    public static float AUTO_AGGRO_THRESHOLD() {
+    public static double AUTO_AGGRO_THRESHOLD() {
         return commonConfig().aggressive_threshold;
     }
 
