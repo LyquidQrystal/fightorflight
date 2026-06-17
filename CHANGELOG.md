@@ -1,19 +1,23 @@
 # V0.10.8:
 ### New Features:
-* Add support for Cobblemon Size Variation, the size of the Pokemon can influence the Pokemon's aggression. The bigger Pokemon will be more aggressive by default.
+* Add support for Cobblemon Size Variation, the size of the Pokemon can influence the Pokemon's aggression. The bigger Pokemon will be more aggressive by default. New config options are added so you can make your own adjustments.
+* Added back the flight mechanic, it's not working very well currently due to the changes of the Cobblemon's Pokemon AI. 
+### New Config:
+* force_enable_flee: Required to be set to true for the flight feature.
+* pokemon_share_yield: If this is set to true
 ### Changes:
-* Added back the flight mechanic, it's not working very well currently due to the changes of the Cobblemon's Pokemon AI.
+* Adjusted the xp mechanic so if a Pokemon is killed by player's Pokemons, all the Pokemon that dealt damage and didn't faint will gain the EXP. and EVs, the EXP. will be affected by the Pokemon count but EVs won't be influenced.
+* Make the wild Pokemon try to attack the last entity that hit it.
 ### Bug fixes:
 * Fix the bug that friendly_fire_immunity_owner and some other related configs is not working currently.
 * Fix the bug that the angry particle is created for a passive Pokemon.
-* Fix the bug that wild pokemons don't attack the mob that hit them when they're chasing a player that haven't hit them.(An easier way to understand is adding a priority system.)
+
 ## TODO list:
+* Add a config option to add Dragon type weaknesses to the Ender Dragon.
 * Adjust the XP mechanic
-  * Allow the Pokemon that tries to attack another Pokemon to gain xp without dealing the last hit. 
-  * Add a config option to share the xp for all the party members.(If this is enabled, the feature above should not be working.)
   * Add multiplier, min value, max value for the Lvl. gap when calculating the experience the Pokemon should get.
 ## WIP(It is written here to remind me what I was trying to do before committing the code):
-* A new bug made some aggressive Pokemon scared if the Pokemon is hit. It's an interesting bug, I will try to figure out the reason and make it a stable feature if possible.
+* A bug made some aggressive Pokemon scared if the Pokemon is hit. It's an interesting bug. The aggression value required to trigger the task that controls the Pokemon to flee is set incorrectly. I'm not sure if I can make it a feature.
 
 # V0.10.7:
 ### New Features:

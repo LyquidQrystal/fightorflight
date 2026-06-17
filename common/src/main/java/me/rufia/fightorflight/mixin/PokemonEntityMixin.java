@@ -105,6 +105,10 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
 
     @Unique
     private final List<FOFMove> MOVES_FOF = new ArrayList<>();//This should only be accessed in the server side!
+    @Unique
+    private final HashSet<Pokemon> HURT_BY_POKEMON_FOF = new HashSet<>();
+    @Unique
+    private Pokemon LAST_HURT_BY_POKEMON_FOF = null;
 
     static {
         DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
@@ -396,6 +400,13 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
                 if (PokemonUtils.abilityIs(pokemonEntity, "roughskin") || PokemonUtils.abilityIs(pokemonEntity, "ironbarbs")) {
                     entity.hurt(damageSources().thorns(pokemonEntity), livingEntity.getMaxHealth() / 8);
                 }
+                if (livingEntity instanceof PokemonEntity attackerPokemon) {
+                    if (attackerPokemon.getPokemon().isPlayerOwned()) {
+                        Pokemon pokemon = attackerPokemon.getPokemon();
+                        HURT_BY_POKEMON_FOF.add(pokemon);
+                        LAST_HURT_BY_POKEMON_FOF = pokemon;
+                    }
+                }
             }
         }
     }
@@ -640,14 +651,33 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
 
     @Inject(method = "dropAllDeathLoot", at = @At("TAIL"))
     private void dropAllDeathLootInject(ServerLevel world, DamageSource source, CallbackInfo ci) {
-        if (getLastHurtByMob() instanceof PokemonEntity pokemonEntity && pokemonEntity.getOwner() != null) {
-            PokemonEntity self = (PokemonEntity) (Object) this;
-            pokemonEntity.getPokemon().addExperience(new SidemodExperienceSource(CobblemonFightOrFlight.MODID), FOFExpCalculator.calculate(pokemonEntity.getPokemon(), self.getPokemon()));
+        if (HURT_BY_POKEMON_FOF.isEmpty()) {
+            return;
+        }
+        PokemonEntity self = (PokemonEntity) (Object) this;
+        if (CobblemonFightOrFlight.commonConfig().pokemon_share_yield) {
+            int pokemonCount = HURT_BY_POKEMON_FOF.size();
+            for (Pokemon pokemon : HURT_BY_POKEMON_FOF) {
+                if (pokemon.isFainted()) {
+                    continue;
+                }
+                pokemon.addExperience(new SidemodExperienceSource(CobblemonFightOrFlight.MODID), FOFExpCalculator.calculate(pokemon, self.getPokemon(), pokemonCount));
+                if (CobblemonFightOrFlight.commonConfig().can_gain_ev) {
+                    var map = FOFEVCalculator.calculate(pokemon, self.getPokemon());
+                    for (Map.Entry<Stat, Integer> entry : map.entrySet()) {
+                        EvSource evSource = new SidemodEvSource(CobblemonFightOrFlight.MODID, pokemon);
+                        pokemon.getEvs().add(entry.getKey(), entry.getValue(), evSource);
+                    }
+                }
+            }
+        } else {
+            Pokemon pokemon = LAST_HURT_BY_POKEMON_FOF;
+            pokemon.addExperience(new SidemodExperienceSource(CobblemonFightOrFlight.MODID), FOFExpCalculator.calculate(pokemon, self.getPokemon()));
             if (CobblemonFightOrFlight.commonConfig().can_gain_ev) {
-                var map = FOFEVCalculator.calculate(pokemonEntity.getPokemon(), self.getPokemon());
+                var map = FOFEVCalculator.calculate(pokemon, self.getPokemon());
                 for (Map.Entry<Stat, Integer> entry : map.entrySet()) {
-                    EvSource evSource = new SidemodEvSource(CobblemonFightOrFlight.MODID, pokemonEntity.getPokemon());
-                    pokemonEntity.getPokemon().getEvs().add(entry.getKey(), entry.getValue(), evSource);
+                    EvSource evSource = new SidemodEvSource(CobblemonFightOrFlight.MODID, pokemon);
+                    pokemon.getEvs().add(entry.getKey(), entry.getValue(), evSource);
                 }
             }
         }

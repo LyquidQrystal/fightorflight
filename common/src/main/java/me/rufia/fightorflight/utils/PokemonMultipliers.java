@@ -47,11 +47,14 @@ public class PokemonMultipliers {
     }
 
     public float getPlayerOwnedDamageMultiplier(boolean isRangeAttack, boolean isMeleeAttack) {
+        if (!hasOwner) {
+            return 1.0f;
+        }
         if (isRangeAttack) {
-            return hasOwner ? CobblemonFightOrFlight.commonConfig().ranged_attack_damage_player : 1.0f;
+            return CobblemonFightOrFlight.commonConfig().ranged_attack_damage_player;
         }
         if (isMeleeAttack) {
-            return hasOwner ? CobblemonFightOrFlight.commonConfig().attack_damage_player : 1.0f;
+            return CobblemonFightOrFlight.commonConfig().attack_damage_player;
         }
         return 1.0f;
     }

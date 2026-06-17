@@ -141,7 +141,8 @@ public class PokemonAttackEffect {
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
-        float value = Math.min(Math.max(multiplier * (moveModifier * attackModifier + mobEffectBoost), minDmg), maxDmg);
+        float value = Math.clamp(multiplier * (moveModifier * attackModifier + mobEffectBoost), minDmg, maxDmg);
+        //float value = Math.min(Math.max(multiplier * (moveModifier * attackModifier + mobEffectBoost), minDmg), maxDmg);
         //CobblemonFightOrFlight.LOGGER.info("value:{} minDmg:{} maxDmg:{} attack:{} attackModifier:{} moveModifier:{} multiplier:{}", value, minDmg, maxDmg, attack, attackModifier, moveModifier, multiplier);
         return value;
     }
@@ -716,7 +717,6 @@ public class PokemonAttackEffect {
                 makeTypeEffectParticle(10, livingEntity, move.getType().getName());
             }
         }
-
     }
 
     public static void dealAoEDamage(PokemonEntity pokemonEntity, Entity centerEntity, boolean shouldHurtAlly, boolean hasDirectContact) {

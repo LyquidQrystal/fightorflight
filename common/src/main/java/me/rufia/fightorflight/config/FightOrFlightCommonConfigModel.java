@@ -146,6 +146,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float experience_multiplier = 0.5f;
     @Comment("Your pokemon can gain EV points by killing a pokemon without a battle?")
     public boolean can_gain_ev = true;
+    @Comment("If you want all the player's Pokemon that dealt the damage to gain EXP. and EV points")
+    public boolean pokemon_share_yield = true;
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle? For example Primeape can use Rage Fist 20x to evolve without a traditional Pokemon Battle.")
     public boolean can_progress_use_move_evolution = true;
     @ConfigEntry.Category("Pokemon Damage and Effects")

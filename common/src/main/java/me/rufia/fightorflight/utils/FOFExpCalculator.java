@@ -2,10 +2,13 @@ package me.rufia.fightorflight.utils;
 
 import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.api.tags.CobblemonItemTags;
+import com.cobblemon.mod.common.pokemon.OriginalTrainerType;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.evolution.variants.LevelUpEvolution;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
+
+import java.util.Objects;
 
 /*
  * Copyright (C) 2023 Cobblemon Contributors
@@ -17,13 +20,18 @@ import me.rufia.fightorflight.item.ItemFightOrFlight;
 //This class is a rewritten version of the ExperienceCalculator interface from Cobblemon
 public class FOFExpCalculator {
     public static int calculate(Pokemon battlePokemon, Pokemon opponentPokemon) {
+        return calculate(battlePokemon, opponentPokemon, 1);
+    }
+
+    public static int calculate(Pokemon battlePokemon, Pokemon opponentPokemon, int participantCount) {
         float FOFExpMultiplier = CobblemonFightOrFlight.commonConfig().experience_multiplier;
         int baseExp = opponentPokemon.getForm().getBaseExperienceYield();
         int opponentLevel = opponentPokemon.getLevel();
-        float term1 = (float) (baseExp * opponentLevel) / 5.0f;
+        float term1 = (float) (baseExp * opponentLevel) / (participantCount * 5.0f);
         float victorLevel = battlePokemon.getLevel();
         float term2 = (float) Math.pow(((2.0f * opponentLevel) + 10) / (opponentLevel + victorLevel + 10), 2.5);
         boolean hasLuckyEgg = battlePokemon.heldItemNoCopy$common().is(CobblemonItemTags.LUCKY_EGG) || battlePokemon.heldItemNoCopy$common().is(ItemFightOrFlight.ORANLUCKYEGG.get());
+        float nonOtBonus = getNonOtBonus(battlePokemon);
         float luckyEggMultiplier = hasLuckyEgg ? (float) Cobblemon.config.getLuckyEggMultiplier() : 1.0f;
         float evolutionMultiplier = battlePokemon.getEvolutionProxy().server().stream().anyMatch(evolution -> {
             var requirements = evolution.getRequirements();
@@ -33,5 +41,14 @@ public class FOFExpCalculator {
         float gimmickBoost = Cobblemon.config.getExperienceMultiplier();
         float term3 = term1 * term2 + 1;
         return Math.round(term3 * luckyEggMultiplier * evolutionMultiplier * affectionMultiplier * gimmickBoost * FOFExpMultiplier) + 1;
+
+    }
+
+    public static float getNonOtBonus(Pokemon pokemon) {
+        boolean isPlayerOwned = pokemon.getOriginalTrainerType() == OriginalTrainerType.PLAYER;
+        var otUUID = pokemon.getOriginalTrainer();
+        String ownerUUID = pokemon.getOwnerUUID() != null ? pokemon.getOwnerUUID().toString() : null;
+
+        return isPlayerOwned && Objects.equals(otUUID, ownerUUID) ? 1f : 1.5f;//If the original trainer type is player, the UUID won't be null, right?
     }
 }

@@ -205,10 +205,7 @@ public class PokemonUtils {
             return null;
         }
 
-        if (isMeleeAttackMove(move)) {
-            return move;
-        }
-        return null;
+        return isMeleeAttackMove(move) ? move : null;
     }
 
     public static Move getRangeAttackMove(PokemonEntity pokemonEntity) {
@@ -216,10 +213,8 @@ public class PokemonUtils {
         if (move == null) {
             return null;
         }
-        if (isRangeAttackMove(move)) {
-            return move;
-        }
-        return null;
+
+        return isMeleeAttackMove(move) ? move : null;
     }
 
     public static Move getStatusMove(PokemonEntity pokemonEntity) {
