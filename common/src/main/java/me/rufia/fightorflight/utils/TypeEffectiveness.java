@@ -4,13 +4,18 @@ import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.types.ElementalType;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import net.minecraft.world.entity.LivingEntity;
 
 public class TypeEffectiveness {
-    public static float getTypeEffectiveness(PokemonEntity offense, PokemonEntity defense) {
-        return getTypeEffectiveness(offense, defense, true);
+    public static float calcTypeEffectiveness(PokemonEntity offense, PokemonEntity defense) {
+        return calcTypeEffectiveness(offense, defense, true);
     }
 
-    public static float getTypeEffectiveness(PokemonEntity offense, PokemonEntity defense, boolean shouldCheckAbility) {
+    public static float calcTypeEffectivenessDefenseNoPKM(PokemonEntity offense, ElementalType defendType) {
+        return calcTypeEffectivenessDefenseNoPKM(offense, defendType, true);
+    }
+
+    public static float calcTypeEffectiveness(PokemonEntity offense, PokemonEntity defense, boolean shouldCheckAbility) {
         if (!CobblemonFightOrFlight.commonConfig().type_effectiveness_between_pokemon) {
             return 1f;
         }
@@ -18,9 +23,9 @@ public class TypeEffectiveness {
 
         float result;
         if (move != null) {
-            result = getTypeEffectiveness(move, defense.getPokemon().getPrimaryType());
+            result = getMoveTypeEffectiveness(move, defense.getPokemon().getPrimaryType());
             if (defense.getPokemon().getSecondaryType() != null) {
-                result *= getTypeEffectiveness(move, defense.getPokemon().getSecondaryType());
+                result *= getMoveTypeEffectiveness(move, defense.getPokemon().getSecondaryType());
             }
         } else {
             ElementalType offenseType = offense.getPokemon().getPrimaryType();
@@ -29,7 +34,7 @@ public class TypeEffectiveness {
         return abilityCheck(offense, defense, result, shouldCheckAbility);
     }
 
-    public static float getTypeEffectiveness(Move offenseMove, ElementalType defenseType) {
+    public static float getMoveTypeEffectiveness(Move offenseMove, ElementalType defenseType) {
         if (offenseMove.getName().equals("freezedry")) {
             if (defenseType.getName().equals("Water")) {
                 return 2f;
@@ -47,11 +52,7 @@ public class TypeEffectiveness {
     }
 
     public static float getTypeEffectivenessSimple(ElementalType offenseType, PokemonEntity defendingPokemon) {
-        float result = getTypeEffectiveness(offenseType, defendingPokemon.getPokemon().getPrimaryType());
-        if (defendingPokemon.getPokemon().getSecondaryType() != null) {
-            result *= getTypeEffectiveness(offenseType, defendingPokemon.getPokemon().getSecondaryType());
-        }
-        return result;
+        return getTypeEffectivenessSimple(offenseType.getName(), defendingPokemon);
     }
 
     public static float getTypeEffectivenessSimple(String typeName, PokemonEntity defendingPokemon) {
@@ -62,9 +63,22 @@ public class TypeEffectiveness {
         return result;
     }
 
+
+    public static float calcTypeEffectivenessDefenseNoPKM(PokemonEntity offense, ElementalType defendType, boolean shouldCheckAbility) {
+        Move move = PokemonUtils.getMove(offense);
+        float result;
+        if (move != null) {
+            result = getMoveTypeEffectiveness(move, defendType);
+        } else {
+            ElementalType offenseType = offense.getPokemon().getPrimaryType();
+            result = getTypeEffectiveness(offenseType, defendType);
+        }
+        return abilityCheck(offense, null, result, shouldCheckAbility);
+    }
+
     public static float getTypeEffectiveness(String offenseTypeName, String defenseTypeName) {
         String offenseTypeNameLower = offenseTypeName.toLowerCase();
-        String defenseTypeNameLower=defenseTypeName.toLowerCase();
+        String defenseTypeNameLower = defenseTypeName.toLowerCase();
         return switch (offenseTypeNameLower) {
             case "normal" -> normalOffense(defenseTypeNameLower);
             case "fighting" -> fightingOffense(defenseTypeNameLower);
@@ -88,27 +102,39 @@ public class TypeEffectiveness {
         };
     }
 
-    private static float abilityCheck(PokemonEntity offense, PokemonEntity defense, float result, boolean shouldCheck) {
+    private static float abilityCheck(PokemonEntity offense, LivingEntity defense, float result, boolean shouldCheck) {
         //I'm not sure if they're in the proper order.
         if (!shouldCheck) {
             return result;
         }
-        if (result <= 0.5f && PokemonUtils.abilityIs(offense, "tintedlens")) {
-            result *= 2f;
+        result *= offensiveAbilityMultiplier(offense, result);
+        if (defense instanceof PokemonEntity defendingPokemon) {
+            result *= defensiveAbilityMultiplier(defendingPokemon, result);
         }
-        if (result < 2f && PokemonUtils.abilityIs(defense, "wonderguard")) {
+        return result;
+    }
+
+    private static float offensiveAbilityMultiplier(PokemonEntity offense, float currentMultiplier) {
+        if (currentMultiplier <= 0.5f && PokemonUtils.abilityIs(offense, "tintedlens")) {
+            return 2f;
+        }
+        if (currentMultiplier >= 2f && PokemonUtils.abilityIs(offense, "neuroforce")) {
+            return 1.25f;
+        }
+        return 1f;
+    }
+
+    private static float defensiveAbilityMultiplier(PokemonEntity defense, float currentMultiplier) {
+        if (currentMultiplier < 2f && PokemonUtils.abilityIs(defense, "wonderguard")) {
             return CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
         }
         if (PokemonUtils.abilityIs(defense, "terashell") && defense.getHealth() == defense.getMaxHealth()) {
             return CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
         }
-        if (result >= 2f && PokemonUtils.abilityIs(offense, "neuroforce")) {
-            result *= 1.25f;
+        if (currentMultiplier >= 2f && (PokemonUtils.abilityIs(defense, "filter") || PokemonUtils.abilityIs(defense, "solidrock") || PokemonUtils.abilityIs(defense, "prismarmor"))) {
+            return 0.75f;
         }
-        if (result >= 2f && (PokemonUtils.abilityIs(defense, "filter") || PokemonUtils.abilityIs(defense, "solidrock") || PokemonUtils.abilityIs(defense, "prismarmor"))) {
-            result *= 0.75f;
-        }
-        return result;
+        return 1f;
     }
 
     protected static float normalOffense(String defenseTypeName) {

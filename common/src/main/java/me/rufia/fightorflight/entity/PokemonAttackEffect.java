@@ -25,6 +25,7 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -177,6 +178,9 @@ public class PokemonAttackEffect {
         }
         ElementalType type = moveType == null ? pokemonEntity.getPokemon().getPrimaryType() : moveType;
         if (!(livingEntity instanceof PokemonEntity targetPokemon)) {
+            if (livingEntity instanceof EnderDragon && CobblemonFightOrFlight.commonConfig().ender_dragon_has_dragon_type) {
+                return TypeEffectiveness.calcTypeEffectivenessDefenseNoPKM(pokemonEntity, ElementalTypes.DRAGON);
+            }
             if (ElementalTypes.WATER.equals(type) && livingEntity.isSensitiveToWater()) {
                 return CobblemonFightOrFlight.commonConfig().water_type_super_effective_dmg_multiplier;
             }
@@ -195,7 +199,7 @@ public class PokemonAttackEffect {
                 return CobblemonFightOrFlight.commonConfig().poison_type_no_effect_dmg_multiplier;
             }
         } else {
-            return TypeEffectiveness.getTypeEffectiveness(pokemonEntity, targetPokemon);
+            return TypeEffectiveness.calcTypeEffectiveness(pokemonEntity, targetPokemon);
         }
         return 1.0f;
     }
@@ -379,7 +383,7 @@ public class PokemonAttackEffect {
             makeMagicAttackParticle(pokemonEntity, hurtTarget);
         }
         if (hurtTarget instanceof PokemonEntity targetPokemon) {
-            float typeEffectivenessMultiplier = TypeEffectiveness.getTypeEffectiveness(pokemonEntity, targetPokemon);
+            float typeEffectivenessMultiplier = TypeEffectiveness.calcTypeEffectiveness(pokemonEntity, targetPokemon);
             if (typeEffectivenessMultiplier >= 1.3f) {
                 //Filter/Solid Rock will reduce the damage,1.3 is to avoid the inaccuracy of float.
                 PokemonUtils.makeParticle(particleAmount, hurtTarget, ParticleTypes.WAX_ON);

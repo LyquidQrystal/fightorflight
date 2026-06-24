@@ -40,8 +40,9 @@ public class FOFExpCalculator {
         float affectionMultiplier = battlePokemon.getFriendship() >= 220 ? 1.2f : 1.0f;
         float gimmickBoost = Cobblemon.config.getExperienceMultiplier();
         float term3 = term1 * term2 + 1;
-        return Math.round(term3 * luckyEggMultiplier * evolutionMultiplier * affectionMultiplier * gimmickBoost * FOFExpMultiplier) + 1;
-
+        int result = Math.round(term3 * nonOtBonus * luckyEggMultiplier * evolutionMultiplier * affectionMultiplier * gimmickBoost * FOFExpMultiplier) + 1;
+        result = Math.max(result, CobblemonFightOrFlight.commonConfig().min_xp_from_pokemon);
+        return CobblemonFightOrFlight.commonConfig().max_xp_from_pokemon < 0 ? result : Math.min(result, CobblemonFightOrFlight.commonConfig().max_xp_from_pokemon);
     }
 
     public static float getNonOtBonus(Pokemon pokemon) {

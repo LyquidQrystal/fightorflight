@@ -4,20 +4,16 @@
 * Added back the flight mechanic, it's not working very well currently due to the changes of the Cobblemon's Pokemon AI. 
 ### New Config:
 * force_enable_flee: Required to be set to true for the flight feature.
-* pokemon_share_yield: If this is set to true
+* pokemon_share_yield: If this is set to true, all Pokemon that attacks the target Pokemon will get the EXP. and EV, or the last one will obtain the EXP. and EV.
+* ender_dragon_has_dragon_type: (This is set to false by default) Give Ender Dragon Dragon Type when calculating the damage it takes. Please notice that the type effectiveness will be influenced by Ender Dragon's own damage reduction(check [here](https://minecraft.wiki/w/Ender_Dragon#Behavior) for more information)
+* min_xp_from_pokemon: The minimum EXP. player's Pokemon can gain from killing a Pokemon without the turn-based battle.
+* max_xp_from_pokemon: The maximum EXP. player's Pokemon can gain from killing a Pokemon without the turn-based battle. If this value is lower than zero, there will be no limit.(This value is set to -1 by default)
 ### Changes:
 * Adjusted the xp mechanic so if a Pokemon is killed by player's Pokemons, all the Pokemon that dealt damage and didn't faint will gain the EXP. and EVs, the EXP. will be affected by the Pokemon count but EVs won't be influenced.
 * Make the wild Pokemon try to attack the last entity that hit it.
 ### Bug fixes:
 * Fix the bug that friendly_fire_immunity_owner and some other related configs is not working currently.
-* Fix the bug that the angry particle is created for a passive Pokemon.
-
-## TODO list:
-* Add a config option to add Dragon type weaknesses to the Ender Dragon.
-* Adjust the XP mechanic
-  * Add multiplier, min value, max value for the Lvl. gap when calculating the experience the Pokemon should get.
-## WIP(It is written here to remind me what I was trying to do before committing the code):
-* A bug made some aggressive Pokemon scared if the Pokemon is hit. It's an interesting bug. The aggression value required to trigger the task that controls the Pokemon to flee is set incorrectly. I'm not sure if I can make it a feature.
+* Fix the bug that the angry particle is created around a passive wild Pokemon.
 
 # V0.10.7:
 ### New Features:

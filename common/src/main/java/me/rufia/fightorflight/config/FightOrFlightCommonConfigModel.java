@@ -146,6 +146,10 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float experience_multiplier = 0.5f;
     @Comment("Your pokemon can gain EV points by killing a pokemon without a battle?")
     public boolean can_gain_ev = true;
+    @Comment("The minimum EXP. player's Pokemon can gain from killing a Pokemon without battle")
+    public int min_xp_from_pokemon = 0;
+    @Comment("The minimum EXP. player's Pokemon can gain from killing a Pokemon without battle. If this value is lower than zero, there will be no limit.")
+    public int max_xp_from_pokemon = -1;
     @Comment("If you want all the player's Pokemon that dealt the damage to gain EXP. and EV points")
     public boolean pokemon_share_yield = true;
     @Comment("If the Pokemon can evolve by using the move out of a Pokemon Battle? For example Primeape can use Rage Fist 20x to evolve without a traditional Pokemon Battle.")
@@ -235,7 +239,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float not_very_effective_multiplier = 0.5f;
     @Comment("Multiplier for no effect damage against the other Pokemon")
     public float no_effect_multiplier = 0.1f;
-    @Comment("Water type damage will be more effective on mobs like Blaze,Enderman,etc.")
+    @Comment("Water type damage will be more effective on mobs like Blaze, Enderman,etc.")
     public float water_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Fire type damage will be not very effective against fire immune entity.(set to 0 if you want a complete immune)")
     public float fire_type_no_effect_dmg_multiplier = 0.1f;
@@ -245,6 +249,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float ice_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Poison type damage will be not very effective against undead mobs.(set to 0 if you want a complete immune)")
     public float poison_type_no_effect_dmg_multiplier = 0.1f;
+    @Comment("If the Ender Dragon should have the Dragon Type weaknesses and resistances?")
+    public boolean ender_dragon_has_dragon_type = false;
     @ConfigEntry.Category("Health Calculation & Synchronization")
     @Comment("If you want to use FOF health mechanic. A different curve that was used in FOF previously. The following configurations needs this one to work.")
     public boolean shouldOverrideHealthMechanic = true;
