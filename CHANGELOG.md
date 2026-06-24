@@ -1,3 +1,7 @@
+# V0.10.9:
+### Bug fixes:
+* Fixed the log spam
+
 # V0.10.8:
 ### New Features:
 * Add support for Cobblemon Size Variation, the size of the Pokemon can influence the Pokemon's aggression. The bigger Pokemon will be more aggressive by default. New config options are added so you can make your own adjustments.

@@ -531,7 +531,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             updateAttackMode();
             backendMoveCooldown();
 
-            FOFUtils.checkEntityActivity(this);
+            //FOFUtils.checkEntityActivity(this);
         }
         if (sec % 5 == 4 && ticks == 17) {
             turnBasedHeldItemTrigger();
