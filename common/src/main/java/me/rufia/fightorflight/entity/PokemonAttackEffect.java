@@ -419,12 +419,17 @@ public class PokemonAttackEffect {
         if (move == null || level.isClientSide) {
             return;
         }
-        if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
-            for (MoveData data : MoveData.moveData.get(move.getName())) {
+        String moveName = move.getName();
+        boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().extra_recharging_moves).toList().contains(moveName);
+        if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(moveName)) {
+            for (MoveData data : MoveData.moveData.get(moveName)) {
                 if (data.isBeforeUse()) {
                     data.invoke(pokemonEntity, hurtTarget);
                 }
             }
+        }
+        if (b1) {
+            doublePokemonAttackTime(pokemonEntity);
         }
     }
 
@@ -455,7 +460,6 @@ public class PokemonAttackEffect {
         boolean b4 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_50).toList().contains(moveName);
         boolean b5 = Arrays.stream(CobblemonFightOrFlight.moveConfig().hp_draining_moves_75).toList().contains(moveName);
         boolean b6 = FOFHeldItemManager.canUse(pokemonEntity, CobblemonItems.LIFE_ORB);
-        boolean b7 = Arrays.stream(CobblemonFightOrFlight.moveConfig().extra_recharging_moves).toList().contains(moveName);
         float dmg = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
         if (b1) {
             pokemonRecallWithAnimation(pokemonEntity);
@@ -478,10 +482,6 @@ public class PokemonAttackEffect {
             if (!(abilityName.equals("sheerforce") || abilityName.equals("magicguard"))) {
                 pokemonRecoilSelf(pokemonEntity, 0.1f);
             }
-        }
-
-        if (b7) {
-            doublePokemonAttackTime(pokemonEntity);
         }
 
         if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {

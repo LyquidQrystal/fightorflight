@@ -2,298 +2,525 @@ package me.rufia.fightorflight.utils;
 
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.types.ElementalType;
+import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.data.effectiveness.FOFTypeEffectiveness;
 import net.minecraft.world.entity.LivingEntity;
+
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class TypeEffectiveness {
     public static float calcTypeEffectiveness(PokemonEntity offense, PokemonEntity defense) {
-        return calcTypeEffectiveness(offense, defense, true);
+        Effectiveness effectiveness = new Effectiveness();
+        return calcTypeEffectiveness(offense, defense, true, effectiveness);
+    }
+
+    public static float calcTypeEffectivenessSimple(String typeName, LivingEntity defending) {
+        Effectiveness effectiveness = new Effectiveness();
+        getTypeEffectivenessSimple(typeName, defending, effectiveness, false);
+        return effectiveness.getResult();
     }
 
     public static float calcTypeEffectivenessDefenseNoPKM(PokemonEntity offense, ElementalType defendType) {
-        return calcTypeEffectivenessDefenseNoPKM(offense, defendType, true);
+        Effectiveness effectiveness = new Effectiveness();
+        return calcTypeEffectivenessDefenseNoPKM(offense, defendType, true, effectiveness);
     }
 
-    public static float calcTypeEffectiveness(PokemonEntity offense, PokemonEntity defense, boolean shouldCheckAbility) {
-        if (!CobblemonFightOrFlight.commonConfig().type_effectiveness_between_pokemon) {
+    protected static float calcTypeEffectiveness(PokemonEntity offense, LivingEntity defense, boolean shouldCheckAbility, Effectiveness effectiveness) {
+        if (!CobblemonFightOrFlight.commonConfig().type_effectiveness_between_pokemon && defense instanceof PokemonEntity) {
             return 1f;
         }
         Move move = PokemonUtils.getMove(offense);
 
-        float result;
         if (move != null) {
-            result = getMoveTypeEffectiveness(move, defense.getPokemon().getPrimaryType());
-            if (defense.getPokemon().getSecondaryType() != null) {
-                result *= getMoveTypeEffectiveness(move, defense.getPokemon().getSecondaryType());
+            var el = getTargetElementalType(defense, PokemonUtils.isMoldBreakerLike(offense));
+            for (ElementalType e : el) {
+                getMoveTypeEffectiveness(move, e, effectiveness);
             }
         } else {
             ElementalType offenseType = offense.getPokemon().getPrimaryType();
-            result = getTypeEffectivenessSimple(offenseType, defense);
+            getTypeEffectivenessSimple(offenseType.getName(), defense, effectiveness, PokemonUtils.isMoldBreakerLike(offense));
         }
-        return abilityCheck(offense, defense, result, shouldCheckAbility);
+        applyCustomTypeEffectiveness(offense, defense, effectiveness, shouldCheckAbility && PokemonUtils.isMoldBreakerLike(offense));
+        return abilityCheck(offense, defense, effectiveness, shouldCheckAbility);
     }
 
-    public static float getMoveTypeEffectiveness(Move offenseMove, ElementalType defenseType) {
+    protected static float calcTypeEffectivenessDefenseNoPKM(PokemonEntity offense, ElementalType defendType, boolean shouldCheckAbility, Effectiveness effectiveness) {
+        Move move = PokemonUtils.getMove(offense);
+
+        if (move != null) {
+            getMoveTypeEffectiveness(move, defendType, effectiveness);
+        } else {
+            ElementalType offenseType = offense.getPokemon().getPrimaryType();
+            getTypeEffectiveness(offenseType.getName(), defendType.getName(), effectiveness);
+        }
+
+        return abilityCheck(offense, null, effectiveness, shouldCheckAbility);
+    }
+
+    protected static void getMoveTypeEffectiveness(Move offenseMove, ElementalType defenseType, Effectiveness effectiveness) {
         if (offenseMove.getName().equals("freezedry")) {
             if (defenseType.getName().equals("Water")) {
-                return 2f;
+                effectiveness.update(1, false);
             }
         }
-        float result = getTypeEffectiveness(offenseMove.getType(), defenseType);
+        getTypeEffectiveness(offenseMove.getType().getName(), defenseType.getName(), effectiveness);
         if (offenseMove.getName().equals("flyingpress")) {
-            result *= getTypeEffectiveness("Flying", defenseType.getName());
+            getTypeEffectiveness("Flying", defenseType.getName(), effectiveness);
         }
-        return result;
     }
 
-    public static float getTypeEffectiveness(ElementalType offenseType, ElementalType defenseType) {
-        return getTypeEffectiveness(offenseType.getName(), defenseType.getName());
-    }
-
-    public static float getTypeEffectivenessSimple(ElementalType offenseType, PokemonEntity defendingPokemon) {
-        return getTypeEffectivenessSimple(offenseType.getName(), defendingPokemon);
-    }
-
-    public static float getTypeEffectivenessSimple(String typeName, PokemonEntity defendingPokemon) {
-        float result = getTypeEffectiveness(typeName, defendingPokemon.getPokemon().getPrimaryType().getName());
-        if (defendingPokemon.getPokemon().getSecondaryType() != null) {
-            result *= getTypeEffectiveness(typeName, defendingPokemon.getPokemon().getSecondaryType().getName());
+    protected static void getTypeEffectivenessSimple(String typeName, LivingEntity defending, Effectiveness effectiveness, boolean moldBreakerAvailable) {
+        var el = getTargetElementalType(defending, moldBreakerAvailable);
+        for (ElementalType e : el) {
+            getTypeEffectiveness(typeName, e.getName(), effectiveness);
         }
-        return result;
     }
 
-
-    public static float calcTypeEffectivenessDefenseNoPKM(PokemonEntity offense, ElementalType defendType, boolean shouldCheckAbility) {
-        Move move = PokemonUtils.getMove(offense);
-        float result;
-        if (move != null) {
-            result = getMoveTypeEffectiveness(move, defendType);
+    protected static Set<ElementalType> getTargetElementalType(LivingEntity target, boolean moldBreakerAvailable) {
+        Set<ElementalType> result = new HashSet<>();
+        if (target instanceof PokemonEntity pokemonEntity) {
+            result.add(pokemonEntity.getPokemon().getPrimaryType());
+            var secType = pokemonEntity.getPokemon().getSecondaryType();
+            if (secType != null) {
+                result.add(secType);
+            }
         } else {
-            ElementalType offenseType = offense.getPokemon().getPrimaryType();
-            result = getTypeEffectiveness(offenseType, defendType);
+            if (FOFTypeEffectiveness.TYPE_EFFECTIVENESS.containsKey(target.getEncodeId())) {
+                var l = FOFTypeEffectiveness.TYPE_EFFECTIVENESS.get(target.getEncodeId());
+                for (FOFTypeEffectiveness te : l) {
+                    if (!moldBreakerAvailable && te.isIgnoredByMoldBreaker()) {
+                        List<String> ls = te.getAttachedElementalType();
+                        for (String st : ls) {
+                            ElementalType e = ElementalTypes.get(st);
+                            if (e != null) {
+                                result.add(e);
+                            }
+                        }
+                    }
+                }
+            }
         }
-        return abilityCheck(offense, null, result, shouldCheckAbility);
+        return result;
     }
 
-    public static float getTypeEffectiveness(String offenseTypeName, String defenseTypeName) {
+    protected static void getTypeEffectiveness(String offenseTypeName, String defenseTypeName, Effectiveness effectiveness) {
         String offenseTypeNameLower = offenseTypeName.toLowerCase();
         String defenseTypeNameLower = defenseTypeName.toLowerCase();
-        return switch (offenseTypeNameLower) {
-            case "normal" -> normalOffense(defenseTypeNameLower);
-            case "fighting" -> fightingOffense(defenseTypeNameLower);
-            case "flying" -> flyingOffense(defenseTypeNameLower);
-            case "poison" -> poisonOffense(defenseTypeNameLower);
-            case "ground" -> groundOffense(defenseTypeNameLower);
-            case "rock" -> rockOffense(defenseTypeNameLower);
-            case "bug" -> bugOffense(defenseTypeNameLower);
-            case "ghost" -> ghostOffense(defenseTypeNameLower);
-            case "steel" -> steelOffense(defenseTypeNameLower);
-            case "fire" -> fireOffense(defenseTypeNameLower);
-            case "water" -> waterOffense(defenseTypeNameLower);
-            case "grass" -> grassOffense(defenseTypeNameLower);
-            case "electric" -> electricOffense(defenseTypeNameLower);
-            case "psychic" -> psychicOffense(defenseTypeNameLower);
-            case "ice" -> iceOffense(defenseTypeNameLower);
-            case "dragon" -> dragonOffense(defenseTypeNameLower);
-            case "dark" -> darkOffense(defenseTypeNameLower);
-            case "fairy" -> fairyOffense(defenseTypeNameLower);
-            default -> 1f;
-        };
+        switch (offenseTypeNameLower) {
+            case "normal":
+                normalOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "fighting":
+                fightingOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "flying":
+                flyingOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "poison":
+                poisonOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "ground":
+                groundOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "rock":
+                rockOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "bug":
+                bugOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "ghost":
+                ghostOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "steel":
+                steelOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "fire":
+                fireOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "water":
+                waterOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "grass":
+                grassOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "electric":
+                electricOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "psychic":
+                psychicOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "ice":
+                iceOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "dragon":
+                dragonOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "dark":
+                darkOffense(defenseTypeNameLower, effectiveness);
+                break;
+            case "fairy":
+                fairyOffense(defenseTypeNameLower, effectiveness);
+                break;
+            default:
+                break;
+        }
     }
 
-    private static float abilityCheck(PokemonEntity offense, LivingEntity defense, float result, boolean shouldCheck) {
+    protected static void applyCustomTypeEffectiveness(PokemonEntity offense, LivingEntity target, Effectiveness effectiveness, boolean moldBreakerAvailable) {
+        if (target instanceof PokemonEntity) {
+            return;
+        }
+        //TODO
+    }
+
+    private static float abilityCheck(PokemonEntity offense, LivingEntity defense, Effectiveness effectiveness, boolean shouldCheck) {
         //I'm not sure if they're in the proper order.
+        float result = effectiveness.getResult();
         if (!shouldCheck) {
             return result;
         }
-        result *= offensiveAbilityMultiplier(offense, result);
+        result *= offensiveAbilityMultiplier(offense, effectiveness);
         if (defense instanceof PokemonEntity defendingPokemon) {
-            result *= defensiveAbilityMultiplier(defendingPokemon, result);
+            result *= defensiveAbilityMultiplier(defendingPokemon, PokemonUtils.isMoldBreakerLike(offense), effectiveness);
+        }
+        if (effectiveness.isNoEffect()) {
+            return getNoEffectMultiplier();
         }
         return result;
     }
 
-    private static float offensiveAbilityMultiplier(PokemonEntity offense, float currentMultiplier) {
-        if (currentMultiplier <= 0.5f && PokemonUtils.abilityIs(offense, "tintedlens")) {
+    private static float offensiveAbilityMultiplier(PokemonEntity offense, Effectiveness effectiveness) {
+        if (effectiveness.getStage() < 0 && PokemonUtils.abilityIs(offense, "tintedlens")) {
             return 2f;
         }
-        if (currentMultiplier >= 2f && PokemonUtils.abilityIs(offense, "neuroforce")) {
+        if (effectiveness.getStage() > 0 && PokemonUtils.abilityIs(offense, "neuroforce")) {
             return 1.25f;
         }
         return 1f;
     }
 
-    private static float defensiveAbilityMultiplier(PokemonEntity defense, float currentMultiplier) {
-        if (currentMultiplier < 2f && PokemonUtils.abilityIs(defense, "wonderguard")) {
-            return CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
+    private static float defensiveAbilityMultiplier(PokemonEntity defense, boolean isMoldBreaker, Effectiveness effectiveness) {
+        if (effectiveness.getStage() < 1 && PokemonUtils.abilityIs(defense, "wonderguard") && !isMoldBreaker) {
+            effectiveness.hitNoEffect();
         }
         if (PokemonUtils.abilityIs(defense, "terashell") && defense.getHealth() == defense.getMaxHealth()) {
-            return CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
+            return getNotVeryEffectiveMultiplier();
         }
-        if (currentMultiplier >= 2f && (PokemonUtils.abilityIs(defense, "filter") || PokemonUtils.abilityIs(defense, "solidrock") || PokemonUtils.abilityIs(defense, "prismarmor"))) {
+        if (effectiveness.getStage() > 0 && (PokemonUtils.abilityIs(defense, "filter") || PokemonUtils.abilityIs(defense, "solidrock") || PokemonUtils.abilityIs(defense, "prismarmor"))) {
             return 0.75f;
         }
         return 1f;
     }
 
-    protected static float normalOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "rock", "steel" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            case "ghost" -> CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
-            default -> 1f;
-        };
+    protected static void normalOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "rock", "steel":
+                effectiveness.hitResistance();
+                break;
+            case "ghost":
+                effectiveness.hitNoEffect();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float fightingOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "normal", "steel", "rock", "ice", "dark" ->
-                    CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "flying", "poison", "psychic", "fairy", "bug" ->
-                    CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            case "ghost" -> CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
-            default -> 1f;
-        };
+    protected static void fightingOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "normal", "steel", "rock", "ice", "dark":
+                effectiveness.hitWeakness();
+                break;
+            case "flying", "poison", "psychic", "fairy", "bug":
+                effectiveness.hitResistance();
+                break;
+            case "ghost":
+                effectiveness.hitNoEffect();
+            default:
+                break;
+        }
     }
 
-    protected static float flyingOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "fighting", "bug", "grass" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "rock", "steel", "electric" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void flyingOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "fighting", "bug", "grass":
+                effectiveness.hitWeakness();
+                break;
+            case "rock", "steel", "electric":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float poisonOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "fairy", "grass" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "poison", "ground", "rock", "ghost" ->
-                    CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            case "steel" -> CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
-            default -> 1f;
-        };
+    protected static void poisonOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "fairy", "grass":
+                effectiveness.hitWeakness();
+                break;
+            case "poison", "ground", "rock", "ghost":
+                effectiveness.hitResistance();
+                break;
+            case "steel":
+                effectiveness.hitNoEffect();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float groundOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "poison", "rock", "steel", "fire", "electric" ->
-                    CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "bug", "grass" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            case "flying" -> CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
-            default -> 1f;
-        };
+    protected static void groundOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "poison", "rock", "steel", "fire", "electric":
+                effectiveness.hitWeakness();
+                break;
+            case "bug", "grass":
+                effectiveness.hitResistance();
+                break;
+            case "flying":
+                effectiveness.hitNoEffect();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float rockOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "flying", "bug", "fire", "ice" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "fighting", "ground", "steel" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void rockOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "flying", "bug", "fire", "ice":
+                effectiveness.hitWeakness();
+                break;
+            case "fighting", "ground", "steel":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float bugOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "grass", "psychic", "dark" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "fighting", "flying", "poison", "ghost", "steel", "fire", "fairy" ->
-                    CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void bugOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "grass", "psychic", "dark":
+                effectiveness.hitWeakness();
+                break;
+            case "fighting", "flying", "poison", "ghost", "steel", "fire", "fairy":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float ghostOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "ghost", "psychic" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "dark" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            case "normal" -> CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
-            default -> 1f;
-        };
+    protected static void ghostOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "ghost", "psychic":
+                effectiveness.hitWeakness();
+                break;
+            case "dark":
+                effectiveness.hitResistance();
+                break;
+            case "normal":
+                effectiveness.hitNoEffect();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float steelOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "rock", "ice", "fairy" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "steel", "fire", "water", "electric" ->
-                    CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void steelOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "rock", "ice", "fairy":
+                effectiveness.hitWeakness();
+                break;
+            case "steel", "fire", "water", "electric":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float fireOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "steel", "ice", "grass", "bug" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "rock", "fire", "water", "dragon" ->
-                    CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void fireOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "steel", "ice", "grass", "bug":
+                effectiveness.hitWeakness();
+                break;
+            case "rock", "fire", "water", "dragon":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float waterOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "ground", "rock", "fire" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "water", "grass", "dragon" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void waterOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "ground", "rock", "fire":
+                effectiveness.hitWeakness();
+                break;
+            case "water", "grass", "dragon":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float grassOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "ground", "rock", "water" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "flying", "poison", "bug", "fire", "steel", "grass", "dragon" ->
-                    CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void grassOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "ground", "rock", "water":
+                effectiveness.hitWeakness();
+                break;
+            case "flying", "poison", "bug", "fire", "steel", "grass", "dragon":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float electricOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "flying", "water" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "grass", "electric", "dragon" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            case "ground" -> CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
-            default -> 1f;
-        };
+    protected static void electricOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "flying", "water":
+                effectiveness.hitWeakness();
+                break;
+            case "grass", "electric", "dragon":
+                effectiveness.hitResistance();
+                break;
+            case "ground":
+                effectiveness.hitNoEffect();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float psychicOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "fighting", "poison" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "steel", "psychic" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            case "dark" -> CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
-            default -> 1f;
-        };
+    protected static void psychicOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "fighting", "poison":
+                effectiveness.hitWeakness();
+                break;
+            case "steel", "psychic":
+                effectiveness.hitResistance();
+                break;
+            case "dark":
+                effectiveness.hitNoEffect();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float iceOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "flying", "ground", "grass", "dragon" ->
-                    CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "steel", "fire", "water", "ice" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void iceOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "flying", "ground", "grass", "dragon":
+                effectiveness.hitWeakness();
+                break;
+            case "steel", "fire", "water", "ice":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float dragonOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "dragon" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "steel" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            case "fairy" -> CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
-            default -> 1f;
-        };
+    protected static void dragonOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "dragon":
+                effectiveness.hitWeakness();
+                break;
+            case "steel":
+                effectiveness.hitResistance();
+                break;
+            case "fairy":
+                effectiveness.hitNoEffect();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float darkOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "ghost", "psychic" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "fighting", "dark", "fairy" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void darkOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "ghost", "psychic":
+                effectiveness.hitWeakness();
+                break;
+            case "fighting", "dark", "fairy":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
     }
 
-    protected static float fairyOffense(String defenseTypeName) {
-        return switch (defenseTypeName) {
-            case "fighting", "dragon", "dark" -> CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
-            case "poison", "steel", "fire" -> CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
-            default -> 1f;
-        };
+    protected static void fairyOffense(String defenseTypeName, Effectiveness effectiveness) {
+        switch (defenseTypeName) {
+            case "fighting", "dragon", "dark":
+                effectiveness.hitWeakness();
+                break;
+            case "poison", "steel", "fire":
+                effectiveness.hitResistance();
+                break;
+            default:
+                break;
+        }
+    }
+
+    public static float getSuperEffectiveMultiplier() {
+        return CobblemonFightOrFlight.commonConfig().super_effective_multiplier;
+    }
+
+    public static float getNotVeryEffectiveMultiplier() {
+        return CobblemonFightOrFlight.commonConfig().not_very_effective_multiplier;
+    }
+
+    public static float getNoEffectMultiplier() {
+        return CobblemonFightOrFlight.commonConfig().no_effect_multiplier;
+    }
+
+    protected static class Effectiveness {
+        private int stage = 0;
+        private boolean isNoEffect = false;
+
+        public int getStage() {
+            return stage;
+        }
+
+        public boolean isNoEffect() {
+            return isNoEffect;
+        }
+
+        public void update(int stageChange, boolean isNoEffect) {
+            stage += stageChange;
+            if (isNoEffect) {
+                this.isNoEffect = true;
+            }
+        }
+
+        public void hitWeakness() {
+            update(1, false);
+        }
+
+        public void hitResistance() {
+            update(-1, false);
+        }
+
+        public void hitNoEffect() {
+            update(0, true);
+        }
+
+        public float getResult() {
+            if (isNoEffect) {
+                return getNoEffectMultiplier();
+            }
+            if (stage != 0) {
+                return (float) (stage > 0 ? Math.pow(getSuperEffectiveMultiplier(), stage) : Math.pow(getNotVeryEffectiveMultiplier(), -stage));
+            }
+            return 1f;
+        }
     }
 }

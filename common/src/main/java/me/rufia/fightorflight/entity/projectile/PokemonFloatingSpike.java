@@ -62,7 +62,7 @@ public class PokemonFloatingSpike extends AbstractPokemonSpike {
         if (getOwner() instanceof PokemonEntity pokemonEntity) {
             if (PokemonAttackEffect.shouldHurtAllyMob(pokemonEntity, target)) {
                 DamageSource damageSource = this.damageSources().indirectMagic(this, pokemonEntity);
-                float multiplier = target instanceof PokemonEntity pokemon ? TypeEffectiveness.getTypeEffectivenessSimple("rock", pokemon) : 1f;
+                float multiplier = target instanceof PokemonEntity pokemon ? TypeEffectiveness.calcTypeEffectivenessSimple("rock", pokemon) : 1f;
                 if (target.hurt(damageSource, multiplier * CobblemonFightOrFlight.moveConfig().spike_basic_damage)) {
                     pokemonEntity.setLastHurtByMob(pokemonEntity);
                     PokemonUtils.setHurtByPlayer(pokemonEntity, target);

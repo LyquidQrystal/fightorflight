@@ -58,7 +58,6 @@ public class PokeStaffAutoBattleSensor extends Sensor<PokemonEntity> {
                 if (thisPKM.getLevel() < targetPKM.getLevel() && CobblemonFightOrFlight.commonConfig().auto_battle_weaker_pokemon_only) {
                     return false;
                 }
-                // TODO ability to compare the levels of the two Pokemon before attacking
                 return targetPokemon.getOwner() == null;
             }
             return false;

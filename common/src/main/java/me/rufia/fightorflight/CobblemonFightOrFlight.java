@@ -13,6 +13,7 @@ import me.rufia.fightorflight.utils.FOFAggressionCalculator;
 import me.rufia.fightorflight.utils.FOFUtils;
 import me.rufia.fightorflight.utils.TargetingWhitelist;
 import me.rufia.fightorflight.utils.listeners.MoveDataListener;
+import me.rufia.fightorflight.utils.listeners.TypeEffectivenessListener;
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.JanksonConfigSerializer;
 import net.minecraft.core.particles.ParticleTypes;
@@ -63,6 +64,7 @@ public class CobblemonFightOrFlight {
         visualEffectConfig = AutoConfig.getConfigHolder(FightOrFlightVisualEffectConfigModel.class).getConfig();
         CobblemonFightOrFlightNetwork.init();
         ReloadListenerRegistry.register(PackType.SERVER_DATA, new MoveDataListener(), ResourceLocation.fromNamespaceAndPath(MODID, "movedata"));
+        ReloadListenerRegistry.register(PackType.SERVER_DATA, new TypeEffectivenessListener(), ResourceLocation.fromNamespaceAndPath(MODID, "type_effectiveness"));
         TargetingWhitelist.init();
     }
 

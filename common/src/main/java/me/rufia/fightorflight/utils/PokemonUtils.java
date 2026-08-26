@@ -59,12 +59,12 @@ public class PokemonUtils {
     }
 
     public static boolean shouldFightTarget(PokemonEntity pokemonEntity) {
-        if (pokemonEntity.getPokemon().getLevel() < CobblemonFightOrFlight.commonConfig().minimum_attack_level) {
+        LivingEntity owner = pokemonEntity.getOwner();
+        LivingEntity targetEntity = getTarget(pokemonEntity);
+        if (pokemonEntity.getPokemon().getLevel() < CobblemonFightOrFlight.commonConfig().minimum_attack_level || targetEntity == null || TargetingWhitelist.getWhitelist(pokemonEntity).contains(targetEntity.getEncodeId())) {
             return false;
         }
 
-        LivingEntity owner = pokemonEntity.getOwner();
-        LivingEntity targetEntity = getTarget(pokemonEntity);
         if (owner != null) {
             if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner || getTarget(pokemonEntity) == null || getTarget(pokemonEntity) == owner || pokemonEntity.getPokemon().getState() instanceof ShoulderedState) {
                 return false;
@@ -80,10 +80,8 @@ public class PokemonUtils {
                 return false;
             }
         } else {
-            if (targetEntity != null) {
-                if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) < CobblemonFightOrFlight.commonConfig().neutral_threshold || pokemonEntity.distanceToSqr(targetEntity) > 400) {
-                    return false;
-                }
+            if (CobblemonFightOrFlight.getFightOrFlightCoefficient(pokemonEntity) < CobblemonFightOrFlight.commonConfig().neutral_threshold || pokemonEntity.distanceToSqr(targetEntity) > 400) {
+                return false;
             }
         }
         return !pokemonEntity.isBusy();
@@ -421,6 +419,15 @@ public class PokemonUtils {
                 mob.setTarget(pokemonEntity);
             }
         }
+    }
+
+    public static boolean isMoldBreakerLike(PokemonEntity pokemonEntity) {
+        for (var s : CobblemonFightOrFlight.commonConfig().mold_breaker_like_ablilities) {
+            if (abilityIs(pokemonEntity, s)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static boolean isSheerForce(PokemonEntity pokemonEntity) {

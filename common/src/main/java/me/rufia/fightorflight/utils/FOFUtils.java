@@ -19,6 +19,7 @@ import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -154,5 +155,18 @@ public class FOFUtils {
 
     public static boolean isPeaceful(LivingEntity entity) {
         return entity.getCommandSenderWorld().getCurrentDifficultyAt(entity.blockPosition()).getDifficulty() == Difficulty.PEACEFUL;
+    }
+
+    public static boolean findEntityTypeTag(LivingEntity target, String targetTag) {
+        if (target == null) {
+            return false;
+        }
+
+        for (var t : target.getType().builtInRegistryHolder().tags().toList()) {
+            if (Objects.equals(targetTag, t.location().toString())) {
+                return true;
+            }
+        }
+        return false;
     }
 }
