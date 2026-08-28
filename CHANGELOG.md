@@ -5,6 +5,7 @@
     * Pokemon can't change the move it's trying to use if it's charging.
     * Moves that needs to charge 1 turn to use will have longer duration.
     * It is designed to be finished in 1 second so it won't influence most players.
+* Custom type effectiveness: Use a json file to give an entity specific weaknesses and resistances. For modpack creators & datapack creators to create more interactions with the mobs from the other mods. (Documentation is coming soon.)
 ### Changes:
 * Changed some of the particle when using moves with specific types.
 * Slightly adjusted the projectile created for the special move that doesn't have special effect currently to make it more accurate.
@@ -22,7 +23,6 @@
 * extra_recharging_moves: Moves that doesn't require the Pokemon to recharge/charge 1 turn, but you want to extend its recharging time for balancing.
 ### TODO list:
 * A more detailed information if the player failed to change the Pokemon's move.
-* Custom type effectiveness: Use a json file to give an entity specific weaknesses and resistances. For modpack creators & datapack creators to create more interactions with the mobs from the other mods.
 
 # V0.10.9:
 ### Bug fixes:

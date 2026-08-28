@@ -1,0 +1,13 @@
+{
+  "id": [
+    "minecraft:ender_dragon"
+  ],
+  "entityTypeTag": [],
+  "attachedElementalType": [
+    "Dragon"
+  ],
+  "weakness": [],
+  "resistance": [],
+  "immune": [],
+  "ignoredByMoldBreaker": false
+}

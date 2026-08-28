@@ -332,6 +332,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float aggression_size_M_value = 0f;
     @Comment("The extra aggression a Pokemon can get if it's size is L.")
     public float aggression_size_L_value = 50f;
-
-
+    @Comment("If you want to use the custom type effectiveness, it allows you to use datapack to add weakness/resistance to non-pokemon entity.")
+    public boolean use_custom_type_effectiveness = true;
 }

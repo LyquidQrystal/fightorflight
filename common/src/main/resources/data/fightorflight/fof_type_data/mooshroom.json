@@ -1,0 +1,14 @@
+{
+  "id": [
+    "minecraft:mooshroom"
+  ],
+  "entityTypeTag": [],
+  "attachedElementalType": [
+    "Bug",
+    "Grass"
+  ],
+  "weakness": [],
+  "resistance": [],
+  "immune": [],
+  "ignoredByMoldBreaker": false
+}

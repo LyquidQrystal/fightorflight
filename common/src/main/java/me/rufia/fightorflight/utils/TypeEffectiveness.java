@@ -8,12 +8,13 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.data.effectiveness.FOFTypeEffectiveness;
 import net.minecraft.world.entity.LivingEntity;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 public class TypeEffectiveness {
-    public static float calcTypeEffectiveness(PokemonEntity offense, PokemonEntity defense) {
+    public static float calcTypeEffectiveness(PokemonEntity offense, LivingEntity defense) {
         Effectiveness effectiveness = new Effectiveness();
         return calcTypeEffectiveness(offense, defense, true, effectiveness);
     }
@@ -44,7 +45,7 @@ public class TypeEffectiveness {
             ElementalType offenseType = offense.getPokemon().getPrimaryType();
             getTypeEffectivenessSimple(offenseType.getName(), defense, effectiveness, PokemonUtils.isMoldBreakerLike(offense));
         }
-        applyCustomTypeEffectiveness(offense, defense, effectiveness, shouldCheckAbility && PokemonUtils.isMoldBreakerLike(offense));
+        applyCustomTypeEffectiveness(offense, defense, effectiveness, shouldCheckAbility && PokemonUtils.isMoldBreakerLike(offense), move);
         return abilityCheck(offense, defense, effectiveness, shouldCheckAbility);
     }
 
@@ -89,16 +90,20 @@ public class TypeEffectiveness {
                 result.add(secType);
             }
         } else {
+            List<FOFTypeEffectiveness> l = new ArrayList<>();
+            if (FOFTypeEffectiveness.TYPE_EFFECTIVENESS.containsKey("any")) {
+                l.addAll(FOFTypeEffectiveness.TYPE_EFFECTIVENESS.get("any"));
+            }
             if (FOFTypeEffectiveness.TYPE_EFFECTIVENESS.containsKey(target.getEncodeId())) {
-                var l = FOFTypeEffectiveness.TYPE_EFFECTIVENESS.get(target.getEncodeId());
-                for (FOFTypeEffectiveness te : l) {
-                    if (!moldBreakerAvailable && te.isIgnoredByMoldBreaker()) {
-                        List<String> ls = te.getAttachedElementalType();
-                        for (String st : ls) {
-                            ElementalType e = ElementalTypes.get(st);
-                            if (e != null) {
-                                result.add(e);
-                            }
+                l.addAll(FOFTypeEffectiveness.TYPE_EFFECTIVENESS.get(target.getEncodeId()));
+            }
+            for (FOFTypeEffectiveness te : l) {
+                if (!(moldBreakerAvailable && te.isIgnoredByMoldBreaker()) && te.testTarget(target)) {
+                    List<String> ls = te.getAttachedElementalType();
+                    for (String st : ls) {
+                        ElementalType e = ElementalTypes.get(st);
+                        if (e != null) {
+                            result.add(e);
                         }
                     }
                 }
@@ -170,11 +175,55 @@ public class TypeEffectiveness {
         }
     }
 
-    protected static void applyCustomTypeEffectiveness(PokemonEntity offense, LivingEntity target, Effectiveness effectiveness, boolean moldBreakerAvailable) {
-        if (target instanceof PokemonEntity) {
+    protected static void applyCustomTypeEffectiveness(PokemonEntity offense, LivingEntity target, Effectiveness effectiveness, boolean moldBreakerAvailable, Move move) {
+        if (target instanceof PokemonEntity || !CobblemonFightOrFlight.commonConfig().use_custom_type_effectiveness) {
             return;
         }
-        //TODO
+        List<FOFTypeEffectiveness> l = new ArrayList<>();
+        if (FOFTypeEffectiveness.TYPE_EFFECTIVENESS.containsKey("any")) {
+            l.addAll(FOFTypeEffectiveness.TYPE_EFFECTIVENESS.get("any"));
+        }
+        if (FOFTypeEffectiveness.TYPE_EFFECTIVENESS.containsKey(target.getEncodeId())) {
+            l.addAll(FOFTypeEffectiveness.TYPE_EFFECTIVENESS.get(target.getEncodeId()));
+        }
+        Set<ElementalType> weakness = new HashSet<>();
+        Set<ElementalType> resistance = new HashSet<>();
+        Set<ElementalType> immune = new HashSet<>();
+        for (FOFTypeEffectiveness te : l) {
+            if (!(moldBreakerAvailable && te.isIgnoredByMoldBreaker()) && te.testTarget(target)) {
+                List<String> wk = te.getWeakness();
+                for (String st : wk) {
+                    ElementalType e = ElementalTypes.get(st);
+                    if (e != null) {
+                        weakness.add(e);
+                    }
+                }
+                List<String> rs = te.getResistance();
+                for (String st : rs) {
+                    ElementalType e = ElementalTypes.get(st);
+                    if (e != null) {
+                        resistance.add(e);
+                    }
+                }
+                List<String> im = te.getImmune();
+                for (String st : im) {
+                    ElementalType e = ElementalTypes.get(st);
+                    if (e != null) {
+                        immune.add(e);
+                    }
+                }
+            }
+        }
+        ElementalType type = move != null ? move.getType() : offense.getPokemon().getPrimaryType();
+        if (weakness.contains(type)) {
+            effectiveness.update(1, false);
+        }
+        if (resistance.contains(type)) {
+            effectiveness.update(-1, false);
+        }
+        if (immune.contains(type)) {
+            effectiveness.update(0, true);
+        }
     }
 
     private static float abilityCheck(PokemonEntity offense, LivingEntity defense, Effectiveness effectiveness, boolean shouldCheck) {

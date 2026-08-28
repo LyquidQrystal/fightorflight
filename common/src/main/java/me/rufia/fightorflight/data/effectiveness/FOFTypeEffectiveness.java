@@ -1,10 +1,6 @@
 package me.rufia.fightorflight.data.effectiveness;
 
-import com.cobblemon.mod.common.api.moves.Move;
-import com.cobblemon.mod.common.api.types.ElementalType;
-import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.utils.FOFUtils;
-import me.rufia.fightorflight.utils.TypeEffectiveness;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.HashMap;
@@ -57,29 +53,6 @@ public class FOFTypeEffectiveness {
 
     public boolean isIgnoredByMoldBreaker() {
         return ignoredByMoldBreaker;
-    }
-
-    public float getMultiplier(PokemonEntity pokemonEntity, ElementalType type, LivingEntity target, boolean moldBreakerAvailable) {
-        if (type == null || target == null || moldBreakerAvailable && ignoredByMoldBreaker || !testTarget(target)) {
-            return 1f;
-        }
-        String typeName = type.getName();
-        if (weakness.contains(typeName)) {
-            return TypeEffectiveness.getSuperEffectiveMultiplier();
-        } else if (resistance.contains(typeName)) {
-            return TypeEffectiveness.getNotVeryEffectiveMultiplier();
-        } else if (immune.contains(typeName)) {
-            return TypeEffectiveness.getNoEffectMultiplier();
-        }
-        return 1f;
-    }
-
-    public float getMultiplier(PokemonEntity pokemonEntity, Move move, LivingEntity target, boolean moldBreakerAvailable) {
-        if (pokemonEntity==null|| target == null || moldBreakerAvailable && ignoredByMoldBreaker || !testTarget(target)) {
-            return 1f;
-        }
-        ElementalType type =move!=null? move.getType():pokemonEntity.getPokemon().getPrimaryType();
-        return getMultiplier(pokemonEntity, type, target, moldBreakerAvailable);
     }
 
     public boolean testTarget(LivingEntity target) {

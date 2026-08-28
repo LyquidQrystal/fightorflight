@@ -17,7 +17,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.EntityTypeTags;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -25,7 +24,6 @@ import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.TamableAnimal;
-import net.minecraft.world.entity.boss.enderdragon.EnderDragon;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -179,30 +177,16 @@ public class PokemonAttackEffect {
         }
         ElementalType type = moveType == null ? pokemonEntity.getPokemon().getPrimaryType() : moveType;
         if (!(livingEntity instanceof PokemonEntity targetPokemon)) {
-            if (livingEntity instanceof EnderDragon && CobblemonFightOrFlight.commonConfig().ender_dragon_has_dragon_type) {
-                return TypeEffectiveness.calcTypeEffectivenessDefenseNoPKM(pokemonEntity, ElementalTypes.DRAGON);
-            }
             if (ElementalTypes.WATER.equals(type) && livingEntity.isSensitiveToWater()) {
                 return CobblemonFightOrFlight.commonConfig().water_type_super_effective_dmg_multiplier;
             }
             if (ElementalTypes.FIRE.equals(type) && livingEntity.fireImmune()) {
                 return CobblemonFightOrFlight.commonConfig().fire_type_no_effect_dmg_multiplier;
             }
-            if (ElementalTypes.ICE.equals(type)) {
-                if (!livingEntity.canFreeze()) {
-                    return CobblemonFightOrFlight.commonConfig().ice_type_no_effect_dmg_multiplier;
-                }
-                if (livingEntity.getType().is(EntityTypeTags.FREEZE_HURTS_EXTRA_TYPES)) {
-                    return CobblemonFightOrFlight.commonConfig().ice_type_super_effective_dmg_multiplier;
-                }
-            }
-            if (ElementalTypes.POISON.equals(type) && livingEntity.getType().is(EntityTypeTags.UNDEAD)) {
-                return CobblemonFightOrFlight.commonConfig().poison_type_no_effect_dmg_multiplier;
-            }
+            return TypeEffectiveness.calcTypeEffectiveness(pokemonEntity, livingEntity);
         } else {
             return TypeEffectiveness.calcTypeEffectiveness(pokemonEntity, targetPokemon);
         }
-        return 1.0f;
     }
 
     public static int getMobEffectBoost(PokemonEntity pokemonEntity) {
@@ -719,7 +703,7 @@ public class PokemonAttackEffect {
                     return;
                 }
                 livingEntity = it.next();
-            } while (centerEntity.distanceToSqr(livingEntity) > 25.0);
+            } while (centerEntity.distanceTo(livingEntity) > CobblemonFightOrFlight.moveConfig().max_AoE_radius);
             if (livingEntity == pokemonEntity || !(shouldHurtAlly && shouldHurtAllyMob(pokemonEntity, livingEntity))) {
                 continue;
             }
@@ -730,11 +714,12 @@ public class PokemonAttackEffect {
                     dmgMultiplier = 1.0f;
                 } else {
                     //TODO unfinished
-                    dmgMultiplier = CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;//Will be replaced when I have enough free time
+                    double maxR = radius - CobblemonFightOrFlight.moveConfig().min_AoE_radius;
+                    double rd = distance - CobblemonFightOrFlight.moveConfig().min_AoE_radius;
+                    dmgMultiplier = (float) Mth.lerp(rd / maxR, CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier, 1f);//Will be replaced when I have enough free time
                 }
-
             } else {
-                dmgMultiplier = CobblemonFightOrFlight.moveConfig().min_AoE_damage_multiplier;
+                dmgMultiplier = 1f;
             }
             var dmgSource = hasDirectContact ? centerEntity.damageSources().mobAttack(pokemonEntity) : centerEntity.damageSources().indirectMagic(pokemonEntity, pokemonEntity);
             boolean bl = livingEntity.hurt(dmgSource, calculatePokemonDamage(pokemonEntity, livingEntity, move) * dmgMultiplier);

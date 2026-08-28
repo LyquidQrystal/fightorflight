@@ -1,0 +1,15 @@
+{
+  "id": [
+    "any"
+  ],
+  "entityTypeTag": [
+    "minecraft:freeze_hurts_extra_types"
+  ],
+  "attachedElementalType": [],
+  "weakness": [
+    "Ice"
+  ],
+  "resistance": [],
+  "immune": [],
+  "ignoredByMoldBreaker": false
+}

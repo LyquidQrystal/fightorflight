@@ -1,0 +1,15 @@
+{
+  "id": [
+    "any"
+  ],
+  "entityTypeTag": [
+    "minecraft:freeze_immune_entity_types"
+  ],
+  "attachedElementalType": [],
+  "weakness": [],
+  "resistance": [],
+  "immune": [
+    "Ice"
+  ],
+  "ignoredByMoldBreaker": false
+}

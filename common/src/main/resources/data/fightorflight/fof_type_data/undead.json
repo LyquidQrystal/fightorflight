@@ -1,0 +1,15 @@
+{
+  "id": [
+    "any"
+  ],
+  "entityTypeTag": [
+    "minecraft:undead"
+  ],
+  "attachedElementalType": [],
+  "weakness": [],
+  "resistance": [],
+  "immune": [
+    "Poison"
+  ],
+  "ignoredByMoldBreaker": false
+}
