@@ -348,6 +348,10 @@ public class PokemonUtils {
         //todo I still need to find a way to update the locator or the particle can't be spawned at the target's location.
     }
 
+    public static boolean isKlutz(PokemonEntity pokemonEntity) {
+        return abilityIs(pokemonEntity, "klutz");
+    }
+
     public static ItemStack getHeldItem(PokemonEntity pokemonEntity) {
         if (pokemonEntity == null) {
             return null;

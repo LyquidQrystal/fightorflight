@@ -23,7 +23,7 @@ public class FOFHeldItemManager {
             return false;
         }
         if (pokemonEntity != null) {
-            return canUse(pokemonEntity.getPokemon(), item);
+            return !PokemonUtils.isKlutz(pokemonEntity) && canUse(pokemonEntity.getPokemon(), item);
         }
         return false;
     }

@@ -386,7 +386,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         }
         PokemonMultipliers pokemonMultipliers = new PokemonMultipliers((PokemonEntity) (Object) this);
         Pokemon pokemon = getPokemon();
-        int specialDef = (int) (pokemon.getSpecialDefence() * (FOFHeldItemManager.canUse(pokemon, CobblemonItems.ASSAULT_VEST) ? 1.3f : 1f));
+        int specialDef = (int) (pokemon.getSpecialDefence() * (FOFHeldItemManager.canUse((PokemonEntity) (Object) this, CobblemonItems.ASSAULT_VEST) ? 1.3f : 1f));
         float def = Math.max(pokemon.getDefence(), specialDef);
         return amount * (1 - pokemonMultipliers.getMaximumDamageReduction() * Math.min(CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier, Mth.lerp(def / CobblemonFightOrFlight.commonConfig().defense_stat_limit, 0, CobblemonFightOrFlight.commonConfig().max_damage_reduction_multiplier)));
     }

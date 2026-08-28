@@ -16,6 +16,7 @@ import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
+import net.minecraft.network.chat.Component;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -211,7 +212,11 @@ public class PokemonAttackEffect {
         if (!FOFHeldItemManager.canUseHeldItemDamageInfluencing()) {
             return 1f;
         }
+
         ItemStack heldItem = PokemonUtils.getHeldItem(pokemonEntity);
+        if (!FOFHeldItemManager.canUse(pokemonEntity, heldItem.getItem())) {
+            return 1f;
+        }
         Move move = PokemonUtils.getMove(pokemonEntity);
         ElementalType type = null;
         if (move != null) {
@@ -252,12 +257,17 @@ public class PokemonAttackEffect {
         return 1.0f;
     }
 
-    public static boolean canChangeMove(PokemonEntity pokemonEntity) {
+    public static boolean canChangeMove(PokemonEntity pokemonEntity, Player player) {
         if (((PokemonInterface) pokemonEntity).getMoveDuration() > 0) {
+            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed.busy", pokemonEntity.getPokemon().getDisplayName(false)));
             return false;
         }
         ItemStack itemStack = PokemonUtils.getHeldItem(pokemonEntity);
-        return !itemStack.is(CobblemonItems.CHOICE_BAND) && !itemStack.is(CobblemonItems.CHOICE_SCARF) && !itemStack.is(CobblemonItems.CHOICE_SPECS);
+        if (!PokemonUtils.isKlutz(pokemonEntity) && (itemStack.is(CobblemonItems.CHOICE_BAND) || itemStack.is(CobblemonItems.CHOICE_SCARF) || itemStack.is(CobblemonItems.CHOICE_SPECS))) {
+            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed.choice_item", pokemonEntity.getPokemon().getDisplayName(false)));
+            return false;
+        }
+        return true;
     }
 
     protected static void calculateTypeEffect(PokemonEntity pokemonEntity, Entity hurtTarget, String typeName, int pkmLevel) {
