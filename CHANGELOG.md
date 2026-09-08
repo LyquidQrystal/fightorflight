@@ -9,7 +9,7 @@
 * Pokemon with Klutz ability will no longer use Held Item.
 ### Changes:
 * Changed some of the particle when using moves with specific types.
-* Slightly adjusted the projectile created for the special move that doesn't have special effect currently to make it more accurate.
+* Slightly adjusted the projectile created for the special move that doesn't have special effect currently.
 * Lowered projectiles speed. It was too fast to notice. It's still fast now, but you might notice something flies away.
 * Reworked the type effectiveness system to make it compatible with the custom type effectiveness system, it should work normally as before in most cases.
 ### Bug fixes:
@@ -19,11 +19,9 @@
 ### New Config:
 * enable_auto_battle_command: If the Auto Battle command should be enabled.
 * auto_battle_friendship_requirement: The friendship requirement for your Pokemon to obey the Auto Battle command. The default value is 100.
-* auto_battle_weaker_pokemon_only: If this is set to true, If this is set to true, Pokemon with Auto Battle command won't attack Pokemon with a higher level.
+* auto_battle_weaker_pokemon_only: If this is set to true, Pokemon with Auto Battle command won't attack Pokemon with a higher level.
 * base_move_duration: The basic duration of a move. In ticks.
 * extra_recharging_moves: Moves that doesn't require the Pokemon to recharge/charge 1 turn, but you want to extend its recharging time for balancing.
-### TODO list:
-* A more detailed information if the player failed to change the Pokemon's move.
 
 # V0.10.9:
 ### Bug fixes:

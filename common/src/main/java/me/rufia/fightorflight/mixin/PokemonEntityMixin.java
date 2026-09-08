@@ -40,6 +40,7 @@ import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -68,6 +69,9 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
 
     @Shadow(remap = false)
     public abstract int getBeamMode();
+
+    @Shadow(remap = false)
+    public abstract UUID getBattleId();
 
     @Unique
     @Nullable
@@ -429,23 +433,27 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         }
     }
 
-    @Inject(method = "isInvulnerableTo", at = @At("HEAD"), cancellable = true)
-    private void invulnerableToModify(DamageSource damageSource, CallbackInfoReturnable<Boolean> cir) {
+    @Override
+    public boolean isInvulnerableTo(DamageSource damageSource) {
         if (!busyLocks.isEmpty()) {
-            cir.setReturnValue(true);
+            return true;
         }
         // Don't let Pokémon be hurt during sendout and recall animations
         if (getBeamMode() != 0) {
-            cir.setReturnValue(true);
+            return true;
         }
 
         if (CobblemonFightOrFlight.commonConfig().suffocation_immunity && damageSource.is(DamageTypes.IN_WALL)) {
-            cir.setReturnValue(true);
+            return true;
         }
 
-        if (!CobblemonFightOrFlight.commonConfig().pvp_immunity && getOwnerUUID() != null && (damageSource.getEntity() instanceof Player)) {
-            cir.setReturnValue(super.isInvulnerableTo(damageSource));
+        if (!CobblemonFightOrFlight.commonConfig().pvp_immunity && getOwnerUUID() != null && (damageSource.getEntity() instanceof ServerPlayer player)) {
+            if (getBattleId() != null) {
+                CobblemonFightOrFlight.LOGGER.info("Occupied by a battle.");
+                return true;
+            }
         }
+        return super.isInvulnerableTo(damageSource);
     }
 
     @Inject(method = "hurt", at = @At("HEAD"), cancellable = true)
@@ -536,9 +544,11 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         }
         PokemonEntity self = (PokemonEntity) (Object) this;
         if (self.getOwner() instanceof Player && !FOFHeldItemManager.canUse(self, CobblemonItems.ASSAULT_VEST)) {
-            PokemonAttackEffect.refreshAttackTime(self, 300);
-            PokemonAttackEffect.resetMoveDuration(self, 0);
-            //PokemonAttackEffect.applyBeforeUseEffect(self, null, move);
+            Move move = PokemonUtils.getStatusMove(self);
+            if (move != null && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+                PokemonAttackEffect.resetMoveDuration(self, 0);
+                //PokemonAttackEffect.applyBeforeUseEffect(self, null, move);
+            }
         }
     }
 
@@ -577,6 +587,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
                         }
                         PokemonUtils.makeParticle(10, self, ParticleTypes.HAPPY_VILLAGER);
                         PokemonUtils.sendAnimationPacket(self, "status");
+                        PokemonAttackEffect.refreshAttackTime(self, 300);
                     }
                     break;
                 }
