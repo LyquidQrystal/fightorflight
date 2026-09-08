@@ -10,6 +10,9 @@ V0.11.0 was designed for Cobblemon 1.7, but it seems to work normally on Cobblem
 * Arthropod mobs(Spiders, bees, etc.) is considered as Bug Type if they're hurt by a Pokemon.
 * Mooshroom is considered as Bug Type and Grass Type if they're hurt by a Pokemon.
 * Pokemon with Klutz ability will no longer use Held Item.
+* Add Auto Battle command to the Poke Staff, it will let your Pokemon try to attack the wild Pokemon nearby. 
+  * Pokemon's friendship should reach 100 to use this command(Can be changed in the config.)
+  * Wild shiny Pokemon won't be attacked unless you set not_attacking_wild_shiny to false.
 ### Changes:
 * Changed some of the particle when using moves with specific types.
 * Slightly adjusted the projectile created for the special move that doesn't have special effect currently.
