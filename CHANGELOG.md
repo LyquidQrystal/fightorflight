@@ -1,4 +1,5 @@
 # V0.11.0:
+V0.11.0 was designed for Cobblemon 1.7, but it seems to work normally on Cobblemon 1.8. So I just update the dependency in the gradle. Please report the bug you encountered in the issue.
 ### New Features:
 * Pokemon can attack in peaceful difficulty now.
 * Adjust the way the range attack works, the Pokemon will gain slowness when trying to use range attack, charge for a short period of time and then attack.
@@ -6,6 +7,8 @@
     * Moves that needs to charge 1 turn to use will have longer duration.
     * It is designed to be finished in 1 second so it won't influence most players.
 * Custom type effectiveness: Use a json file to give an entity specific weaknesses and resistances. For modpack creators & datapack creators to create more interactions with the mobs from the other mods. (Documentation is coming soon.)
+* Arthropod mobs(Spiders, bees, etc.) is considered as Bug Type if they're hurt by a Pokemon.
+* Mooshroom is considered as Bug Type and Grass Type if they're hurt by a Pokemon.
 * Pokemon with Klutz ability will no longer use Held Item.
 ### Changes:
 * Changed some of the particle when using moves with specific types.
@@ -16,6 +19,7 @@
 * Fixed the bug that the white list config is not working currently.
 * Fixed the bug that moves needs 1 turn to recharge/charge don't have a longer cooldown(I think it never worked so I guess no one should discover that this is a bug.)
 * Fixed the bug that some range attack move is not working correctly.
+* Fixed the bug that a player can hurt another player's Pokemon in a pvp battle and set pvp_immunity to false.
 ### New Config:
 * enable_auto_battle_command: If the Auto Battle command should be enabled.
 * auto_battle_friendship_requirement: The friendship requirement for your Pokemon to obey the Auto Battle command. The default value is 100.
