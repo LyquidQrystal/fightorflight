@@ -97,6 +97,10 @@ public class CobblemonFightOrFlight {
         Set<String> pokemonAspects = pokemon.getAspects();
         double height = pokemonEntity.position().y;
 
+        if (commonConfig().alpha_always_aggressive && pokemon.isAlpha()) {
+            return FOFAggressionCalculator.getAggressiveValue();
+        }
+
         if (SpeciesNeverAggro(speciesName) || SpeciesAlwaysFlee(speciesName)) {
             return FOFAggressionCalculator.getPeacefulValue();
         }

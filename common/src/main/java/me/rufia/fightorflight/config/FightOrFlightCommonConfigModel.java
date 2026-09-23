@@ -11,7 +11,7 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @ConfigEntry.Category("Wild Pokemon Aggression")
     @Comment("Do more aggressive Pokemon fight back when provoked?")
     public boolean do_pokemon_attack = true;
-    @Comment("Do especially aggressive Pokemon attack unprovoked?")
+    @Comment("Do especially aggressive Pokemon attack unprovoked? Required for the other configs that make Pokemon always aggressive")
     public boolean do_pokemon_attack_unprovoked = false;
     @Comment("If the aggressive pokemon will only attack unprovoked in the dark area.(similar to the spider in Minecraft,do_pokemon_attack_unprovoked needs to be set to true")
     public boolean light_dependent_unprovoked_attack = true;
@@ -53,6 +53,8 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean stop_running_after_hurt = true;
     @Comment("Wild pokemon will be slow down if the hp is not full.")
     public boolean slow_down_after_hurt = false;
+    @Comment("Make all the Alpha Pokemons aggressive. It has higher priority than never aggro species currently.")
+    public boolean alpha_always_aggressive = true;
     @Comment("Pokemon with these natures are slightly more aggressive.")
     public String[] aggressive_nature = {"sassy", "hardy", "bold", "impish", "hasty"};
     @Comment("The aggression multiplier for natures above.")

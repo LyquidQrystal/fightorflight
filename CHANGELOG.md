@@ -1,11 +1,13 @@
 # V0.11.1:
+### New Features:
+* If you enabled wild pokemon unprovoked attack, the Alpha Pokemon will be aggressive.
 ### Changes: 
 * Make the aggression influenced by Cobblemon's size instead of Cobblemon Size Variation mod.
 ### TODO:
 * Json file driven species behaviour
 * Priority system for targeting
 * Split do_pokemon_defend_owner
-* Alpha Pokemon Feature
+* Alpha Pokemon Feature(The ability to use move and higher stat currently)
 
 # V0.11.0:
 V0.11.0 was designed for Cobblemon 1.7, but it seems to work normally on Cobblemon 1.8. So I just update the dependency in the gradle. Please report the bug you encountered in the issue.
