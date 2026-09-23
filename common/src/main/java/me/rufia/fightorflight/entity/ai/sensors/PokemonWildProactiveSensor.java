@@ -23,7 +23,7 @@ public class PokemonWildProactiveSensor extends Sensor<PokemonEntity> {
         if (!PokemonUtils.WildPokemonCanPerformUnprovokedAttack(entity)) {
             return;
         }
-        if (CobblemonFightOrFlight.getFightOrFlightCoefficient(entity) <= CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD() || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && entity.getLightLevelDependentMagicValue() >= 0.5f)) {
+        if (CobblemonFightOrFlight.getFightOrFlightCoefficient(entity) < CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD() || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && entity.getLightLevelDependentMagicValue() >= 0.5f)) {
             return;
         }
         entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> findTarget(entity, visibleLivingEntities));

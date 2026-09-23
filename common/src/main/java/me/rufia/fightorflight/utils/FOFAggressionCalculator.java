@@ -3,6 +3,7 @@ package me.rufia.fightorflight.utils;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import com.cobblemon.mod.common.pokemon.PokemonSizeCategory;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import net.minecraft.world.phys.AABB;
 
@@ -72,6 +73,18 @@ public class FOFAggressionCalculator {
         return multiplier * CobblemonFightOrFlight.commonConfig().aggression_nature_base_value;
     }
 
+    protected static double getSizeAggressionCoefficient(PokemonEntity pokemonEntity) {
+        Pokemon pokemon = pokemonEntity.getPokemon();
+        PokemonSizeCategory category = pokemon.getSizeCategory();
+        String cName = category.name();
+        if (Arrays.stream(CobblemonFightOrFlight.commonConfig().size_S_cobblemon_sizer).toList().contains(cName)) {
+            return CobblemonFightOrFlight.commonConfig().aggression_size_S_value;
+        } else if (Arrays.stream(CobblemonFightOrFlight.commonConfig().size_L_cobblemon_sizer).toList().contains(cName)) {
+            return CobblemonFightOrFlight.commonConfig().aggression_size_L_value;
+        }
+        return CobblemonFightOrFlight.commonConfig().aggression_size_M_value;
+    }
+
     //Extra aggression offered by mods that FOF has an integrated support.
     protected static double getSupportedModExtraAggression(PokemonEntity pokemonEntity) {
         double result = 0;
@@ -98,6 +111,7 @@ public class FOFAggressionCalculator {
                     + getIntimidateCoefficient(pokemonEntity)
                     + getLevelAggressionCoefficient(pokemonEntity)
                     + getNatureAggressionCoefficient(pokemonEntity.getPokemon())
+                    + getSizeAggressionCoefficient(pokemonEntity)
                     + getSupportedModExtraAggression(pokemonEntity)
                     + getSideModExtraAggression(pokemonEntity);
         }

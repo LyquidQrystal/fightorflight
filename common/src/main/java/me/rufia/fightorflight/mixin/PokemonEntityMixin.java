@@ -177,7 +177,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     }
 
     @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    protected void defineSynchedData(SynchedEntityData.Builder builder, CallbackInfo callbackInfo) {
+    protected void defineFOFSynchedData(SynchedEntityData.Builder builder, CallbackInfo callbackInfo) {
         builder.define(DATA_ID_ATTACK_TARGET, 0);
         builder.define(DATA_ID_CAPTURED_BY, 0);
         builder.define(ATTACK_TIME, 0);

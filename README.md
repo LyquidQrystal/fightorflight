@@ -80,6 +80,7 @@ This version is no longer server-side only. Try CobbleGuard if you want a server
 - New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if enabled.(Similar to the spiders in Minecraft, enabled by default)
 
 ## TODO
+### Sometimes I will just write the update plan in CHANGELOG.md, check it if you're really interested in my future update plan.
 - Main Goal For the Following Updates:
   * Small adjustments and fixes
 - Things that might be done in a short period of time(1~3 big updates):

@@ -16,6 +16,7 @@ import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.MoverType;
 import net.minecraft.world.entity.ai.attributes.Attributes;
+import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.ProjectileUtil;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.phys.BlockHitResult;
@@ -132,7 +133,15 @@ public class PokemonArrow extends AbstractPokemonProjectile {
 
     protected boolean hurtTarget(PokemonEntity pokemonEntity, LivingEntity target) {
         DamageSource damageSource = this.damageSources().indirectMagic(this, pokemonEntity);
-        if (target.hurt(damageSource, getDamage())) {
+        float damage = getDamage();
+        if (pokemonEntity != null && pokemonEntity.getOwner() instanceof Player) {
+            Move move = PokemonUtils.getMove(pokemonEntity);
+            if (move != null) {
+                damage = PokemonAttackEffect.calculatePokemonDamage(pokemonEntity, target, move);
+            }
+        }
+
+        if (target.hurt(damageSource, damage)) {
             if (target.getType() == EntityType.ENDERMAN) {
                 this.discard();
                 return false;//To be honest, idk if it's necessary.

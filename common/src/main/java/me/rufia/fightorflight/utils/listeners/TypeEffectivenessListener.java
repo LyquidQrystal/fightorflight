@@ -56,7 +56,6 @@ public class TypeEffectivenessListener extends SimplePreparableReloadListener<Ma
                     FOFTypeEffectiveness.TYPE_EFFECTIVENESS.get(id).add(eff);
                 }
             }
-            //if(FOFTypeEffectiveness.TYPE_EFFECTIVENESS.containsKey())
             ++fileCount;
         }
         CobblemonFightOrFlight.LOGGER.info("[FOF] {} type data files processed.", fileCount);

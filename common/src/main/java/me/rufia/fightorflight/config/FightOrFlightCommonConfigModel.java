@@ -314,18 +314,24 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("If you want to set willFlee to true in Pokemon's combat behaviour of Cobblemon. Will only be enabled to Pokemon that won't attack.(Not aggressive enough/not allowed to attack by the config.")
     public boolean attack_in_peaceful_difficulty = true;
     @ConfigEntry.Category("Mod Compat")
-    @Comment("Sizes that will be recognized as S for FOF when you are using the basic sizer.(The default sizer)")
+    @Comment("Sizes that will be recognized as S for FOF when you are using the basic sizer.(The default sizer)(Deprecated)")
     public String[] size_S_basic_sizer = {"Tiny", "Small"};
-    @Comment("Sizes that will be recognized as M for FOF when you are using the basic sizer.(The default sizer)")
+    @Comment("Sizes that will be recognized as M for FOF when you are using the basic sizer.(The default sizer)(Deprecated)")
     public String[] size_M_basic_sizer = {"Average"};
-    @Comment("Sizes that will be recognized as L for FOF when you are using the basic sizer.(The default sizer)")
+    @Comment("Sizes that will be recognized as L for FOF when you are using the basic sizer.(The default sizer)(Deprecated)")
     public String[] size_L_basic_sizer = {"Big", "Large", "Huge"};
-    @Comment("Sizes that will be recognized as S for FOF when you are using the Gen9 sizer.")
+    @Comment("Sizes that will be recognized as S for FOF when you are using the Gen9 sizer.(Deprecated)")
     public String[] size_S_gen9_sizer = {"S", "XS", "XXS", "XXXS"};
-    @Comment("Sizes that will be recognized as M for FOF when you are using the Gen9 sizer.")
+    @Comment("Sizes that will be recognized as M for FOF when you are using the Gen9 sizer.(Deprecated)")
     public String[] size_M_gen9_sizer = {"M"};
-    @Comment("Sizes that will be recognized as L for FOF when you are using the Gen9 sizer.")
+    @Comment("Sizes that will be recognized as L for FOF when you are using the Gen9 sizer.(Deprecated)")
     public String[] size_L_gen9_sizer = {"L", "XL", "XXL", "XXXL"};
+    @Comment("Sizes that will be recognized as L for FOF when you are using Cobblemon")
+    public String[] size_S_cobblemon_sizer = {"S", "XS"};
+    @Comment("Sizes that will be recognized as L for FOF when you are using Cobblemon")
+    public String[] size_M_cobblemon_sizer = {"L", "XL"};
+    @Comment("Sizes that will be recognized as L for FOF when you are using Cobblemon")
+    public String[] size_L_cobblemon_sizer = {"L", "XL"};
     @Comment("The extra aggression a Pokemon can get if it's size is S.")
     public float aggression_size_S_value = -30f;
     @Comment("The extra aggression a Pokemon can get if it's size is M.")
