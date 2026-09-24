@@ -109,8 +109,11 @@ public abstract class AbstractPokemonAreaEffect extends Entity implements IPokem
         float r = getRadius();
         if (this instanceof PokemonTornado) {
             setHeight(r);
+        }
+        if (this instanceof PokemonAreaEffectMagic) {
+            setHeight(r * 1.5f);
         } else {
-            setHeight(0.5f);
+            setHeight(1f);
         }
         //CobblemonFightOrFlight.LOGGER.info("AOE Height:{}", getHeight());
     }

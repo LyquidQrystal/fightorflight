@@ -3,6 +3,7 @@ package me.rufia.fightorflight.mixin;
 
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
+import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.EvSource;
 import com.cobblemon.mod.common.api.pokemon.stats.SidemodEvSource;
@@ -40,7 +41,6 @@ import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -545,7 +545,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         PokemonEntity self = (PokemonEntity) (Object) this;
         if (self.getOwner() instanceof Player && !FOFHeldItemManager.canUse(self, CobblemonItems.ASSAULT_VEST)) {
             Move move = PokemonUtils.getStatusMove(self);
-            if (move != null && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+            if (move != null && PokemonAttackEffect.canUseMove(self) && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
                 PokemonAttackEffect.resetMoveDuration(self, 0);
                 //PokemonAttackEffect.applyBeforeUseEffect(self, null, move);
             }
@@ -581,7 +581,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             switch (attackMode) {
                 case 0: {
                     Move move = PokemonUtils.getStatusMove(self);
-                    if (move != null && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+                    if (move != null && PokemonAttackEffect.canUseMove(self) && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
                         for (MoveData data : MoveData.moveData.get(move.getName())) {
                             data.invoke(self, null);
                         }
@@ -606,6 +606,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     @Unique
     private void slowTick(int ticks, int sec) {
         if (ticks == 11) {
+            wildRandomMove();
             updateAttackMode();
             backendMoveCooldown();
 
@@ -659,23 +660,66 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         Pokemon pokemon = pokemonEntity.getPokemon();
         Move move = PokemonUtils.getMove(pokemonEntity);
         boolean attackIsHigher = pokemon.getAttack() > pokemon.getSpecialAttack();//The default setting.
-        boolean hasOwner = pokemonEntity.getOwner() != null;//The pokemon has no trainer.
+        boolean hasOwner = pokemonEntity.getOwner() != null;//The pokemon has a trainer.
         boolean moveAvailable = move != null;
-        if (hasOwner && moveAvailable) {
-            if (PokemonUtils.isMeleeAttackMove(move)) {
-                setAttackMode(1);
-            } else if (PokemonUtils.isRangeAttackMove(move)) {
-                setAttackMode(2);
+        boolean wildCanUseRange = !hasOwner && !attackIsHigher && (CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack || CobblemonFightOrFlight.commonConfig().wild_alpha_ranged_attack && PokemonUtils.isAlpha(pokemonEntity));
+        if (moveAvailable) {
+            if (hasOwner) {
+                if (PokemonUtils.isMeleeAttackMove(move)) {
+                    setAttackMode(1);
+                } else if (PokemonUtils.isRangeAttackMove(move)) {
+                    setAttackMode(2);
+                } else {
+                    setAttackMode(0);
+                }
             } else {
-                setAttackMode(0);
+                if (PokemonAttackEffect.canUseMove(pokemonEntity)) {
+                    if (wildCanUseRange && PokemonUtils.isRangeAttackMove(move)) {
+                        setAttackMode(2);
+                    } else {
+                        setAttackMode(1);
+                    }
+                } else {
+                    if (wildCanUseRange) {
+                        setAttackMode(2);
+                    } else {
+                        setAttackMode(1);
+                    }
+                }
             }
             //CobblemonFightOrFlight.LOGGER.info("Current attack mode: {}", getAttackMode());
             setCurrentMove(move);
         } else {
-            if (!attackIsHigher && CobblemonFightOrFlight.commonConfig().wild_pokemon_ranged_attack) {
+            if (wildCanUseRange) {
                 setAttackMode(2);
             } else {
                 setAttackMode(1);
+            }
+        }
+    }
+
+    @Unique
+    private void wildRandomMove() {
+        if (getOwner() != null) {
+            return;
+        }
+        PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+        if (PokemonUtils.isAlpha(pokemonEntity) && PokemonAttackEffect.canUseMove(pokemonEntity)) {
+            CobblemonFightOrFlight.LOGGER.info("Trying to switch move.");
+            var moves = getPokemon().getMoveSet();
+            List<Move> attackMoves = new ArrayList<>();
+            for (Move move : moves) {
+                if (!move.getDamageCategory().equals(DamageCategories.INSTANCE.getSTATUS())) {
+                    attackMoves.add(move);
+                }
+            }
+            if (attackMoves.isEmpty()) {
+                return;
+            }
+            int randIndex = random.nextInt(attackMoves.size());
+            if (PokemonAttackEffect.canChangeMove(pokemonEntity, null)) {
+                switchMove(attackMoves.get(randIndex));
+                PokemonUtils.makeParticle(6, this, ParticleTypes.ENCHANTED_HIT);
             }
         }
     }

@@ -88,9 +88,10 @@ public class FOFAggressionCalculator {
     //Extra aggression offered by mods that FOF has an integrated support.
     protected static double getSupportedModExtraAggression(PokemonEntity pokemonEntity) {
         double result = 0;
+        /*
         if (CobblemonFightOrFlight.sizeVariationCompat.isLoaded()) {
             result += CobblemonFightOrFlight.sizeVariationCompat.getExtraAggression(pokemonEntity);
-        }
+        }*/
         //CobblemonFightOrFlight.LOGGER.info("{}:{}", pokemonEntity.getPokemon().getDisplayName(false), result);
         return result;
     }

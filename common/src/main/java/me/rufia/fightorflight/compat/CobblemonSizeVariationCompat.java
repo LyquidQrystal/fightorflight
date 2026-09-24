@@ -10,6 +10,7 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 
 import java.util.Arrays;
 
+@Deprecated
 public class CobblemonSizeVariationCompat extends AbstractModCompat {
     @Override
     public String getModID() {

@@ -1,13 +1,18 @@
 # V0.11.1:
 ### New Features:
 * If you enabled wild pokemon unprovoked attack, the Alpha Pokemon will be aggressive.
+* Wild Alpha Pokemon now will try to use move and switch them randomly. They might also use range attack.(Configurable)
 ### Changes: 
+* Wild Pokemon won't try to use the moves now unless it's an Alpha Pokemon.(Some moves could be used before. set wild_pokemon_can_use_move to true if you want it back.)
 * Make the aggression influenced by Cobblemon's size instead of Cobblemon Size Variation mod.
+* Increased the height of the area effect hitbox.
 ### TODO:
 * Json file driven species behaviour
 * Priority system for targeting
 * Split do_pokemon_defend_owner
 * Alpha Pokemon Feature(The ability to use move and higher stat currently)
+* Add a config option for the interval between Alpha switching moves.
+* Add a sidebar to display the move an alpha is switching. Moves from Player's Pokemon should be displayed, too.
 
 # V0.11.0:
 V0.11.0 was designed for Cobblemon 1.7, but it seems to work normally on Cobblemon 1.8. So I just update the dependency in the gradle. Please report the bug you encountered in the issue.

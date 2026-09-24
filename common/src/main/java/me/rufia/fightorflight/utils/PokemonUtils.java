@@ -666,4 +666,11 @@ public class PokemonUtils {
         }
         return ChatFormatting.stripFormatting(pokemon.getDisplayName(false).getString());
     }
+
+    public static boolean isAlpha(PokemonEntity pokemonEntity) {
+        if (pokemonEntity == null) {
+            return false;
+        }
+        return pokemonEntity.getPokemon().isAlpha();
+    }
 }

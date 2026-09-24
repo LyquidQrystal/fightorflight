@@ -209,8 +209,14 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean force_player_battle_on_player_hurt = false;
     @Comment("If this is set to true, only the players of different teams can start a battle")
     public boolean force_player_battle_check_team = true;
+    @Comment("If wild pokemon can use move to attack. If this is set to false, the move power will be set to the value of base_power in fightorflight_moves.json5 when calculating damage.")
+    public boolean wild_pokemon_can_use_move = false;
+    @Comment("If wild pokemon can use move to attack. If this is set to false, the move power will be set to the value of base_power in fightorflight_moves.json5 when calculating damage.")
+    public boolean wild_alpha_can_use_move = true;
+    @Comment("If wild alpha pokemon can use the range attack. If the pokemon can't use a move, it will only use range attack if the Special Attack is higher than Attack.")
+    public boolean wild_alpha_ranged_attack = true;
     @ConfigEntry.Category("Pokemon Ranged Attack")
-    @Comment("If wild pokemon can use the ranged attack.")
+    @Comment("If wild pokemon can use the range attack. If the pokemon can't use a move, it will only use range attack if the Special Attack is higher than Attack.")
     public boolean wild_pokemon_ranged_attack = false;
     @Comment("The minimum time between pokemons ranged attacks. In seconds.")
     public float minimum_ranged_attack_interval = 1.0f;

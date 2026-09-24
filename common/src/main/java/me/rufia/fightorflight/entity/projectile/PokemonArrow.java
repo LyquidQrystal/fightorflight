@@ -157,7 +157,7 @@ public class PokemonArrow extends AbstractPokemonProjectile {
             if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
                 applyTypeEffect(pokemonEntity, target);
             }
-            if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+            if (PokemonAttackEffect.canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect) {
                 Move move = PokemonUtils.getMove(pokemonEntity);
                 PokemonAttackEffect.applyPostEffect(pokemonEntity, target, move, true);
             }

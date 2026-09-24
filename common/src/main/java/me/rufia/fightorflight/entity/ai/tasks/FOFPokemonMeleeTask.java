@@ -64,7 +64,7 @@ public class FOFPokemonMeleeTask {
         //CobblemonFightOrFlight.LOGGER.info("Trying to use melee attack");
         if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, hurtTarget)) {
             Move move = PokemonUtils.getMove(pokemonEntity);
-            if (move != null) {
+            if (PokemonAttackEffect.canUseMove(pokemonEntity) && move != null) {
                 if (Arrays.stream(CobblemonFightOrFlight.moveConfig().self_centered_aoe_moves).toList().contains(move.getName())) {
                     PokemonAttackEffect.dealAoEDamage(pokemonEntity, pokemonEntity, true, PokemonUtils.isMeleeAttackMove(move));
                     if (PokemonUtils.isPhysicalMove(move)) {

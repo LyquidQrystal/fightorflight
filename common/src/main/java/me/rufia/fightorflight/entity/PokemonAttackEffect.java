@@ -133,8 +133,8 @@ public class PokemonAttackEffect {
         PokemonMultipliers multipliers = new PokemonMultipliers(pokemonEntity);
         float attackModifier = CobblemonFightOrFlight.commonConfig().max_bonus_from_stat * Mth.sqrt((float) Math.min(attack, maxStat) / maxStat);
         float moveModifier = movePower / 40 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
-        float minDmg = isSpecial ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
-        float maxDmg = isSpecial ? multipliers.getMaximumRangeAttackDamage() : multipliers.getMaximumAttackDamage();
+        float minDmg = isUsingRangeAttack ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
+        float maxDmg = isUsingRangeAttack ? multipliers.getMaximumRangeAttackDamage() : multipliers.getMaximumAttackDamage();
         float sheerForceMultiplier = PokemonUtils.canActivateSheerForce(pokemonEntity) ? 1.3f : 1.0f;
         float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack);
         float mobEffectBoost = getMobEffectBoost(pokemonEntity);
@@ -143,7 +143,6 @@ public class PokemonAttackEffect {
             multiplier *= CobblemonFightOrFlight.moveConfig().indirect_attack_move_power_multiplier;
         }
         float value = Math.clamp(multiplier * (moveModifier * attackModifier + mobEffectBoost), minDmg, maxDmg);
-        //float value = Math.min(Math.max(multiplier * (moveModifier * attackModifier + mobEffectBoost), minDmg), maxDmg);
         //CobblemonFightOrFlight.LOGGER.info("value:{} minDmg:{} maxDmg:{} attack:{} attackModifier:{} moveModifier:{} multiplier:{}", value, minDmg, maxDmg, attack, attackModifier, moveModifier, multiplier);
         return value;
     }
@@ -259,12 +258,16 @@ public class PokemonAttackEffect {
 
     public static boolean canChangeMove(PokemonEntity pokemonEntity, Player player) {
         if (((PokemonInterface) pokemonEntity).getMoveDuration() > 0) {
-            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed.busy", pokemonEntity.getPokemon().getDisplayName(false)));
+            if (player != null) {
+                player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed.busy", pokemonEntity.getPokemon().getDisplayName(false)));
+            }
             return false;
         }
         ItemStack itemStack = PokemonUtils.getHeldItem(pokemonEntity);
         if (!PokemonUtils.isKlutz(pokemonEntity) && (itemStack.is(CobblemonItems.CHOICE_BAND) || itemStack.is(CobblemonItems.CHOICE_SCARF) || itemStack.is(CobblemonItems.CHOICE_SPECS))) {
-            player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed.choice_item", pokemonEntity.getPokemon().getDisplayName(false)));
+            if (player != null) {
+                player.sendSystemMessage(Component.translatable("item.fightorflight.pokestaff.move.failed.choice_item", pokemonEntity.getPokemon().getDisplayName(false)));
+            }
             return false;
         }
         return true;
@@ -415,7 +418,7 @@ public class PokemonAttackEffect {
         }
         String moveName = move.getName();
         boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().extra_recharging_moves).toList().contains(moveName);
-        if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(moveName)) {
+        if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(moveName)) {
             for (MoveData data : MoveData.moveData.get(moveName)) {
                 if (data.isBeforeUse()) {
                     data.invoke(pokemonEntity, hurtTarget);
@@ -432,7 +435,7 @@ public class PokemonAttackEffect {
         if (move == null || level.isClientSide) {
             return;
         }
-        if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+        if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
             for (MoveData data : MoveData.moveData.get(move.getName())) {
                 if (data.isOnUse()) {
                     data.invoke(pokemonEntity, hurtTarget);
@@ -482,7 +485,7 @@ public class PokemonAttackEffect {
             applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
         }
 
-        if (CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
+        if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
             for (MoveData data : MoveData.moveData.get(move.getName())) {
                 if (data.isOnHit() && targetIsHurt) {
                     data.invoke(pokemonEntity, hurtTarget);
@@ -532,7 +535,7 @@ public class PokemonAttackEffect {
         Move move = PokemonUtils.getRangeAttackMove(pokemonEntity);
         AbstractPokemonProjectile bullet;
         PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
-        if (move != null) {
+        if (canUseMove(pokemonEntity) && move != null) {
             String moveName = move.getName();
             Random rand = new Random();
             boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName);
@@ -572,7 +575,7 @@ public class PokemonAttackEffect {
                 shootProjectileEntity(pokemonEntity, target, bullet);
                 addProjectileEntity(pokemonEntity, target, bullet, move);
             }
-            if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+            if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect) {
                 applyOnUseEffect(pokemonEntity, target, move);
             }
         } else {
@@ -831,13 +834,18 @@ public class PokemonAttackEffect {
         }
     }
 
-
+    /**
+     *
+     * @param pokemonEntity The Pokemon that is using melee attack
+     * @param hurtTarget    The target that will be attacked
+     * @return If the Pokemon has finished the attack and dealt damage.
+     */
     public static boolean pokemonAttack(PokemonEntity pokemonEntity, Entity hurtTarget) {
         Pokemon pokemon = pokemonEntity.getPokemon();
         float hurtDamage;
         float hurtKnockback = 1f;
         Move move = PokemonUtils.getMeleeMove(pokemonEntity);
-        if (move != null) {
+        if (canUseMove(pokemonEntity) && move != null) {
             boolean b1 = PokemonUtils.isExplosiveMove(move.getName());
             if (b1) {
                 hurtDamage = 0f;
@@ -847,7 +855,7 @@ public class PokemonAttackEffect {
             if (hurtTarget instanceof LivingEntity livingEntity) {
                 makeTypeEffectParticle(10, livingEntity, move.getType().getName());
                 PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
-                if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect) {
                     applyOnUseEffect(pokemonEntity, livingEntity, move);
                 }
             }
@@ -868,7 +876,7 @@ public class PokemonAttackEffect {
                 if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
                     pokemonEntity.setDeltaMovement(pokemonEntity.getDeltaMovement().multiply(0.6D, 1.0D, 0.6D));
                 }
-                if (CobblemonFightOrFlight.commonConfig().activate_move_effect) {
+                if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect) {
                     applyPostEffect(pokemonEntity, livingEntity, move, true);
                 }
                 livingEntity.knockback(CobblemonFightOrFlight.commonConfig().activate_type_effect ? hurtKnockback * 0.5F : 0.5F, Mth.sin(pokemonEntity.getYRot() * ((float) Math.PI / 180F)), -Mth.cos(pokemonEntity.getYRot() * ((float) Math.PI / 180F)));
@@ -879,6 +887,27 @@ public class PokemonAttackEffect {
         return flag;
     }
 
+    /**
+     *
+     * @param pokemonEntity
+     * @return If the Pokemon has the right to use move.
+     */
+    public static boolean canUseMove(PokemonEntity pokemonEntity) {
+        if (pokemonEntity.getOwner() != null) {
+            return true;
+        }
+        if (CobblemonFightOrFlight.commonConfig().wild_alpha_can_use_move && PokemonUtils.isAlpha(pokemonEntity)) {
+            return true;
+        }
+        return CobblemonFightOrFlight.commonConfig().wild_pokemon_can_use_move;
+    }
+
+    /**
+     *
+     * @param pokemonEntity The attacker
+     * @param target        The target that might be hurt
+     * @return If the Pokemon should hurt the target
+     */
     public static boolean shouldHurtAllyMob(PokemonEntity pokemonEntity, LivingEntity target) {
         if (pokemonEntity == null || target == null) {
             return true;
@@ -902,6 +931,12 @@ public class PokemonAttackEffect {
         return true;
     }
 
+    /**
+     *
+     * @param pokemonEntity The Pokemon that was attacked
+     * @param attacker      The attacker
+     * @return If the Pokemon should be hurt by this attack.
+     */
     public static boolean shouldBeHurtByAllyMob(PokemonEntity pokemonEntity, LivingEntity attacker) {
         if (pokemonEntity == null || attacker == null) {
             return true;
