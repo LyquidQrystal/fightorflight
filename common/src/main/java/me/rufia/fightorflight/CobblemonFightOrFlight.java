@@ -36,7 +36,6 @@ public class CobblemonFightOrFlight {
     private static FightOrFlightCommonConfigModel commonConfig;
     private static FightOrFlightMoveConfigModel moveConfig;
     private static FightOrFlightVisualEffectConfigModel visualEffectConfig;
-    //public static CobblemonSizeVariationCompat sizeVariationCompat;//TODO It should be deprecated, don't forget to remove it.
     //private static TriConsumer<PokemonEntity, Integer, Goal> goalAdder;
 
 
@@ -53,8 +52,6 @@ public class CobblemonFightOrFlight {
     }
 
     public static void init(Predicate<String> modCompatPredicate) {
-        //sizeVariationCompat = new CobblemonSizeVariationCompat();
-        //sizeVariationCompat.tryLoad(modCompatPredicate);
         AutoConfig.register(FightOrFlightCommonConfigModel.class, JanksonConfigSerializer::new);
         AutoConfig.register(FightOrFlightMoveConfigModel.class, JanksonConfigSerializer::new);
         AutoConfig.register(FightOrFlightVisualEffectConfigModel.class, JanksonConfigSerializer::new);

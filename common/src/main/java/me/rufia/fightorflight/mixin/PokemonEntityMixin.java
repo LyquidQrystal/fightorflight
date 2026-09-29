@@ -4,6 +4,7 @@ package me.rufia.fightorflight.mixin;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
+import com.cobblemon.mod.common.api.moves.categories.DamageCategory;
 import com.cobblemon.mod.common.api.pokemon.experience.SidemodExperienceSource;
 import com.cobblemon.mod.common.api.pokemon.stats.EvSource;
 import com.cobblemon.mod.common.api.pokemon.stats.SidemodEvSource;
@@ -606,7 +607,6 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     @Unique
     private void slowTick(int ticks, int sec) {
         if (ticks == 11) {
-            wildRandomMove();
             updateAttackMode();
             backendMoveCooldown();
 
@@ -614,6 +614,10 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         }
         if (sec % 5 == 4 && ticks == 17) {
             turnBasedHeldItemTrigger();
+        }
+        int switchMoveInterval = CobblemonFightOrFlight.commonConfig().wild_alpha_switch_move_interval;
+        if (sec % switchMoveInterval == 0 && ticks == 17) {
+            wildRandomMove();
         }
     }
 
@@ -704,12 +708,30 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             return;
         }
         PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
-        if (PokemonUtils.isAlpha(pokemonEntity) && PokemonAttackEffect.canUseMove(pokemonEntity)) {
-            CobblemonFightOrFlight.LOGGER.info("Trying to switch move.");
-            var moves = getPokemon().getMoveSet();
+        if (!busyLocks.isEmpty()) {
+            return;
+        }
+        if (getTarget() == null) {
+            return;
+        }
+        if (CobblemonFightOrFlight.commonConfig().wild_alpha_switch_move && PokemonUtils.isAlpha(pokemonEntity) && PokemonAttackEffect.canUseMove(pokemonEntity)) {
+            //CobblemonFightOrFlight.LOGGER.info("Trying to switch move.");
+            Pokemon pokemon = getPokemon();
+            int attackStatGap = pokemon.getSpecialAttack() - pokemon.getAttack();
+            List<DamageCategory> allowedCategories = new ArrayList<>();
+            if (Mth.abs(attackStatGap) <= 30 || !CobblemonFightOrFlight.commonConfig().wild_alpha_switch_move_stat_check) {
+                allowedCategories.add(DamageCategories.INSTANCE.getPHYSICAL());
+                allowedCategories.add(DamageCategories.INSTANCE.getSPECIAL());
+            } else if (attackStatGap > 0) {
+                allowedCategories.add(DamageCategories.INSTANCE.getSPECIAL());
+            } else {
+                allowedCategories.add(DamageCategories.INSTANCE.getPHYSICAL());
+            }
+            //TODO unfinished
+            var moves = pokemon.getMoveSet();
             List<Move> attackMoves = new ArrayList<>();
             for (Move move : moves) {
-                if (!move.getDamageCategory().equals(DamageCategories.INSTANCE.getSTATUS())) {
+                if (allowedCategories.contains(move.getDamageCategory())) {
                     attackMoves.add(move);
                 }
             }
@@ -774,11 +796,17 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     @Unique
     private void shareYield(PokemonEntity self) {
         int pokemonCount = HURT_BY_POKEMON_FOF.size();
+        int faintedPokemonCount = 0;
+        for (Pokemon pokemon : HURT_BY_POKEMON_FOF) {
+            if (pokemon.isFainted()) {
+                faintedPokemonCount++;
+            }
+        }
         for (Pokemon pokemon : HURT_BY_POKEMON_FOF) {
             if (pokemon.isFainted()) {
                 continue;
             }
-            pokemon.addExperience(new SidemodExperienceSource(CobblemonFightOrFlight.MODID), FOFExpCalculator.calculate(pokemon, self.getPokemon(), pokemonCount));
+            pokemon.addExperience(new SidemodExperienceSource(CobblemonFightOrFlight.MODID), FOFExpCalculator.calculate(pokemon, self.getPokemon(), pokemonCount - faintedPokemonCount));
             if (CobblemonFightOrFlight.commonConfig().can_gain_ev) {
                 var map = FOFEVCalculator.calculate(pokemon, self.getPokemon());
                 for (Map.Entry<Stat, Integer> entry : map.entrySet()) {

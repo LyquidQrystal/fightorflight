@@ -6,10 +6,14 @@
 * Wild Pokemon won't try to use the moves now unless it's an Alpha Pokemon.(Some moves could be used before. set wild_pokemon_can_use_move to true if you want it back.)
 * Make the aggression influenced by Cobblemon's size instead of Cobblemon Size Variation mod.
 * Increased the height of the area effect hitbox.
-### TODO:
+### Bug Fixes:
+* Fix the bug that if a Pokemon is killed by other Pokemon but some of them got fainted before the Pokemon dies, the fainted Pokemon will be counted as a participant.
+### TODO(Some of them are suggestions from the github issue. They're listed here so they will be added, but it might be added in the future update instead of this version):
 * Json file driven species behaviour
 * Priority system for targeting
 * Split do_pokemon_defend_owner
+* Config to stop Pokemon being aggressive out of water
+* Fix the bug that do_pokemon_attack_in_battle is not working correctly.
 * Alpha Pokemon Feature(The ability to use move and higher stat currently)
 * Add a config option for the interval between Alpha switching moves.
 * Add a sidebar to display the move an alpha is switching. Moves from Player's Pokemon should be displayed, too.

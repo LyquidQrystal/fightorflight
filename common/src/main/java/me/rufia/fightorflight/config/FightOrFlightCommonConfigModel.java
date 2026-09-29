@@ -215,6 +215,12 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public boolean wild_alpha_can_use_move = true;
     @Comment("If wild alpha pokemon can use the range attack. If the pokemon can't use a move, it will only use range attack if the Special Attack is higher than Attack.")
     public boolean wild_alpha_ranged_attack = true;
+    @Comment("If alpha Pokemon can change the move it use.")
+    public boolean wild_alpha_switch_move = true;
+    @Comment("The interval between the wild alpha pokemon tries to change its move. In seconds.")
+    public int wild_alpha_switch_move_interval = 5;
+    @Comment("If a wild alpha pokemon can use range attack and the gap between two Attack stat is greater than 30, it will try to use the moves that suit the highest one, or it will try to use a mix of them. If this is set to false, the alpha will choose move randomly.")
+    public boolean wild_alpha_switch_move_stat_check = true;
     @ConfigEntry.Category("Pokemon Ranged Attack")
     @Comment("If wild pokemon can use the range attack. If the pokemon can't use a move, it will only use range attack if the Special Attack is higher than Attack.")
     public boolean wild_pokemon_ranged_attack = false;
