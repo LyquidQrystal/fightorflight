@@ -17,6 +17,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.particles.SimpleParticleType;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.Mth;
 import net.minecraft.util.RandomSource;
@@ -953,5 +954,22 @@ public class PokemonAttackEffect {
             }
         }
         return true;
+    }
+
+    public static int getFactionCode(PokemonEntity pokemonEntity, ServerPlayer player) {
+        if (player == null || pokemonEntity == null) {
+            return 0;
+        }
+        if (player.equals(pokemonEntity.getOwner())) {
+            return 1;
+        }
+        LivingEntity pokemonTarget = pokemonEntity.getTarget();
+        if (player.equals(pokemonTarget) || (pokemonTarget instanceof TamableAnimal tamableAnimal && player.equals(tamableAnimal.getOwner()))) {
+            return 2;
+        }
+        if (pokemonEntity.getPokemon().isAlpha()) {
+            return 3;
+        }
+        return 0;
     }
 }

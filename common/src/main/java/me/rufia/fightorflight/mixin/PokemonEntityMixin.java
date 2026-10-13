@@ -12,12 +12,14 @@ import com.cobblemon.mod.common.api.pokemon.stats.Stat;
 import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
+import dev.architectury.networking.NetworkManager;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
 import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.entity.ai.sensors.FOFSensors;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
+import me.rufia.fightorflight.net.packet.MoveInfoPacket;
 import me.rufia.fightorflight.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
@@ -42,6 +44,7 @@ import net.minecraft.world.entity.ai.sensing.SensorType;
 import net.minecraft.world.entity.animal.ShoulderRidingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.phys.AABB;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -789,6 +792,13 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
                 break;
             }
             ++index;
+        }
+
+        var playerList = level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(position(), 16, 16, 16));
+        for (ServerPlayer player : playerList) {
+            PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+            MoveInfoPacket packet = new MoveInfoPacket(getDisplayName().getString(), move.getDisplayName().getString(), PokemonAttackEffect.getFactionCode(pokemonEntity, player));
+            NetworkManager.sendToPlayer(player, packet);
         }
         setCurrentMove(move);
     }

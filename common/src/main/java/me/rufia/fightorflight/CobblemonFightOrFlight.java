@@ -84,7 +84,7 @@ public class CobblemonFightOrFlight {
     }
 
     public static double getFightOrFlightCoefficient(PokemonEntity pokemonEntity) {
-        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_attack) {
+        if (!commonConfig().do_pokemon_attack) {
             return FOFAggressionCalculator.getPeacefulValue();
         }
 
@@ -105,9 +105,9 @@ public class CobblemonFightOrFlight {
             return FOFAggressionCalculator.getAggressiveValue();
         }
 
-        List<String> peacefulBiomeList = Arrays.stream(CobblemonFightOrFlight.commonConfig().peaceful_biome).toList();
-        List<String> neutralBiomeList = Arrays.stream(CobblemonFightOrFlight.commonConfig().neutral_biome).toList();
-        List<String> aggressiveBiomeList = Arrays.stream(CobblemonFightOrFlight.commonConfig().aggressive_biome).toList();
+        List<String> peacefulBiomeList = Arrays.stream(commonConfig().peaceful_biome).toList();
+        List<String> neutralBiomeList = Arrays.stream(commonConfig().neutral_biome).toList();
+        List<String> aggressiveBiomeList = Arrays.stream(commonConfig().aggressive_biome).toList();
         String biomeName = pokemonEntity.level().getBiome(pokemonEntity.blockPosition()).getRegisteredName();
         if (!peacefulBiomeList.isEmpty() && peacefulBiomeList.contains(biomeName)) {
             return FOFAggressionCalculator.getPeacefulValue();
@@ -123,12 +123,12 @@ public class CobblemonFightOrFlight {
     }
 
     public static boolean BelowAlwaysAggro(double height) {
-        return height < CobblemonFightOrFlight.commonConfig().always_aggro_below;
+        return height < commonConfig().always_aggro_below;
     }
 
     public static boolean AspectsAlwaysAggro(Set<String> pokemonAspects) {
         // Retrieve the list of always aggressive features from the config
-        String[] alwaysAggroFeatures = CobblemonFightOrFlight.commonConfig().always_aggro_aspects;
+        String[] alwaysAggroFeatures = commonConfig().always_aggro_aspects;
 
         // Convert the array to a Set for faster lookup
         Set<String> aggroFeatureSet = new HashSet<>(Arrays.asList(alwaysAggroFeatures));
@@ -143,7 +143,7 @@ public class CobblemonFightOrFlight {
     }
 
     public static boolean SpeciesAlwaysAggro(String speciesName) {
-        for (String aggroSpecies : CobblemonFightOrFlight.commonConfig().always_aggro) {
+        for (String aggroSpecies : commonConfig().always_aggro) {
             if (aggroSpecies.equals(speciesName)) {
                 return true;
             }
@@ -152,7 +152,7 @@ public class CobblemonFightOrFlight {
     }
 
     public static boolean SpeciesNeverAggro(String speciesName) {
-        for (String passiveSpecies : CobblemonFightOrFlight.commonConfig().never_aggro) {
+        for (String passiveSpecies : commonConfig().never_aggro) {
             if (passiveSpecies.equals(speciesName)) {
                 return true;
             }

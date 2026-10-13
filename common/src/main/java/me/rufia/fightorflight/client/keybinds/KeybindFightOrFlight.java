@@ -10,6 +10,7 @@ import java.util.List;
 public class KeybindFightOrFlight {
     public static List<KeyMapping> bindings = new ArrayList<>();
     public static KeyMapping START_BATTLE;
+    public static KeyMapping SHOULD_RENDER_MESSAGE_LIST;
     public static MoveSlotKeybind MOVE_SLOT_1;
     public static MoveSlotKeybind MOVE_SLOT_2;
     public static MoveSlotKeybind MOVE_SLOT_3;
@@ -18,6 +19,7 @@ public class KeybindFightOrFlight {
 
     static {
         START_BATTLE = new KeyMapping("key.fightorflight.startbattle", InputConstants.Type.KEYSYM, InputConstants.KEY_G, KeybindCategories.FOF);
+        SHOULD_RENDER_MESSAGE_LIST = new KeyMapping("key.fightorflight.should_display_notification_bar", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), KeybindCategories.FOF);
         MOVE_SLOT_1 = new MoveSlotKeybind("key.fightorflight.moveslot1", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), KeybindCategories.FOF_POKESTAFF, 0);
         MOVE_SLOT_2 = new MoveSlotKeybind("key.fightorflight.moveslot2", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), KeybindCategories.FOF_POKESTAFF, 1);
         MOVE_SLOT_3 = new MoveSlotKeybind("key.fightorflight.moveslot3", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), KeybindCategories.FOF_POKESTAFF, 2);

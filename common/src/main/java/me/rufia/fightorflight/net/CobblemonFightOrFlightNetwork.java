@@ -3,14 +3,8 @@ package me.rufia.fightorflight.net;
 import dev.architectury.networking.NetworkManager;
 import dev.architectury.platform.Platform;
 import dev.architectury.utils.Env;
-import me.rufia.fightorflight.net.handler.FOFStartBattlePokemonHandler;
-import me.rufia.fightorflight.net.handler.FOFStartBattleRequestHandler;
-import me.rufia.fightorflight.net.handler.SendCommandHandler;
-import me.rufia.fightorflight.net.handler.SendMoveSlotHandler;
-import me.rufia.fightorflight.net.packet.FOFStartBattlePokemonPacket;
-import me.rufia.fightorflight.net.packet.FOFStartBattleRequestPacket;
-import me.rufia.fightorflight.net.packet.SendCommandPacket;
-import me.rufia.fightorflight.net.packet.SendMoveSlotPacket;
+import me.rufia.fightorflight.net.handler.*;
+import me.rufia.fightorflight.net.packet.*;
 
 public class CobblemonFightOrFlightNetwork {
     public static void registerC2S() {
@@ -29,13 +23,18 @@ public class CobblemonFightOrFlightNetwork {
     }
 
     public static void registerS2C() {
-        if( Platform.getEnvironment() ==Env.CLIENT){
+        if (Platform.getEnvironment() == Env.CLIENT) {
             NetworkManager.registerReceiver(NetworkManager.Side.S2C, FOFStartBattleRequestPacket.TYPE, FOFStartBattleRequestPacket.STREAM_CODEC, (packet, context) -> {
                 FOFStartBattleRequestHandler handler = new FOFStartBattleRequestHandler();
                 handler.handle(packet, context);
-            });}
-        else {
+            });
+            NetworkManager.registerReceiver(NetworkManager.Side.S2C, MoveInfoPacket.TYPE, MoveInfoPacket.STREAM_CODEC, (packet, context) -> {
+                MoveInfoHandler handler = new MoveInfoHandler();
+                handler.handle(packet, context);
+            });
+        } else {
             NetworkManager.registerS2CPayloadType(FOFStartBattleRequestPacket.TYPE, FOFStartBattleRequestPacket.STREAM_CODEC);
+            NetworkManager.registerS2CPayloadType(MoveInfoPacket.TYPE, MoveInfoPacket.STREAM_CODEC);
         }
     }
 

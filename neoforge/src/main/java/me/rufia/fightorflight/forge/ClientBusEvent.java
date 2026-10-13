@@ -2,6 +2,8 @@ package me.rufia.fightorflight.forge;
 
 import com.cobblemon.mod.common.client.CobblemonClient;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.CobblemonFightOrFlightClient;
+import me.rufia.fightorflight.client.hud.moveinfo.MoveInfoRenderer;
 import me.rufia.fightorflight.client.hud.moveslots.MoveSlotsRender;
 import net.minecraft.client.Minecraft;
 import net.neoforged.api.distmarker.Dist;
@@ -19,6 +21,10 @@ public class ClientBusEvent {
             var pokemon = storage.getParty().get(slot);
             if (pokemon != null) {
                 MoveSlotsRender.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true), pokemon);
+            }
+
+            if (CobblemonFightOrFlightClient.getMsgCount() > 0) {
+                MoveInfoRenderer.render(event.getGuiGraphics(), event.getPartialTick().getGameTimeDeltaPartialTick(true));
             }
         }
     }

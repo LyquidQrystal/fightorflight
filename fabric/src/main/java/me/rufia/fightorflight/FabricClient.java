@@ -2,6 +2,7 @@ package me.rufia.fightorflight;
 
 import com.cobblemon.mod.common.client.CobblemonClient;
 import dev.architectury.registry.client.level.entity.EntityModelLayerRegistry;
+import me.rufia.fightorflight.client.hud.moveinfo.MoveInfoRenderer;
 import me.rufia.fightorflight.client.hud.moveslots.MoveSlotsRender;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
 import me.rufia.fightorflight.client.model.*;
@@ -38,6 +39,10 @@ public final class FabricClient implements ClientModInitializer {
                 var pokemon = storage.getParty().get(slot);
                 if (pokemon != null) {
                     MoveSlotsRender.render(drawContext, tickCounter.getGameTimeDeltaPartialTick(true), pokemon);
+                }
+
+                if (CobblemonFightOrFlightClient.getMsgCount() > 0) {
+                    MoveInfoRenderer.render(drawContext, tickCounter.getGameTimeDeltaPartialTick(true));
                 }
             }
         }));
