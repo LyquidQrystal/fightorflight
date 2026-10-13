@@ -6,6 +6,7 @@ import com.google.common.collect.ImmutableMap;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.Behavior;
 import net.minecraft.world.entity.ai.behavior.BehaviorUtils;
@@ -26,6 +27,9 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
         if (pokemon instanceof PokemonEntity pokemonEntity) {
             LivingEntity target = FOFPokemonAttackTask.getTarget(pokemonEntity);
             if (target != null && target.isAlive()) {
+                if (FOFPokemonAttackTask.isTargetInBattle(pokemonEntity)) {
+                    return false;
+                }
                 return PokemonUtils.shouldShoot(pokemonEntity) && BehaviorUtils.canSee(pokemonEntity, target) && isWithinAttackRange(pokemonEntity, target);
             }
         }
@@ -55,6 +59,9 @@ public class FOFPokemonRangeTask extends Behavior<LivingEntity> {
                 if (FOFPokemonAttackTask.sharedStartCondition(pokemonEntity)) {
                     if (attackTime == 0) {
                         if (!canSee) {
+                            return;
+                        }
+                        if (FOFPokemonAttackTask.isTargetInBattle(pokemonEntity)) {
                             return;
                         }
                         prepareRangeAttack(pokemonEntity, target);
