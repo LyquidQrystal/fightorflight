@@ -12,18 +12,18 @@ public class MoveInfoPacket implements NetworkPacket, CustomPacketPayload {
     public static final ResourceLocation MOVE_INFO_PACKET_ID = ResourceLocation.fromNamespaceAndPath(CobblemonFightOrFlight.MODID, "send_move_info");
     public static final StreamCodec<ByteBuf, MoveInfoPacket> STREAM_CODEC;
     public static final Type<MoveInfoPacket> TYPE = new Type<>(MOVE_INFO_PACKET_ID);
-    private String pokemonName;
+    private Integer pokemonId;
     private String moveName;
     private Integer faction;
 
-    public MoveInfoPacket(String pokemonName, String moveName, Integer faction) {
-        this.pokemonName = pokemonName;
+    public MoveInfoPacket(Integer pokemonId, String moveName, Integer faction) {
+        this.pokemonId = pokemonId;
         this.moveName = moveName;
         this.faction = faction;
     }
 
-    public String getPokemonName() {
-        return pokemonName;
+    public Integer getPokemonId() {
+        return pokemonId;
     }
 
     public String getMoveName() {
@@ -36,7 +36,7 @@ public class MoveInfoPacket implements NetworkPacket, CustomPacketPayload {
 
     static {
         STREAM_CODEC = StreamCodec.composite(
-                ByteBufCodecs.STRING_UTF8, MoveInfoPacket::getPokemonName,
+                ByteBufCodecs.INT, MoveInfoPacket::getPokemonId,
                 ByteBufCodecs.STRING_UTF8, MoveInfoPacket::getMoveName,
                 ByteBufCodecs.INT, MoveInfoPacket::getFaction,
                 MoveInfoPacket::new);

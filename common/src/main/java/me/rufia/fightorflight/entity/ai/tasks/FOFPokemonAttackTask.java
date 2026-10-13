@@ -9,7 +9,7 @@ import net.minecraft.world.entity.LivingEntity;
 public abstract class FOFPokemonAttackTask {
     public static boolean isTargetInBattle(PokemonEntity pokemonEntity) {
         if (getTarget(pokemonEntity) instanceof ServerPlayer targetAsPlayer) {
-            return BattleRegistry.getBattleByParticipatingPlayer(targetAsPlayer) != null;
+            return PokemonUtils.playerHasBattle(targetAsPlayer);
         }
         return false;
     }

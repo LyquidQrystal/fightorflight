@@ -617,6 +617,10 @@ public class PokemonUtils {
         return false;
     }
 
+    public static boolean playerHasBattle(ServerPlayer serverPlayer) {
+        return BattleRegistry.getBattleByParticipatingPlayer(serverPlayer) != null;
+    }
+
     public static boolean canBattlePlayer(ServerPlayer serverPlayer) {
         boolean playerHasAlivePokemon = false;
         for (Pokemon pokemon : Cobblemon.INSTANCE.getStorage().getParty(serverPlayer)) {
@@ -626,7 +630,7 @@ public class PokemonUtils {
             }
         }
 
-        return BattleRegistry.getBattleByParticipatingPlayer(serverPlayer) == null
+        return !playerHasBattle(serverPlayer)
                 && playerHasAlivePokemon
                 && serverPlayer.isAlive();
     }

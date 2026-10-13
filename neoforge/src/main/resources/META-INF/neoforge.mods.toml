@@ -28,7 +28,7 @@ side = "BOTH"
 [[dependencies.fightorflight]]
 modId = "cobblemon"
 type = "required"
-versionRange = "[1.8.1,)"
+versionRange = "[1.8.2,)"
 ordering = "AFTER"
 side = "BOTH"
 

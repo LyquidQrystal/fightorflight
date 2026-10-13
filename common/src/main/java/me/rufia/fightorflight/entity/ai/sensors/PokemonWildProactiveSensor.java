@@ -4,11 +4,11 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.MemoryStatus;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
 import net.minecraft.world.entity.ai.sensing.Sensor;
-import net.minecraft.world.entity.player.Player;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Set;
@@ -36,8 +36,11 @@ public class PokemonWildProactiveSensor extends Sensor<PokemonEntity> {
 
     private void findTarget(PokemonEntity pokemonEntity, NearestVisibleLivingEntities visibleLivingEntities) {
         var nearestPlayer = visibleLivingEntities.findClosest(livingEntity -> {
-            if (livingEntity instanceof Player player) {
-                return !(player.isCreative() || player.isSpectator());
+            if (livingEntity instanceof ServerPlayer player) {
+                if (player.isCreative() || player.isSpectator()) {
+                    return false;
+                }
+                return !PokemonUtils.playerHasBattle(player);
             }
             return false;
         });

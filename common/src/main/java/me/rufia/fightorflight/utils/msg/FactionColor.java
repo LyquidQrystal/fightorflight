@@ -4,6 +4,7 @@ public class FactionColor {
     private final int sidebarColor;
     private final int topColor;
     private final int bottomColor;
+    public static final FactionColor DARK_MODE = new FactionColor(0xFF90887C, 0xFF101020, 0x80060608);
     public static final FactionColor NEUTRAL = new FactionColor(0xFF90887C, 0xFFE0D8CC, 0x80242020);
     public static final FactionColor ALLY = new FactionColor(0xFF40A0E0, 0xFF40A0C0, 0x80143040);
     public static final FactionColor HOSTILE = new FactionColor(0xFFE02002, 0xFFE01800, 0x80400808);

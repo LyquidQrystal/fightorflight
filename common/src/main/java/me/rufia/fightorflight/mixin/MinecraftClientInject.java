@@ -5,6 +5,7 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.net.messages.server.RequestPlayerInteractionsPacket;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import dev.architectury.networking.NetworkManager;
+import me.rufia.fightorflight.CobblemonFightOrFlightClient;
 import me.rufia.fightorflight.client.keybinds.CommandKeybind;
 import me.rufia.fightorflight.client.keybinds.KeybindFightOrFlight;
 import me.rufia.fightorflight.item.ItemFightOrFlight;
@@ -52,6 +53,9 @@ public abstract class MinecraftClientInject {
     private void postTick(CallbackInfo ci) {
         if (KeybindFightOrFlight.START_BATTLE.consumeClick()) {
             startBattle();
+        }
+        if (KeybindFightOrFlight.SHOULD_RENDER_MESSAGE_LIST.consumeClick()) {
+            CobblemonFightOrFlightClient.changeShouldRenderMessageList();
         }
         if (KeybindFightOrFlight.MOVE_SLOT_1.consumeClick()) {
             sendMoveSlotPacket(KeybindFightOrFlight.MOVE_SLOT_1.getMoveSlot());

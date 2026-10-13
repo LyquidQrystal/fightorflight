@@ -9,7 +9,7 @@ import java.util.List;
 
 public class CobblemonFightOrFlightClient {
     private static final List<FOFMsg> CLIENT_MESSAGE_LIST = new ArrayList<>();
-    private static boolean shouldRenderMessageList;
+    private static boolean shouldRenderMessageList = true;
 
     public static void addMsg(FOFMsg msg) {
         int msgCount = 5;

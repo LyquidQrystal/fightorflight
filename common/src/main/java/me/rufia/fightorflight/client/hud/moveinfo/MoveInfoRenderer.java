@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.client.hud.moveinfo;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.CobblemonFightOrFlightClient;
 import me.rufia.fightorflight.utils.msg.FOFMsg;
 import me.rufia.fightorflight.utils.msg.FOFSwitchMoveMsg;
@@ -14,10 +15,12 @@ public class MoveInfoRenderer {
     public static float TEXT_SIZE = 0.5f;
 
     public static void render(GuiGraphics graphics, float tickDelta) {
+        if (!CobblemonFightOrFlightClient.isShouldRenderMessageList()) {
+            return;
+        }
         int msgAmount = CobblemonFightOrFlightClient.getMsgCount();
         Minecraft minecraft = Minecraft.getInstance();
         var player = minecraft.player;
-        //TODO Config to disable it
         if (player == null || msgAmount == 0) {
             return;
         }
@@ -55,18 +58,24 @@ public class MoveInfoRenderer {
         int y1 = originY + index * height;
         int x2 = x1 + width + horizontalMovement;
         int y2 = y1 + height;
-        //graphics.fill(x1, y1, x2, y2, 0xA040A0C0);
         int alphaValue = getAlpha(switchMoveMsg, guiTick);
         FactionColor factionColor = FactionColor.getColorFromFaction(switchMoveMsg.getFaction());
-        graphics.fillGradient(x1, y1, x2, y2 - 2, modifyAlphaValue(alphaValue, factionColor.getTopColor()), factionColor.getBottomColor());
+        FactionColor factionColorAlt = null;
+        if (CobblemonFightOrFlight.visualEffectConfig().notification_bar_dark_mode) {
+            factionColorAlt = FactionColor.DARK_MODE;
+        }
+
+        graphics.fillGradient(x1, y1, x2, y2 - 2, modifyAlphaValue(alphaValue, factionColorAlt == null ? factionColor.getTopColor() : factionColorAlt.getTopColor()), factionColorAlt == null ? factionColor.getBottomColor() : factionColorAlt.getBottomColor());
         graphics.fill(x1, y1, x1 + 2, y2 - 2, factionColor.getSidebarColor());
         PoseStack poseStack = graphics.pose();
         poseStack.pushPose();
         poseStack.scale(TEXT_SIZE, TEXT_SIZE, 1);
         int textX = x1 + width / 10;
         int textY = y1 + height / 4;
-        graphics.drawWordWrap(font, switchMoveMsg.getMessageText(), (int) (textX / TEXT_SIZE), (int) (textY / TEXT_SIZE), (int) (width * 0.8 / TEXT_SIZE), 0xFFFFFF);
-        //graphics.drawCenteredString(font, msg.getMessageText(), (int) (textX / TEXT_SIZE), (int) (textY / TEXT_SIZE), 0xFFFFFF);
+        var component = switchMoveMsg.getMessageText();
+        if (component != null) {
+            graphics.drawWordWrap(font, component, (int) (textX / TEXT_SIZE), (int) (textY / TEXT_SIZE), (int) (width * 0.8 / TEXT_SIZE), 0xFFFFFF);
+        }
         poseStack.popPose();
     }
 

@@ -793,12 +793,13 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             }
             ++index;
         }
-
-        var playerList = level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(position(), 16, 16, 16));
-        for (ServerPlayer player : playerList) {
-            PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
-            MoveInfoPacket packet = new MoveInfoPacket(getDisplayName().getString(), move.getDisplayName().getString(), PokemonAttackEffect.getFactionCode(pokemonEntity, player));
-            NetworkManager.sendToPlayer(player, packet);
+        if (CobblemonFightOrFlight.visualEffectConfig().show_switch_move_msg_server) {
+            var playerList = level().getEntitiesOfClass(ServerPlayer.class, AABB.ofSize(position(), 16, 16, 16));
+            for (ServerPlayer player : playerList) {
+                PokemonEntity pokemonEntity = (PokemonEntity) (Object) this;
+                MoveInfoPacket packet = new MoveInfoPacket(getId(), move.getName(), PokemonAttackEffect.getFactionCode(pokemonEntity, player));
+                NetworkManager.sendToPlayer(player, packet);
+            }
         }
         setCurrentMove(move);
     }

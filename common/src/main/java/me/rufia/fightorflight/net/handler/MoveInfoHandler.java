@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.net.handler;
 
 import dev.architectury.networking.NetworkManager;
+import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.CobblemonFightOrFlightClient;
 import me.rufia.fightorflight.net.NetworkPacketHandler;
 import me.rufia.fightorflight.net.packet.MoveInfoPacket;
@@ -11,8 +12,11 @@ import net.minecraft.client.Minecraft;
 public class MoveInfoHandler implements NetworkPacketHandler<MoveInfoPacket> {
     @Override
     public void handle(MoveInfoPacket packet, NetworkManager.PacketContext context) {
-        int guiTick=Minecraft.getInstance().gui.getGuiTicks();
-        FOFMsg msg = new FOFSwitchMoveMsg(packet,guiTick);
+        if (!CobblemonFightOrFlight.visualEffectConfig().show_switch_move_msg_client) {
+            return;
+        }
+        int guiTick = Minecraft.getInstance().gui.getGuiTicks();
+        FOFMsg msg = new FOFSwitchMoveMsg(packet, guiTick);
         CobblemonFightOrFlightClient.addMsg(msg);
     }
 }

@@ -25,6 +25,7 @@ public class KeybindFightOrFlight {
         MOVE_SLOT_3 = new MoveSlotKeybind("key.fightorflight.moveslot3", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), KeybindCategories.FOF_POKESTAFF, 2);
         MOVE_SLOT_4 = new MoveSlotKeybind("key.fightorflight.moveslot4", InputConstants.Type.KEYSYM, InputConstants.UNKNOWN.getValue(), KeybindCategories.FOF_POKESTAFF, 3);
         bindings.add(START_BATTLE);
+        bindings.add(SHOULD_RENDER_MESSAGE_LIST);
         bindings.add(MOVE_SLOT_1);
         bindings.add(MOVE_SLOT_2);
         bindings.add(MOVE_SLOT_3);

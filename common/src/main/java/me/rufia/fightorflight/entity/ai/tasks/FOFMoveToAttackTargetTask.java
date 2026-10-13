@@ -4,6 +4,7 @@ import com.bedrockk.molang.Expression;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.util.MoLangExtensionsKt;
 import me.rufia.fightorflight.utils.PokemonUtils;
+import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.OneShot;
 import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
@@ -24,6 +25,11 @@ public class FOFMoveToAttackTargetTask {
                         int closeEnoughDistance = PokemonUtils.shouldShoot(pokemonEntity) ? (int) (PokemonUtils.getAttackRadius() * 0.6) : MoLangExtensionsKt.resolveInt(MoLangExtensionsKt.getMainThreadRuntime(), closeEnoughDistanceExp, MoLangExtensionsKt.getContextOrEmpty(MoLangExtensionsKt.getMainThreadRuntime()));
 
                         var attackTarget = context.get(attackTargetAccessor);
+                        if (attackTarget instanceof ServerPlayer player) {
+                            if (PokemonUtils.playerHasBattle(player)) {
+                                return false;
+                            }
+                        }
                         var position = attackTarget.position();
                         var walkTarget = context.tryGet(walkTargetAccessor).orElse(null);
                         if (walkTarget == null || walkTarget.getTarget().currentPosition().distanceToSqr(position) > closeEnoughDistance) {
