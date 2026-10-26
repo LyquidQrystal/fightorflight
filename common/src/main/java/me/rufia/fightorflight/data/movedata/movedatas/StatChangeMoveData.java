@@ -34,39 +34,40 @@ public class StatChangeMoveData extends MoveData {
         if (finalTarget == null) {
             return;
         }
+        int duration = calculateEffectDuration(pokemonEntity) * 20;
         String name = getName();
         //CobblemonFightOrFlight.LOGGER.info("Trying to apply stat related effect");
         if (Objects.equals(name, "attack") || Objects.equals(name, "special_attack")) {
             if (isPositive()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, duration, stage - 1));
             } else if (isNegative()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, -stage - 1));
             }
         } else if (Objects.equals(name, "defense") || Objects.equals(name, "special_defense")) {
             if (isPositive()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration, stage - 1));
             } else if (isNegative()) {
-                finalTarget.addEffect(new MobEffectInstance(FOFEffects.RESISTANCE_WEAKENED, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));//It's not working?
+                finalTarget.addEffect(new MobEffectInstance(FOFEffects.RESISTANCE_WEAKENED, duration, -stage - 1));//It's not working?
             }
         } else if (Objects.equals(name, "speed")) {
             if (isPositive()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration, stage - 1));
             } else if (isNegative()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, -stage - 1));
             }
         } else if (Objects.equals(name, "all")) {
             if (isPositive()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, calculateEffectDuration(pokemonEntity) * 20, stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_BOOST, duration, stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SPEED, duration, stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.DAMAGE_RESISTANCE, duration, stage - 1));
             } else if (isNegative()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
-                finalTarget.addEffect(new MobEffectInstance(FOFEffects.RESISTANCE_WEAKENED, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.MOVEMENT_SLOWDOWN, duration, -stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.WEAKNESS, duration, -stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(FOFEffects.RESISTANCE_WEAKENED, duration, -stage - 1));
             }
         } else if (Objects.equals(name, "accuracy")) {
             if (isNegative()) {
-                finalTarget.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, calculateEffectDuration(pokemonEntity) * 20, -stage - 1));
+                finalTarget.addEffect(new MobEffectInstance(MobEffects.BLINDNESS, duration, -stage - 1));
             }
         }
     }

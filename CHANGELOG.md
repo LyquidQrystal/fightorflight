@@ -6,6 +6,7 @@
 * Alpha Pokemon Feature(Higher HP and damage)
 * Add a config option for the interval between Alpha switching moves.
 * Json file driven species behaviour
+* Fix the bug that multiple_bullet_moves and multiple_tracing_bullet_moves is not working correctly.
 
 # V0.11.1:
 ### New Features:

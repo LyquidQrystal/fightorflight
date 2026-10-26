@@ -173,6 +173,14 @@ public class PokemonUtils {
         return move;
     }
 
+    public static  boolean isSpecialMeleeAttackMove(String moveName){
+        return Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName);
+    }
+
+    public static boolean isPhysicalRangeAttackMove(String moveName){
+        return Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName)|| Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName);
+    }
+
     public static boolean isMeleeAttackMove(Move move) {
         if (move == null) {
             return false;
@@ -180,8 +188,8 @@ public class PokemonUtils {
         String moveName = move.getName();
         boolean isSpecial = isSpecialMove(move);
         boolean isPhysical = isPhysicalMove(move);
-        boolean b1 = isPhysical && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName));
-        boolean b2 = isSpecial && (Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
+        boolean b1 = isPhysical && !isPhysicalRangeAttackMove(moveName);
+        boolean b2 = isSpecial && isSpecialMeleeAttackMove(moveName);
         return b1 || b2;
     }
 
@@ -192,8 +200,8 @@ public class PokemonUtils {
         String moveName = move.getName();
         boolean isSpecial = isSpecialMove(move);
         boolean isPhysical = isPhysicalMove(move);
-        boolean b1 = isPhysical && (Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName));
-        boolean b2 = isSpecial && !(Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName));
+        boolean b1 = isPhysical && isPhysicalRangeAttackMove(moveName);
+        boolean b2 = isSpecial && !isSpecialMeleeAttackMove(moveName);
         return b1 || b2;
     }
 
