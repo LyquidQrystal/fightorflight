@@ -198,9 +198,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
 
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
-        if (target != null) {
-            setAttackTargetId(target.getId());
-        }
+        setAttackTargetId(target.getId());
     }
 
     @Override
@@ -265,7 +263,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
 
     @Override
     public void setCurrentMove(Move move) {
-        setCurrentMoveName(move.getName());
+        setCurrentMove(move.getName());
     }
 
     @Override
@@ -274,7 +272,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     }
 
     @Override
-    public void setCurrentMoveName(String name) {
+    public void setCurrentMove(String name) {
         fof$currentMove = name == null ? "" : name;
         fof$markStateDirty();
     }
@@ -782,8 +780,12 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             }
             int randIndex = random.nextInt(attackMoves.size());
             if (PokemonAttackEffect.canChangeMove(pokemonEntity, null)) {
-                switchMove(attackMoves.get(randIndex));
-                PokemonUtils.makeParticle(6, this, ParticleTypes.ENCHANTED_HIT);
+                Move oldMove = PokemonUtils.getMove(pokemonEntity);
+                Move newMove = attackMoves.get(randIndex);
+                if (oldMove == null || (newMove != null && !Objects.equals(oldMove.getName(), newMove.getName()))) {
+                    switchMove(newMove);
+                    PokemonUtils.makeParticle(6, this, ParticleTypes.ENCHANTED_HIT);
+                }
             }
         }
     }

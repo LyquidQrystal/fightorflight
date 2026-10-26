@@ -35,7 +35,7 @@ public class FOFPokemonStateHandler implements NetworkPacketHandler<FOFPokemonSt
             return;
         }
         state.setAttackTargetId(packet.getAttackTargetId());
-        state.setCurrentMoveName(packet.getMoveName());
+        state.setCurrentMove(packet.getMoveName());
         state.setAttackTime(packet.getAttackTime());
         state.setMaxAttackTime(packet.getMaxAttackTime());
         state.setMoveDuration(packet.getMoveDuration());

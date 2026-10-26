@@ -39,14 +39,12 @@ public interface PokemonInterface {
     default void setCurrentMove(Move move) {
     }
 
+    default void setCurrentMove(String name) {
+    }
 
     default String getCurrentMove() {
         return null;
     }
-
-    default void setCurrentMoveName(String name) {
-    }
-
 
     default int getNextCryTime() {
         return 0;
