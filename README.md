@@ -101,3 +101,11 @@ The new way:
 1. Open the Key binds setting, find Cobblemon Fight or Flight: Poke Staff, set the key bind you like
 2. Get one Poke Staff
 3. Hold it in your hand, press the key to use the command. Right click with the staff will repeat the last command you use.
+
+# AI Usage
+Some of the code in this mod is written with the help of an AI assistant(Hermes Agent, running a DeepSeek model). Here is how it works.
+
+- **What is AI assisted:** Parts of the code, mostly refactoring and the plumbing around it. I describe the design and the constraints, the assistant writes the code, then I review it, compile it, test it and fix whatever it got wrong.
+- **What is not:** The balance numbers, the config and every in-game behaviour decision are mine. The assistant only helps writing and refactoring the code.
+- **How it gets checked:** Anything AI assisted still has to compile and be played by myself before it ships. The assistant can't launch the game because I haven't allowed that.
+- **Bug reports:** Just like before. If something breaks, put the log or the crash report in an issue, I've been developing FOF for almost 3 years without AI, so I'm still sure that I'm familiar with the way it works.
