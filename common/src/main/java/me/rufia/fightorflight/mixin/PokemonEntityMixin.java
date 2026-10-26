@@ -19,15 +19,13 @@ import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.entity.ai.sensors.FOFSensors;
 import me.rufia.fightorflight.item.component.PokeStaffComponent;
+import me.rufia.fightorflight.net.FOFStateSync;
 import me.rufia.fightorflight.net.packet.MoveInfoPacket;
 import me.rufia.fightorflight.utils.*;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
-import net.minecraft.network.syncher.EntityDataAccessor;
-import net.minecraft.network.syncher.EntityDataSerializers;
-import net.minecraft.network.syncher.SynchedEntityData;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.util.Mth;
@@ -87,31 +85,41 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     private int ownerLastHurtTick = 0;
     @Unique
     private int ticksUntilNewAngerParticle = 0;
+    // ------------------------------------------------------------------
+    // FOF entity state. This used to live in SynchedEntityData, which required injecting into
+    // PokemonEntity#defineSynchedData and conflicted with other mods doing the same.
+    // The part that the client needs is now pushed by FOFPokemonStatePacket (see FOFStateSync).
+    // ------------------------------------------------------------------
     @Unique
-    private static final EntityDataAccessor<Integer> DATA_ID_ATTACK_TARGET;
+    private int fof$attackTargetId = 0;
     @Unique
-    private static final EntityDataAccessor<Integer> DATA_ID_CAPTURED_BY;
+    private String fof$currentMove = "";
     @Unique
-    private static final EntityDataAccessor<Integer> ATTACK_MODE;
+    private int fof$attackTime = 0;
     @Unique
-    private static final EntityDataAccessor<Integer> ATTACK_TIME;
+    private int fof$maxAttackTime = -1;
     @Unique
-    private static final EntityDataAccessor<Integer> MAX_ATTACK_TIME;
+    private int fof$moveDuration = -1;//Activate the move if the value equals to 0, then this value will be reduced to -1.
     @Unique
-    private static final EntityDataAccessor<String> MOVE;
+    private int fof$moveDurationOriginal = -1;
+    // Server side only, never sent to the client.
     @Unique
-    private static final EntityDataAccessor<Integer> CRY_CD;
+    private int fof$attackMode = 0;//0 means the pokemon can't attack, 1 for melee, 2 for range attack.
     @Unique
-    private static final EntityDataAccessor<String> COMMAND;
+    private int fof$cryCd = 0;
     @Unique
-    private static final EntityDataAccessor<String> COMMAND_DATA;
+    private String fof$command = "";
     @Unique
-    private static final EntityDataAccessor<BlockPos> TARGET_BLOCK_POS;
+    private String fof$commandData = "";
+    @Unique
+    private BlockPos fof$targetBlockPos = BlockPos.ZERO;
+    @Unique
+    private int fof$capturedBy = 0;
 
     @Unique
-    private static final EntityDataAccessor<Integer> MOVE_DURATION;//Activate the move if the value equals to 0, then this value will be reduced to -1.
+    private boolean fof$stateDirty = false;
     @Unique
-    private static final EntityDataAccessor<Integer> MOVE_DURATION_ORIGINAL;
+    private final Map<UUID, Integer> fof$lastStateSync = new HashMap<>();
 
     @Unique
     private final List<FOFMove> MOVES_FOF = new ArrayList<>();//This should only be accessed in the server side!
@@ -119,22 +127,6 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     private final HashSet<Pokemon> HURT_BY_POKEMON_FOF = new HashSet<>();
     @Unique
     private Pokemon LAST_HURT_BY_POKEMON_FOF = null;
-
-    static {
-        DATA_ID_ATTACK_TARGET = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
-        DATA_ID_CAPTURED_BY = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
-        ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
-        MAX_ATTACK_TIME = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
-        MOVE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
-        CRY_CD = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
-        COMMAND = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
-        COMMAND_DATA = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.STRING);
-        TARGET_BLOCK_POS = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.BLOCK_POS);
-        ATTACK_MODE = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);//0 means the pokemon can't attack, 1 for melee, 2 for range attack.
-        MOVE_DURATION = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
-        MOVE_DURATION_ORIGINAL = SynchedEntityData.defineId(PokemonEntityMixin.class, EntityDataSerializers.INT);
-
-    }
 
     @Unique
     protected void createTargetBlockPos() {
@@ -163,7 +155,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             if (fightorflight$clientSideCachedAttackTarget != null) {
                 return fightorflight$clientSideCachedAttackTarget;
             } else {
-                Entity entity = this.level().getEntity(this.entityData.get(DATA_ID_ATTACK_TARGET));
+                Entity entity = this.level().getEntity(this.fof$attackTargetId);
                 if (entity instanceof LivingEntity) {
                     fightorflight$clientSideCachedAttackTarget = (LivingEntity) entity;
                     return fightorflight$clientSideCachedAttackTarget;
@@ -173,37 +165,14 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         return super.getTarget();
     }
 
-    @Inject(method = "onSyncedDataUpdated", at = @At("TAIL"))
-    public void onSyncedDataUpdated(EntityDataAccessor<?> key, CallbackInfo ci) {
-        if (DATA_ID_ATTACK_TARGET.equals(key)) {
-            this.fightorflight$clientSideCachedAttackTarget = null;
-        }
-    }
-
-    @Inject(method = "defineSynchedData", at = @At("TAIL"))
-    protected void defineFOFSynchedData(SynchedEntityData.Builder builder, CallbackInfo callbackInfo) {
-        builder.define(DATA_ID_ATTACK_TARGET, 0);
-        builder.define(DATA_ID_CAPTURED_BY, 0);
-        builder.define(ATTACK_TIME, 0);
-        builder.define(MAX_ATTACK_TIME, -1);
-        builder.define(MOVE, "");
-        builder.define(CRY_CD, 0);
-        builder.define(COMMAND, "");
-        builder.define(COMMAND_DATA, "");
-        builder.define(TARGET_BLOCK_POS, BlockPos.ZERO);
-        builder.define(ATTACK_MODE, 0);
-        builder.define(MOVE_DURATION, -1);
-        builder.define(MOVE_DURATION_ORIGINAL, -1);
-    }
-
     @Inject(method = "saveWithoutId", at = @At("HEAD"))
     private void writeAdditionalNbt(CompoundTag compoundTag, CallbackInfoReturnable<Boolean> ci) {
-        compoundTag.putInt(CRY_CD.toString(), 0);
+        compoundTag.putInt("FOF_CryCd", 0);
     }
 
     @Inject(method = "load", at = @At("TAIL"))
     private void readAdditionalNbt(CompoundTag compoundTag, CallbackInfo ci) {
-        entityData.set(CRY_CD, compoundTag.getInt(CRY_CD.toString()));
+        fof$cryCd = compoundTag.getInt("FOF_CryCd");
     }
 
     @ModifyVariable(method = "assignNewBrainWithMemoriesAndSensors", at = @At("HEAD"), argsOnly = true, index = 3)
@@ -230,28 +199,44 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
         if (target != null) {
-            this.entityData.set(DATA_ID_ATTACK_TARGET, target.getId());
+            setAttackTargetId(target.getId());
         }
     }
 
     @Override
+    public int getAttackTargetId() {
+        return fof$attackTargetId;
+    }
+
+    @Override
+    public void setAttackTargetId(int id) {
+        if (fof$attackTargetId != id) {
+            fightorflight$clientSideCachedAttackTarget = null;
+        }
+        fof$attackTargetId = id;
+        fof$markStateDirty();
+    }
+
+    @Override
     public int getAttackTime() {
-        return entityData.get(ATTACK_TIME);
+        return fof$attackTime;
     }
 
     @Override
     public void setAttackTime(int val) {
-        entityData.set(ATTACK_TIME, val);
+        fof$attackTime = val;
+        fof$markStateDirty();
     }
 
     @Override
     public int getMaxAttackTime() {
-        return entityData.get(MAX_ATTACK_TIME);
+        return fof$maxAttackTime;
     }
 
     @Override
     public void setMaxAttackTime(int val) {
-        entityData.set(MAX_ATTACK_TIME, val);
+        fof$maxAttackTime = val;
+        fof$markStateDirty();
     }
 
     @Override
@@ -280,93 +265,101 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
 
     @Override
     public void setCurrentMove(Move move) {
-        entityData.set(MOVE, move.getName());
+        setCurrentMoveName(move.getName());
     }
 
     @Override
     public String getCurrentMove() {
-        return entityData.get(MOVE);
+        return fof$currentMove;
+    }
+
+    @Override
+    public void setCurrentMoveName(String name) {
+        fof$currentMove = name == null ? "" : name;
+        fof$markStateDirty();
     }
 
     @Override
     public int getNextCryTime() {
-        return this.entityData.get(CRY_CD);
+        return fof$cryCd;
     }
 
     @Override
     public void setNextCryTime(int time) {
-        this.entityData.set(CRY_CD, time);
+        fof$cryCd = time;
     }
 
     @Override
     public void setCommand(String cmd) {
-        entityData.set(COMMAND, cmd);
+        fof$command = cmd == null ? "" : cmd;
     }
 
     @Override
     public String getCommand() {
-        return entityData.get(COMMAND);
+        return fof$command;
     }
 
     @Override
     public void setCommandData(String cmdData) {
-        entityData.set(COMMAND_DATA, cmdData);
+        fof$commandData = cmdData == null ? "" : cmdData;
         createTargetBlockPos();
     }
 
     @Override
     public String getCommandData() {
-        return entityData.get(COMMAND_DATA);
+        return fof$commandData;
     }
 
     @Override
     public BlockPos getTargetBlockPos() {
-        return this.entityData.get(TARGET_BLOCK_POS);
+        return fof$targetBlockPos;
     }
 
     @Override
     public void setTargetBlockPos(BlockPos blockPos) {
-        this.entityData.set(TARGET_BLOCK_POS, blockPos);
+        fof$targetBlockPos = blockPos == null ? BlockPos.ZERO : blockPos;
     }
 
     @Override
     public int getCapturedBy() {
-        return entityData.get(DATA_ID_CAPTURED_BY);
+        return fof$capturedBy;
     }
 
     @Override
     public void setCapturedBy(int id) {
-        entityData.set(DATA_ID_CAPTURED_BY, id);
+        fof$capturedBy = id;
     }
 
     @Override
     public int getAttackMode() {
-        return entityData.get(ATTACK_MODE);
+        return fof$attackMode;
     }
 
     @Override
     public void setAttackMode(int attackMode) {
-        entityData.set(ATTACK_MODE, attackMode);
+        fof$attackMode = attackMode;
     }
 
     @Override
     public int getMoveDuration() {
-        return entityData.get(MOVE_DURATION);
+        return fof$moveDuration;
     }
 
     @Override
     public void setMoveDuration(int duration) {
-        entityData.set(MOVE_DURATION, duration);
+        fof$moveDuration = duration;
+        fof$markStateDirty();
     }
 
     @Override
     public int getMoveDurationOriginal() {
-        return entityData.get(MOVE_DURATION_ORIGINAL);
+        return fof$moveDurationOriginal;
     }
 
     @Override
     public void setMoveDurationOriginal(int duration) {
-        entityData.set(MOVE_DURATION_ORIGINAL, duration);
+        fof$moveDurationOriginal = duration;
+        fof$markStateDirty();
     }
 
 
@@ -538,6 +531,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             int t = tickCount % 20;
             int sec = tickCount / 20;
             slowTick(t, sec);
+            fof$syncState();
         }
     }
 
@@ -621,6 +615,51 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         int switchMoveInterval = CobblemonFightOrFlight.commonConfig().wild_alpha_switch_move_interval;
         if (sec % switchMoveInterval == 0 && ticks == 17) {
             wildRandomMove();
+        }
+    }
+
+    @Unique
+    private void fof$markStateDirty() {
+        if (this.level() == null || this.level().isClientSide) {
+            return;
+        }
+        fof$stateDirty = true;
+    }
+
+    @Unique
+    private void fof$syncState() {
+        PokemonEntity self = (PokemonEntity) (Object) this;
+        int tick = this.tickCount;
+        // Push the changes of the last two ticks to the players that can see this pokemon.
+        if (tick % 2 == 0 && fof$stateDirty) {
+            List<ServerPlayer> players = FOFStateSync.nearPlayers(self);
+            if (!players.isEmpty()) {
+                FOFStateSync.sendState(self, players);
+                for (ServerPlayer player : players) {
+                    fof$lastStateSync.put(player.getUUID(), tick);
+                }
+            }
+            fof$stateDirty = false;
+        }
+        // Catch up players that started tracking this pokemon after it was spawned (or that lost the packet).
+        // The resend happens in the entity tick instead of on a tracking event, because the tracking events fire
+        // before the client actually knows the entity, which would make the packet get dropped.
+        if (tick >= 20 && tick % 20 == 0) {
+            List<ServerPlayer> players = FOFStateSync.nearPlayers(self);
+            for (ServerPlayer player : players) {
+                Integer lastSent = fof$lastStateSync.get(player.getUUID());
+                if (lastSent == null || tick - lastSent > FOFStateSync.RESYNC_INTERVAL) {
+                    FOFStateSync.sendState(self, player);
+                    fof$lastStateSync.put(player.getUUID(), tick);
+                }
+            }
+            if (!fof$lastStateSync.isEmpty()) {
+                Set<UUID> nearby = new HashSet<>();
+                for (ServerPlayer player : players) {
+                    nearby.add(player.getUUID());
+                }
+                fof$lastStateSync.keySet().retainAll(nearby);
+            }
         }
     }
 

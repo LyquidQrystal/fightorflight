@@ -44,6 +44,9 @@ public interface PokemonInterface {
         return null;
     }
 
+    default void setCurrentMoveName(String name) {
+    }
+
 
     default int getNextCryTime() {
         return 0;
@@ -71,6 +74,13 @@ public interface PokemonInterface {
     }
 
     default void setTargetBlockPos(BlockPos blockPos) {
+    }
+
+    default int getAttackTargetId() {
+        return 0;
+    }
+
+    default void setAttackTargetId(int id) {
     }
 
     default int getCapturedBy() {

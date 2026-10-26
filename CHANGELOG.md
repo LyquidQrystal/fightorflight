@@ -7,6 +7,8 @@
 * Add a config option for the interval between Alpha switching moves.
 * Json file driven species behaviour
 * Fix the bug that multiple_bullet_moves and multiple_tracing_bullet_moves is not working correctly.
+### Changes:
+* Reworked the per-pokemon state sync: the mod no longer injects accessors into `PokemonEntity#defineSynchedData`, it sends the state the client needs with a dedicated packet instead. This removes the incompatibility with other mods that mixin into the same method.
 
 # V0.11.1:
 ### New Features:

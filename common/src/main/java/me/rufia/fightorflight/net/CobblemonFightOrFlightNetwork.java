@@ -32,9 +32,14 @@ public class CobblemonFightOrFlightNetwork {
                 MoveInfoHandler handler = new MoveInfoHandler();
                 handler.handle(packet, context);
             });
+            NetworkManager.registerReceiver(NetworkManager.Side.S2C, FOFPokemonStatePacket.TYPE, FOFPokemonStatePacket.STREAM_CODEC, (packet, context) -> {
+                FOFPokemonStateHandler handler = new FOFPokemonStateHandler();
+                handler.handle(packet, context);
+            });
         } else {
             NetworkManager.registerS2CPayloadType(FOFStartBattleRequestPacket.TYPE, FOFStartBattleRequestPacket.STREAM_CODEC);
             NetworkManager.registerS2CPayloadType(MoveInfoPacket.TYPE, MoveInfoPacket.STREAM_CODEC);
+            NetworkManager.registerS2CPayloadType(FOFPokemonStatePacket.TYPE, FOFPokemonStatePacket.STREAM_CODEC);
         }
     }
 
