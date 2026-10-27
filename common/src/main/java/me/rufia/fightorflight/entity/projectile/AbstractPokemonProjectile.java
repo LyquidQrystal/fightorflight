@@ -5,7 +5,6 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.entity.IPokemonAttack;
 import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
-import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.syncher.EntityDataAccessor;
 import net.minecraft.network.syncher.EntityDataSerializers;
@@ -30,13 +29,14 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile impl
 
     protected void initPosition(LivingEntity shooter) {
         this.setOwner(shooter);
-        BlockPos blockPos = shooter.blockPosition();
-        float angle = shooter.getYRot();
-        //CobblemonFightOrFlight.LOGGER.info(String.valueOf(angle));
         double radius = 0.5 * shooter.getBbWidth();
-        double d = (double) blockPos.getX() + 0.5 - radius * Math.sin(angle);
-        double e = (double) blockPos.getY() + Math.max(0.3f, shooter.getBbHeight() * 0.67);
-        double f = (double) blockPos.getZ() + 0.5 + radius * Math.cos(angle);
+        //getYRot() is in degrees, Math.sin/cos expect radians.
+        double yaw = Math.toRadians(shooter.getYRot());
+        //Muzzle point: the front of the hitbox, measured from the entity center (blockPosition() would snap it
+        //to the block center) and from the entity feet (blockPosition().getY() would snap it to the block floor).
+        double d = shooter.getX() - radius * Math.sin(yaw);
+        double e = shooter.getY() + Math.max(0.3F, shooter.getBbHeight() * 0.67F);
+        double f = shooter.getZ() + radius * Math.cos(yaw);
         this.moveTo(d, e, f, this.getYRot(), this.getXRot());
     }
 

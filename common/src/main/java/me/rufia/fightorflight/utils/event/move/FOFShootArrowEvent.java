@@ -14,7 +14,7 @@ public class FOFShootArrowEvent extends FOFShootProjectileEvent<PokemonArrow> {
     @Override
     public void launchProjectileEntity() {
         PokemonArrow arrow = new PokemonArrow(getUser().level(), getUser(), getTarget());
-        PokemonAttackEffect.shootProjectileEntity(getUser(), getTarget(), arrow);
+        PokemonAttackEffect.shootProjectileEntity(getTarget(), arrow);
         PokemonAttackEffect.addProjectileEntity(getUser(), getTarget(), arrow,getMove());
     }
 }

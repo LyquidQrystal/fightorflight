@@ -528,10 +528,13 @@ public class PokemonAttackEffect {
         pokemonEntity.level().addFreshEntity(projectile);
     }
 
-    public static void shootProjectileEntity(PokemonEntity pokemonEntity, LivingEntity target, AbstractPokemonProjectile projectile) {
-        double d = target.getX() - pokemonEntity.getX();
+    public static void shootProjectileEntity(LivingEntity target, AbstractPokemonProjectile projectile) {
+        //The aim has to start where the projectile actually is: the muzzle point is offset from the body
+        //center (see AbstractPokemonProjectile#initPosition), so using the shooter position here would shift
+        //the whole flight path sideways.
+        double d = target.getX() - projectile.getX();
         double e = target.getY(0.5) - projectile.getY();
-        double f = target.getZ() - pokemonEntity.getZ();
+        double f = target.getZ() - projectile.getZ();
         float velocity = 1.2f;
         projectile.accurateShoot(d, e, f, velocity, 0.1f);
     }

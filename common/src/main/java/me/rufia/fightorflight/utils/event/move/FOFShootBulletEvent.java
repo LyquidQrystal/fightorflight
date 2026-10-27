@@ -14,7 +14,7 @@ public class FOFShootBulletEvent extends FOFShootProjectileEvent<PokemonBullet> 
     @Override
     public void launchProjectileEntity() {
         PokemonBullet bullet = new PokemonBullet(getUser().level(), getUser());
-        PokemonAttackEffect.shootProjectileEntity(getUser(), getTarget(), bullet);
+        PokemonAttackEffect.shootProjectileEntity(getTarget(), bullet);
         PokemonAttackEffect.addProjectileEntity(getUser(), getTarget(), bullet, getMove());
     }
 }
