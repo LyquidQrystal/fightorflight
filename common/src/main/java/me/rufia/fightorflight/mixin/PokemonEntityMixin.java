@@ -22,6 +22,8 @@ import me.rufia.fightorflight.item.component.PokeStaffComponent;
 import me.rufia.fightorflight.net.FOFStateSync;
 import me.rufia.fightorflight.net.packet.MoveInfoPacket;
 import me.rufia.fightorflight.utils.*;
+import me.rufia.fightorflight.utils.event.move.FOFMoveEvent;
+import me.rufia.fightorflight.utils.handler.MoveEventHandler;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Vec3i;
 import net.minecraft.core.particles.ParticleTypes;
@@ -127,6 +129,8 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
     private final HashSet<Pokemon> HURT_BY_POKEMON_FOF = new HashSet<>();
     @Unique
     private Pokemon LAST_HURT_BY_POKEMON_FOF = null;
+    @Unique
+    private final MoveEventHandler moveEventHandler = new MoveEventHandler();
 
     @Unique
     protected void createTargetBlockPos() {
@@ -530,6 +534,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             int sec = tickCount / 20;
             slowTick(t, sec);
             fof$syncState();
+            moveEventHandler.update(tickCount);
         }
     }
 
@@ -893,5 +898,10 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         } else {
             lastTakeYield(self);
         }
+    }
+
+    @Override
+    public void addMoveEvent(FOFMoveEvent event) {
+        moveEventHandler.addEvent(event);
     }
 }

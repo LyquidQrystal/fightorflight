@@ -173,12 +173,17 @@ public class PokemonUtils {
         return move;
     }
 
-    public static  boolean isSpecialMeleeAttackMove(String moveName){
+    public static boolean isSpecialMeleeAttackMove(String moveName) {
         return Arrays.stream(CobblemonFightOrFlight.moveConfig().special_contact_moves).toList().contains(moveName);
     }
 
-    public static boolean isPhysicalRangeAttackMove(String moveName){
-        return Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName)|| Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName) || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName);
+    public static boolean isPhysicalRangeAttackMove(String moveName) {
+        return Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName)
+                || Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName)
+                || Arrays.stream(CobblemonFightOrFlight.moveConfig().physical_single_arrow_moves).toList().contains(moveName)
+                || Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName)
+                || Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_arrow_moves).toList().contains(moveName)
+                || Arrays.stream(CobblemonFightOrFlight.moveConfig().double_arrow_moves).toList().contains(moveName);
     }
 
     public static boolean isMeleeAttackMove(Move move) {

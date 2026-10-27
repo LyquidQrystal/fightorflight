@@ -5,8 +5,8 @@ import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.CobblemonFightOrFlightClient;
 import me.rufia.fightorflight.net.NetworkPacketHandler;
 import me.rufia.fightorflight.net.packet.MoveInfoPacket;
-import me.rufia.fightorflight.utils.msg.FOFMsg;
-import me.rufia.fightorflight.utils.msg.FOFSwitchMoveMsg;
+import me.rufia.fightorflight.utils.event.msg.FOFMsg;
+import me.rufia.fightorflight.utils.event.msg.FOFSwitchMoveMsg;
 import net.minecraft.client.Minecraft;
 
 public class MoveInfoHandler implements NetworkPacketHandler<MoveInfoPacket> {

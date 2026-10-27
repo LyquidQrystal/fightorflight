@@ -1,42 +1,29 @@
 package me.rufia.fightorflight;
 
-import me.rufia.fightorflight.utils.msg.FOFMsg;
+import me.rufia.fightorflight.utils.event.msg.FOFMsg;
+import me.rufia.fightorflight.utils.handler.MsgHandler;
 import net.minecraft.client.Minecraft;
-
-import java.util.ArrayList;
-import java.util.List;
 
 
 public class CobblemonFightOrFlightClient {
-    private static final List<FOFMsg> CLIENT_MESSAGE_LIST = new ArrayList<>();
     private static boolean shouldRenderMessageList = true;
+    private static final MsgHandler handler = new MsgHandler();
 
     public static void addMsg(FOFMsg msg) {
-        int msgCount = 5;
-        if (CLIENT_MESSAGE_LIST.size() >= msgCount) {
-            CLIENT_MESSAGE_LIST.removeFirst();
-        }
-        CLIENT_MESSAGE_LIST.add(msg);
-    }
-
-    public static void addMsgDirect(FOFMsg msg) {
-        CLIENT_MESSAGE_LIST.add(msg);
+        handler.addMsg(msg);
     }
 
     public static int getMsgCount() {
-        return CLIENT_MESSAGE_LIST.size();
+        return handler.getMsgCount();
     }
 
     public static FOFMsg getMsg(int index) {
-        if (index >= CLIENT_MESSAGE_LIST.size() || index < 0) {
-            return null;
-        }
-        return CLIENT_MESSAGE_LIST.get(index);
+        return handler.getMsg(index);
     }
 
     public static void updateMsgList() {
         int guiTick = Minecraft.getInstance().gui.getGuiTicks();
-        CLIENT_MESSAGE_LIST.removeIf((msg -> !msg.isAvailable(guiTick)));
+        handler.update(guiTick);
     }
 
     public static void changeShouldRenderMessageList() {

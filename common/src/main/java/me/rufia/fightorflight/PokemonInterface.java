@@ -1,6 +1,7 @@
 package me.rufia.fightorflight;
 
 import com.cobblemon.mod.common.api.moves.Move;
+import me.rufia.fightorflight.utils.event.move.FOFMoveEvent;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.entity.LivingEntity;
 import org.jetbrains.annotations.Nullable;
@@ -129,4 +130,6 @@ public interface PokemonInterface {
     default int getOwnerLastHurtTick() {
         return -1;
     }
+
+    default void addMoveEvent(FOFMoveEvent event){}
 }

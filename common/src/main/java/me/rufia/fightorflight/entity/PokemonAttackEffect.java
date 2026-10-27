@@ -12,6 +12,9 @@ import me.rufia.fightorflight.data.movedata.MoveData;
 import me.rufia.fightorflight.entity.areaeffect.AbstractPokemonAreaEffect;
 import me.rufia.fightorflight.entity.projectile.*;
 import me.rufia.fightorflight.utils.*;
+import me.rufia.fightorflight.utils.event.move.FOFShootArrowEvent;
+import me.rufia.fightorflight.utils.event.move.FOFShootBulletEvent;
+import me.rufia.fightorflight.utils.event.move.FOFShootTracingBulletEvent;
 import me.rufia.fightorflight.utils.explosion.FOFExplosion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.particles.ParticleTypes;
@@ -509,19 +512,23 @@ public class PokemonAttackEffect {
         }
     }
 
-    protected static void addProjectileEntity(PokemonEntity pokemonEntity, LivingEntity target, AbstractPokemonProjectile projectile, Move move) {
+    public static void addProjectileEntity(PokemonEntity pokemonEntity, LivingEntity target, AbstractPokemonProjectile projectile, Move move) {
+        if (move == null) {
+            addProjectileEntity(pokemonEntity, target, projectile);
+            return;
+        }
         projectile.setElementalType(move.getType().getName());
         projectile.setDamage(calculatePokemonDamage(pokemonEntity, target, move));
         pokemonEntity.level().addFreshEntity(projectile);
     }
 
-    protected static void addProjectileEntity(PokemonEntity pokemonEntity, LivingEntity target, AbstractPokemonProjectile projectile) {
+    public static void addProjectileEntity(PokemonEntity pokemonEntity, LivingEntity target, AbstractPokemonProjectile projectile) {
         projectile.setElementalType(pokemonEntity.getPokemon().getPrimaryType().getName());
         projectile.setDamage(calculatePokemonDamage(pokemonEntity, target, true));
         pokemonEntity.level().addFreshEntity(projectile);
     }
 
-    protected static void shootProjectileEntity(PokemonEntity pokemonEntity, LivingEntity target, AbstractPokemonProjectile projectile) {
+    public static void shootProjectileEntity(PokemonEntity pokemonEntity, LivingEntity target, AbstractPokemonProjectile projectile) {
         double d = target.getX() - pokemonEntity.getX();
         double e = target.getY(0.5) - projectile.getY();
         double f = target.getZ() - pokemonEntity.getZ();
@@ -534,11 +541,10 @@ public class PokemonAttackEffect {
             return;
         }
         Move move = PokemonUtils.getRangeAttackMove(pokemonEntity);
-        AbstractPokemonProjectile bullet;
         PokemonUtils.sendAnimationPacket(pokemonEntity, "special");
+        int currentTick = pokemonEntity.tickCount;
         if (canUseMove(pokemonEntity) && move != null) {
             String moveName = move.getName();
-            Random rand = new Random();
             boolean b1 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_bullet_moves).toList().contains(moveName);
             boolean b2 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_bullet_moves).toList().contains(moveName);
             boolean b3 = Arrays.stream(CobblemonFightOrFlight.moveConfig().single_tracing_bullet_moves).toList().contains(moveName);
@@ -548,16 +554,24 @@ public class PokemonAttackEffect {
             boolean b7 = Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(moveName);
             boolean b8 = Arrays.stream(CobblemonFightOrFlight.moveConfig().magic_attack_moves).toList().contains(moveName);
             boolean b9 = Arrays.stream(CobblemonFightOrFlight.moveConfig().delayed_aoe_at_target_position).toList().contains(moveName);
-            if (b3 || b4) {
-                for (int i = 0; i < (b3 ? 1 : rand.nextInt(3) + 1); ++i) {
-                    bullet = new PokemonTracingBullet(pokemonEntity.level(), pokemonEntity, target, pokemonEntity.getDirection().getAxis());
-                    addProjectileEntity(pokemonEntity, target, bullet, move);
+            boolean b10 = Arrays.stream(CobblemonFightOrFlight.moveConfig().double_arrow_moves).toList().contains(moveName);
+            boolean b11 = Arrays.stream(CobblemonFightOrFlight.moveConfig().multiple_arrow_moves).toList().contains(moveName);
+            int strikeCount = b11 || b4 || b2 ? calculateAttackNumber(pokemonEntity, moveName) : 1;
+            if (b10) {
+                for (int i = 0; i < 2; ++i) {
+                    ((PokemonInterface) pokemonEntity).addMoveEvent(new FOFShootArrowEvent(currentTick, i * 5, pokemonEntity, target, move));
+                }
+            } else if (b11) {
+                for (int i = 0; i < strikeCount; ++i) {
+                    ((PokemonInterface) pokemonEntity).addMoveEvent(new FOFShootArrowEvent(currentTick, i * 5, pokemonEntity, target, move));
+                }
+            } else if (b3 || b4) {
+                for (int i = 0; i < strikeCount; ++i) {
+                    ((PokemonInterface) pokemonEntity).addMoveEvent(new FOFShootTracingBulletEvent(currentTick, i * 5, pokemonEntity, target, move));
                 }
             } else if (b1 || b2) {
-                for (int i = 0; i < (b1 ? 1 : rand.nextInt(3) + 1); ++i) {
-                    bullet = new PokemonBullet(pokemonEntity.level(), pokemonEntity);
-                    shootProjectileEntity(pokemonEntity, target, bullet);
-                    addProjectileEntity(pokemonEntity, target, bullet, move);
+                for (int i = 0; i < strikeCount; ++i) {
+                    ((PokemonInterface) pokemonEntity).addMoveEvent(new FOFShootBulletEvent(currentTick, i * 5, pokemonEntity, target, move));
                 }
             } else if (b5 || b7 || b8) {
                 if (!PokemonUtils.pokemonTryForceEncounter(pokemonEntity, target)) {
@@ -572,17 +586,13 @@ public class PokemonAttackEffect {
             } else if (b9) {
                 createAOE(pokemonEntity, target, move);
             } else {
-                bullet = new PokemonArrow(pokemonEntity.level(), pokemonEntity, target);
-                shootProjectileEntity(pokemonEntity, target, bullet);
-                addProjectileEntity(pokemonEntity, target, bullet, move);
+                ((PokemonInterface) pokemonEntity).addMoveEvent(new FOFShootArrowEvent(currentTick, 0, pokemonEntity, target, move));
             }
             if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect) {
                 applyOnUseEffect(pokemonEntity, target, move);
             }
         } else {
-            bullet = new PokemonArrow(pokemonEntity.level(), pokemonEntity, target);
-            shootProjectileEntity(pokemonEntity, target, bullet);
-            addProjectileEntity(pokemonEntity, target, bullet);
+            ((PokemonInterface) pokemonEntity).addMoveEvent(new FOFShootArrowEvent(currentTick, 0, pokemonEntity, target, move));
         }
     }
 
@@ -972,4 +982,18 @@ public class PokemonAttackEffect {
         }
         return 0;
     }
+
+    //It is only used by range attack currently, so moves like Population Bomb and Triple Axel is not listed here.
+    public static int calculateAttackNumber(PokemonEntity pokemonEntity, String moveName) {
+        boolean isSkillLink = PokemonUtils.abilityIs(pokemonEntity, "skilllink");
+        boolean hasLoadedDice = PokemonUtils.getHeldItem(pokemonEntity).is(CobblemonItems.LOADED_DICE);
+        if (isSkillLink) {
+            return 5;
+        }
+        if (hasLoadedDice) {
+            return pokemonEntity.getRandom().nextIntBetweenInclusive(4, 5);
+        }
+        return pokemonEntity.getRandom().nextIntBetweenInclusive(2, 5);
+    }
+
 }

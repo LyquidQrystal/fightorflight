@@ -38,15 +38,24 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
     };
     @Comment("Physical moves that uses arrow,these moves will let the Pokemon shoot arrow while using the Attack stat to calculate the damage.")
     public String[] physical_single_arrow_moves = {
-            "dragondarts",
             "iceshard",
             "iciclecrash",
-            "iciclespear",
             "gunkshot",
+            "thousandarrows"
+    };
+    @Comment("Moves that shoot multiple arrows.")
+    public String[] multiple_arrow_moves = {
+            "iciclespear",
             "scaleshot",
             "spikecannon",
             "pinmissile",
-            "thousandarrows"
+            "tachyoncutter",
+            "watershuriken"
+    };
+    @Comment("Moves that shoot exactly 2 arrows.")
+    public String[] double_arrow_moves = {
+            "dragondarts",
+            "tachyoncutter"
     };
     @Comment("Moves that shoots multiple bullet")
     public String[] multiple_bullet_moves = {
@@ -124,7 +133,7 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "snipeshot"
     };
     @Comment("Moves that doesn't require the Pokemon to recharge/charge 1 turn, but you want to extend its recharging time for balancing. Moves that needs to recharge 1 turn have built-in longer recharging time and can't be disabled currently.")
-    public String[] extra_recharging_moves={
+    public String[] extra_recharging_moves = {
             "hydropump",
             "fleurcannon",
             "zapcannon"

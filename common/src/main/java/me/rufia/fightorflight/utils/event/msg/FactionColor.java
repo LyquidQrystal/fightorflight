@@ -1,4 +1,4 @@
-package me.rufia.fightorflight.utils.msg;
+package me.rufia.fightorflight.utils.event.msg;
 
 public class FactionColor {
     private final int sidebarColor;

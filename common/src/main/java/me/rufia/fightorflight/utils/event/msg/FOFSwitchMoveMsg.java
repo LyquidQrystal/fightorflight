@@ -1,4 +1,4 @@
-package me.rufia.fightorflight.utils.msg;
+package me.rufia.fightorflight.utils.event.msg;
 
 import me.rufia.fightorflight.net.packet.MoveInfoPacket;
 import net.minecraft.client.Minecraft;
@@ -12,19 +12,17 @@ public class FOFSwitchMoveMsg extends FOFMsg {
 
 
     public FOFSwitchMoveMsg(int pokemonId, String moveName, int faction, int createTime) {
+        super(100, createTime);
         this.pokemonId = pokemonId;
         this.moveName = moveName;
         this.faction = faction;
-        duration = 100;
-        this.createTime = createTime;
     }
 
     public FOFSwitchMoveMsg(MoveInfoPacket packet, int createTime) {
+        super(100, createTime);
         this.pokemonId = packet.getPokemonId();
         this.moveName = packet.getMoveName();
         this.faction = packet.getFaction();
-        duration = 100;
-        this.createTime = createTime;
     }
 
     public int getFaction() {

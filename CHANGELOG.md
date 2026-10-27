@@ -9,7 +9,7 @@
 * Fix the bug that multiple_bullet_moves and multiple_tracing_bullet_moves is not working correctly.
 ### Changes:
 * Reworked the pokemon state sync: the mod no longer injects accessors into `PokemonEntity#defineSynchedData`, it sends the state the client needs with a dedicated packet instead. This removes the incompatibility with other mods that mixin into the same method.
-
+* Multi strike range attack works better now.
 # V0.11.1:
 ### New Features:
 * If you enabled wild pokemon unprovoked attack, the Alpha Pokemon will be aggressive.
