@@ -125,14 +125,32 @@ public abstract class AbstractPokemonProjectile extends ThrowableProjectile impl
         super.onHitBlock(result);
     }
 
+    /**
+     * The gravity that is actually applied by this projectile every tick.
+     * <p>
+     * {@code 0.0} means the projectile flies in a straight line, which is the case for every projectile whose
+     * {@code tick()} does not call {@code applyGravity()} (bullets, spikes, ...). The aim solver uses this instead
+     * of {@link #getGravity()} so that a projectile which does not fall is never compensated for a fall.
+     */
+    protected double getEffectiveGravity() {
+        return 0.0;
+    }
+
     public void accurateShoot(double x, double y, double z, float velocity, float inaccuracy) {
-        double horizontalDistance = Math.sqrt(x * x + z * z);
-        float g = (float) getGravity();
+        double g = getEffectiveGravity();
+        double horizontalSqr = x * x + z * z;
         double v2 = velocity * velocity;
-        double sqrtDelta = Math.sqrt(v2 * v2 - 2 * v2 * g * y - g * g * horizontalDistance * horizontalDistance);
-        double t = Math.sqrt(2 * (v2 - g * y - sqrtDelta)) / g;
-        double vy = 0.5 * g * t + y;
-        //CobblemonFightOrFlight.LOGGER.info("{},{},{},{}", x, vy, z, t);
-        this.shoot(x, y, z, velocity, inaccuracy);
+        double discriminant = v2 * v2 - 2.0 * v2 * g * y - g * g * horizontalSqr;
+        if (g <= 0.0 || discriminant <= 0.0 || horizontalSqr < 1.0E-4) {
+            //Straight flight, target out of range (no real solution) or an almost vertical shot:
+            //fall back to the plain straight line instead of producing a NaN direction.
+            this.shoot(x, y, z, velocity, inaccuracy);
+            return;
+        }
+        //Low angle ballistic solution: t is the flight time that reaches the point at the given distance and height.
+        double t = Math.sqrt(2.0 * (v2 - g * y - Math.sqrt(discriminant))) / g;
+        //shoot() normalizes the vector, so only the ratio between the components matters:
+        //the vertical displacement has to be raised by the fall that happens during the flight.
+        this.shoot(x, y + 0.5 * g * t * t, z, velocity, inaccuracy);
     }
 }

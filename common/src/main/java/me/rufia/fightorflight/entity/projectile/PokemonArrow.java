@@ -51,6 +51,15 @@ public class PokemonArrow extends AbstractPokemonProjectile {
         super.shoot(x, y, z, velocity, inaccuracy);
     }
 
+    /**
+     * The arrow is the only FOF projectile that actually falls: {@link #tick()} applies the gravity unless the
+     * arrow is a no physics one. Reporting the same condition here keeps the aim solver in sync with the flight.
+     */
+    @Override
+    protected double getEffectiveGravity() {
+        return this.noPhysics ? 0.0 : this.getGravity();
+    }
+
     public void lerpMotion(double x, double y, double z) {
         super.lerpMotion(x, y, z);
     }
