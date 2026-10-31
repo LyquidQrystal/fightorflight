@@ -46,7 +46,7 @@ public class PokemonPostRenderer {
                     return;
                 }
                 float g = 40 + partialTicks + moveDuration;//entity.getClientSideAttackTime() + partialTicks;
-                Color color = PokemonAttackEffect.getColorFromType(move.getType().getName());
+                Color color = PokemonAttackEffect.getColorFromType(PokemonAttackEffect.modifyElementalTypeByAbility(entity, move).getName());
                 float h = g * 0.5F % 1.0F;
                 float i = entity.getEyeHeight();
                 poseStack.pushPose();

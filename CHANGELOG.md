@@ -1,5 +1,7 @@
 # V0.11.2:
+
 ### TODO(Some of them are suggestions from the github issue. They're listed here so they will be added, but they might be added in the future update instead of this version):
+
 * Priority system for targeting
 * Split do_pokemon_defend_owner
 * Config to stop Pokemon being aggressive out of water
@@ -7,218 +9,406 @@
 * Add a config option for the interval between Alpha switching moves.
 * Json file driven species behaviour
 * Fix the bug that multiple_bullet_moves and multiple_tracing_bullet_moves is not working correctly.
+
+### New Features:
+
+* The Following abilities now works:
+    * Galvanize
+    * Aerilate
+    * Dragonize
+    * Pixilate
+    * Normalize
+    * Refrigerate
+    * Liquid Voice
+    * Technician
+    * Sharpness
+    * Strong Jaw
+    * Iron Fist
+    * Mega Launcher
+    * Punk Rock(It can only boost the sound-based moves damage the Pokemon deal, but it can't reduce the damage taken
+      currently.)
+    * Fire Mane
+    * Water Bubble
+    * Dragon's Maw
+    * Rocket Payload
+    * Steel Worker
+    * Tough Claw
+
 ### Changes:
-* Reworked the pokemon state sync: the mod no longer injects accessors into `PokemonEntity#defineSynchedData`, it sends the state the client needs with a dedicated packet instead. This removes the incompatibility with other mods that mixin into the same method.
+
+* Reworked the pokemon state sync: the mod no longer injects accessors into `PokemonEntity#defineSynchedData`, it sends
+  the state the client needs with a dedicated packet instead. This removes the incompatibility with other mods that
+  mixin into the same method.
 * Multi strike range attack works better now.
 * Optimized projectile aiming.
 
-
 # V0.11.1:
+
 ### New Features:
+
 * If you enabled wild pokemon unprovoked attack, the Alpha Pokemon will be aggressive.
-* Wild Alpha Pokemon now will try to use move and switch them randomly when attacking. They might also use range attack.(Configurable)
+* Wild Alpha Pokemon now will try to use move and switch them randomly when attacking. They might also use range
+  attack.(Configurable)
 * A notification will appear on the right side of your screen if a Pokemon change the move it uses now.
-### Changes: 
-* Wild Pokemon won't try to use the moves now unless it's an Alpha Pokemon.(Some moves could be used before. set wild_pokemon_can_use_move to true if you want it back.)
+
+### Changes:
+
+* Wild Pokemon won't try to use the moves now unless it's an Alpha Pokemon.(Some moves could be used before. set
+  wild_pokemon_can_use_move to true if you want it back.)
 * Make the aggression influenced by Cobblemon's size instead of Cobblemon Size Variation mod.
 * Increased the height of the area effect hitbox.
+
 ### Bug Fixes:
-* Fix the bug that if a Pokemon is killed by other Pokemon but some of them got fainted before the Pokemon dies, the fainted Pokemon will be counted as a participant and influence the XP sharing.
+
+* Fix the bug that if a Pokemon is killed by other Pokemon but some of them got fainted before the Pokemon dies, the
+  fainted Pokemon will be counted as a participant and influence the XP sharing.
 * Fix the bug that do_pokemon_attack_in_battle is not working correctly.
 
 # V0.11.0:
-V0.11.0 was designed for Cobblemon 1.7, but it seems to work normally on Cobblemon 1.8. So I just update the dependency in the gradle. Please report the bug you encountered in the issue.
+
+V0.11.0 was designed for Cobblemon 1.7, but it seems to work normally on Cobblemon 1.8. So I just update the dependency
+in the gradle. Please report the bug you encountered in the issue.
+
 ### New Features:
+
 * Pokemon can attack in peaceful difficulty now.
-* Adjust the way the range attack works, the Pokemon will gain slowness when trying to use range attack, charge for a short period of time and then attack.
+* Adjust the way the range attack works, the Pokemon will gain slowness when trying to use range attack, charge for a
+  short period of time and then attack.
     * Pokemon can't change the move it's trying to use if it's charging.
     * Moves that needs to charge 1 turn to use will have longer duration.
     * It is designed to be finished in 1 second so it won't influence most players.
-* Custom type effectiveness: Use a json file to give an entity specific weaknesses and resistances. For modpack creators & datapack creators to create more interactions with the mobs from the other mods. (Documentation is coming soon.)
+* Custom type effectiveness: Use a json file to give an entity specific weaknesses and resistances. For modpack
+  creators & datapack creators to create more interactions with the mobs from the other mods. (Documentation is coming
+  soon.)
 * Arthropod mobs(Spiders, bees, etc.) is considered as Bug Type if they're hurt by a Pokemon.
 * Mooshroom is considered as Bug Type and Grass Type if they're hurt by a Pokemon.
 * Pokemon with Klutz ability will no longer use Held Item.
-* Add Auto Battle command to the Poke Staff, it will let your Pokemon try to attack the wild Pokemon nearby. 
-  * Pokemon's friendship should reach 100 to use this command(Can be changed in the config.)
-  * Wild shiny Pokemon won't be attacked unless you set not_attacking_wild_shiny to false.
+* Add Auto Battle command to the Poke Staff, it will let your Pokemon try to attack the wild Pokemon nearby.
+    * Pokemon's friendship should reach 100 to use this command(Can be changed in the config.)
+    * Wild shiny Pokemon won't be attacked unless you set not_attacking_wild_shiny to false.
+
 ### Changes:
+
 * Changed some of the particle when using moves with specific types.
 * Slightly adjusted the projectile created for the special move that doesn't have special effect currently.
 * Lowered projectiles speed. It was too fast to notice. It's still fast now, but you might notice something flies away.
-* Reworked the type effectiveness system to make it compatible with the custom type effectiveness system, it should work normally as before in most cases.
+* Reworked the type effectiveness system to make it compatible with the custom type effectiveness system, it should work
+  normally as before in most cases.
+
 ### Bug fixes:
+
 * Fixed the bug that the white list config is not working currently.
-* Fixed the bug that moves needs 1 turn to recharge/charge don't have a longer cooldown(I think it never worked so I guess no one should discover that this is a bug.)
+* Fixed the bug that moves needs 1 turn to recharge/charge don't have a longer cooldown(I think it never worked so I
+  guess no one should discover that this is a bug.)
 * Fixed the bug that some range attack move is not working correctly.
 * Fixed the bug that a player can hurt another player's Pokemon in a pvp battle and set pvp_immunity to false.
+
 ### New Config:
+
 * enable_auto_battle_command: If the Auto Battle command should be enabled.
-* auto_battle_friendship_requirement: The friendship requirement for your Pokemon to obey the Auto Battle command. The default value is 100.
-* auto_battle_weaker_pokemon_only: If this is set to true, Pokemon with Auto Battle command won't attack Pokemon with a higher level.
+* auto_battle_friendship_requirement: The friendship requirement for your Pokemon to obey the Auto Battle command. The
+  default value is 100.
+* auto_battle_weaker_pokemon_only: If this is set to true, Pokemon with Auto Battle command won't attack Pokemon with a
+  higher level.
 * base_move_duration: The basic duration of a move. In ticks.
-* extra_recharging_moves: Moves that doesn't require the Pokemon to recharge/charge 1 turn, but you want to extend its recharging time for balancing.
+* extra_recharging_moves: Moves that doesn't require the Pokemon to recharge/charge 1 turn, but you want to extend its
+  recharging time for balancing.
 
 # V0.10.9:
+
 ### Bug fixes:
+
 * Fixed the log spam
 * Fix the bug that Pokemon can only gain exp from melee attack.
 
 # V0.10.8:
+
 ### New Features:
-* Add support for Cobblemon Size Variation, the size of the Pokemon can influence the Pokemon's aggression. The bigger Pokemon will be more aggressive by default. New config options are added so you can make your own adjustments.
-* Added back the flight mechanic, it's not working very well currently due to the changes of the Cobblemon's Pokemon AI. 
+
+* Add support for Cobblemon Size Variation, the size of the Pokemon can influence the Pokemon's aggression. The bigger
+  Pokemon will be more aggressive by default. New config options are added so you can make your own adjustments.
+* Added back the flight mechanic, it's not working very well currently due to the changes of the Cobblemon's Pokemon AI.
+
 ### New Config:
+
 * force_enable_flee: Required to be set to true for the flight feature.
-* pokemon_share_yield: If this is set to true, all Pokemon that attacks the target Pokemon will get the EXP. and EV, or the last one will obtain the EXP. and EV.
-* ender_dragon_has_dragon_type: (This is set to false by default) Give Ender Dragon Dragon Type when calculating the damage it takes. Please notice that the type effectiveness will be influenced by Ender Dragon's own damage reduction(check [here](https://minecraft.wiki/w/Ender_Dragon#Behavior) for more information)
+* pokemon_share_yield: If this is set to true, all Pokemon that attacks the target Pokemon will get the EXP. and EV, or
+  the last one will obtain the EXP. and EV.
+* ender_dragon_has_dragon_type: (This is set to false by default) Give Ender Dragon Dragon Type when calculating the
+  damage it takes. Please notice that the type effectiveness will be influenced by Ender Dragon's own damage reduction(
+  check [here](https://minecraft.wiki/w/Ender_Dragon#Behavior) for more information)
 * min_xp_from_pokemon: The minimum EXP. player's Pokemon can gain from killing a Pokemon without the turn-based battle.
-* max_xp_from_pokemon: The maximum EXP. player's Pokemon can gain from killing a Pokemon without the turn-based battle. If this value is lower than zero, there will be no limit.(This value is set to -1 by default)
+* max_xp_from_pokemon: The maximum EXP. player's Pokemon can gain from killing a Pokemon without the turn-based battle.
+  If this value is lower than zero, there will be no limit.(This value is set to -1 by default)
+
 ### Changes:
-* Adjusted the xp mechanic so if a Pokemon is killed by player's Pokemons, all the Pokemon that dealt damage and didn't faint will gain the EXP. and EVs, the EXP. will be affected by the Pokemon count but EVs won't be influenced.
+
+* Adjusted the xp mechanic so if a Pokemon is killed by player's Pokemons, all the Pokemon that dealt damage and didn't
+  faint will gain the EXP. and EVs, the EXP. will be affected by the Pokemon count but EVs won't be influenced.
 * Make the wild Pokemon try to attack the last entity that hit it.
+
 ### Bug fixes:
+
 * Fix the bug that friendly_fire_immunity_owner and some other related configs is not working currently.
 * Fix the bug that the angry particle is created around a passive wild Pokemon.
 
 # V0.10.7:
+
 ### New Features:
-* Using a new packet and handler so a keybind added a long time ago can work properly now. This is used to start a battle with an aggressive pokemon around the player so you don't need to aim at it.
+
+* Using a new packet and handler so a keybind added a long time ago can work properly now. This is used to start a
+  battle with an aggressive pokemon around the player so you don't need to aim at it.
 * PVE Battles started with this mod will use the selected Pokemon now.
+
 ### New Config:
+
 * peaceful_biome: Pokemon will be peaceful in these biomes.
 * neutral_biome: Pokemon will be neutral in these biomes.
 * aggressive_biome: Pokemon will be aggressive in these biomes(Proactive attack needs to be enabled in advance)
+
 ### Bug fixes:
+
 * Fixed the bug that player's pokemon did not protect themselves when hurt.
 
 # V0.10.6:
+
 ### New Config:
-* force_wild_battle_on_player_attack: If this is set to true, a battle will be started when a player attacks a wild Pokemon.
-* force_player_battle_on_player_attack: If this is set to true, a battle will be started when a player attacks another player's Pokemon(Untested).
+
+* force_wild_battle_on_player_attack: If this is set to true, a battle will be started when a player attacks a wild
+  Pokemon.
+* force_player_battle_on_player_attack: If this is set to true, a battle will be started when a player attacks another
+  player's Pokemon(Untested).
+
 ### Changes:
-* Adjusted the Leftovers mechanic so the players can't heal the pokemon quickly by just sending them out and recalling repeatedly.
+
+* Adjusted the Leftovers mechanic so the players can't heal the pokemon quickly by just sending them out and recalling
+  repeatedly.
+
 ### Bug Fixes:
+
 * Fixed the bug that the game will crash if a Pokemon tries to use a ghost type move on Cobblemon 1.7.2
 
 # V0.10.5:
+
 ### Implemented Features:
+
 * Poke Staff Commands(Move, Attack, Hold Position)
+
 ### Bug Fixes:
+
 * Fixed the bug that the anger effect will be spawned on Pokemon that can't attack.
 
 # V0.10.4:
+
 ### Implemented Features:
+
 * Failed captures will be counted as a provocation.
+
 ### Bug fixes:
+
 * Probably fix the bug that mods that increases entity max health not working properly for Pokemon.
 * Fixed the bug that wild Pokemon cries too frequently if the Pokemon becomes aggressive.
 * Fixed the bug that player's Pokemon can't attack the other players or their Pokemon.
 * Fixed the bug that not_attacking_wild_shiny is not working correctly.
 * Fixed the bug that Pokemon can still attack in battle.
 * Fixed the misspelling of can_progress_use_move_evolution.
+
 ### Known bugs:
-* Pokemon will stop trying to attack after being mounted. Needs to be recalled and released again.(I'm quite busy, I'll spend more time looking at the code after I'm free.)
-* [Nether Invader](https://modrinth.com/mod/nether-invader) will cause all the Pokemon can't attack proactively.(I'm not sure about the reason. The findClosest method of NearestVisibleLivingEntities fails to return the correct value. Might be caused by its mixin.)
+
+* Pokemon will stop trying to attack after being mounted. Needs to be recalled and released again.(I'm quite busy, I'll
+  spend more time looking at the code after I'm free.)
+* [Nether Invader](https://modrinth.com/mod/nether-invader) will cause all the Pokemon can't attack proactively.(I'm not
+  sure about the reason. The findClosest method of NearestVisibleLivingEntities fails to return the correct value. Might
+  be caused by its mixin.)
 
 # v0.10.3:
+
 ### Implemented Features:
+
 * Added back wild Pokemon's cries and angry particles
-* Added back extra speed multiplier affected by the Pokemon's speed stat.(Only usable when chasing the target currently.)
+* Added back extra speed multiplier affected by the Pokemon's speed stat.(Only usable when chasing the target
+  currently.)
+
 ### New Config:
+
 * not_attacking_wild_shiny: If this is set to true, player's Pokemon won't hurt wild shiny Pokemon
+
 ### New Features:
+
 * Uses sound from Cobblemon for most of the moves.
 
 # V0.10.2:
+
 ### Implemented Features:
+
 * Wild Pokemon proactive attack
+
 ### New Config:
-* force_enable_defend_owner: TLDR:Allows you to solve the problem that Pokemon added by the datapacks/addons can't attack. Explanation: It set willDefendOwner to true in the Pokemon combat behaviour. So the Pokemon can be prepared for targeting entities. The datapack creators can enable this by themselves, too.
-* force_enable_defend_self: TLDR:Allows you to solve the problem that Pokemon added by the datapacks/addons can't attack. It works in a similar way like the one mentioned above.
+
+* force_enable_defend_owner: TLDR:Allows you to solve the problem that Pokemon added by the datapacks/addons can't
+  attack. Explanation: It set willDefendOwner to true in the Pokemon combat behaviour. So the Pokemon can be prepared
+  for targeting entities. The datapack creators can enable this by themselves, too.
+* force_enable_defend_self: TLDR:Allows you to solve the problem that Pokemon added by the datapacks/addons can't
+  attack. It works in a similar way like the one mentioned above.
+
 ### Localization:
+
 * fr_fr localization from [@Augustin Laurent](https://github.com/augustin-laurent)
 
 # V0.10.1:
+
 ### Bug Fixes:
-* Fix the bug that the Pokemon won't try to approach the target if the Pokemon can see the target but it is not within the attack range if the Pokemon is using a range attack move.
+
+* Fix the bug that the Pokemon won't try to approach the target if the Pokemon can see the target but it is not within
+  the attack range if the Pokemon is using a range attack move.
+
 ### Changes:
+
 * Increased the range attack radius.
+
 ### Known issue:
-* Some Pokemon added by MSD can't use the combat behaviour I added. I'm not sure what's the reason, but I guess it's not my problem because they can't use the mechanic added by Cobblemon, too.
+
+* Some Pokemon added by MSD can't use the combat behaviour I added. I'm not sure what's the reason, but I guess it's not
+  my problem because they can't use the mechanic added by Cobblemon, too.
 
 # V0.10.0:
+
 ## Half Reborn Update
-Cobblemon 1.7 has changed a lot of things. The Brain system used in Minecraft might be easy to create complex behaviour if you build an entity from the ground up. However, it's quite hard to inject something new to a brain due to the highly immutable structure Mojang uses.  
-I've tried my best to update this mod to Cobblemon 1.7 but there are still something that needs to be updated. This version doesn't have all the features already included in V0.9.0, but I still hope that you can enjoy this update.
+
+Cobblemon 1.7 has changed a lot of things. The Brain system used in Minecraft might be easy to create complex behaviour
+if you build an entity from the ground up. However, it's quite hard to inject something new to a brain due to the highly
+immutable structure Mojang uses.  
+I've tried my best to update this mod to Cobblemon 1.7 but there are still something that needs to be updated. This
+version doesn't have all the features already included in V0.9.0, but I still hope that you can enjoy this update.
+
 ### Implemented Features:
+
 * FOF style melee attack and range attack.
 * Pokemon will attack the target you hit.
+
 ### Some unimplemented features that you might care:
+
 * Poke Staff can't select the target for the Pokemon currently.
 * Poke Staff can't select the position you want the Pokemon to move to.
 * Wild Pokemon attack the player proactively.
 
 ### Localization:
+
 * PT_BR localization from [@PrincessStelllar](https://github.com/PrincessStelllar)
 
 # V0.9.0:
+
 This version is for Cobblemon 1.6 and 1.6.1! The new version for Cobblemon 1.7 will be released in a few days.  
-Since Cobblemon 1.7 is released. 0.9.0 will be the last version that adds new features and supports Cobblemon 1.6.1. However, I will still fix the bugs reported before 2026.1.1 for Cobblemon 1.6.1.
+Since Cobblemon 1.7 is released. 0.9.0 will be the last version that adds new features and supports Cobblemon 1.6.1.
+However, I will still fix the bugs reported before 2026.1.1 for Cobblemon 1.6.1.
+
 ### New Features:
-* Quick Attack and some of the other moves with high priority will approach the target quickly if the pokemon is distant from the target and the pokemon is trying to use the move.
-* Some moves can create a storm at the target position. The storm will be started after a short period of time after being created.
-* Some moves can create a whirlpool at the target position. It will try to hurt the targets within the range and slow them. 
-* The size of the pokemon(More accurately, the width of the bounding box of a pokemon) will influence the radius of the area of effect.
+
+* Quick Attack and some of the other moves with high priority will approach the target quickly if the pokemon is distant
+  from the target and the pokemon is trying to use the move.
+* Some moves can create a storm at the target position. The storm will be started after a short period of time after
+  being created.
+* Some moves can create a whirlpool at the target position. It will try to hurt the targets within the range and slow
+  them.
+* The size of the pokemon(More accurately, the width of the bounding box of a pokemon) will influence the radius of the
+  area of effect.
+
 ### New Config:
-* quick_attack_like_move: Moves that is similar to Quick Attack, the Pokemon will approach the target quickly if it is distant from the target when the pokemon is trying to use the move.
-* delayed_aoe_at_target_position: Moves that will create an area that will deal the damage to the targets after a short period of time.
-* delayed_aoe_can_float: Moves that can create the area of effect in the air, if a move is included in delayed_aoe_at_target_position but it is not included in this list, the area of effect will be created on the ground below the target if the target is in the air.
-* delayed_aoe_rise_up_tornado: Moves that will create a tornado after a short period of time. The storm has a much higher bounding box height compared to the whirlpool.
-* delayed_aoe_bounding_whirlpool: Moves that will create a whirlpool at the target position, this whirlpool will be activated after a short period of time. Dealing damage to the targets and slowing them down.
+
+* quick_attack_like_move: Moves that is similar to Quick Attack, the Pokemon will approach the target quickly if it is
+  distant from the target when the pokemon is trying to use the move.
+* delayed_aoe_at_target_position: Moves that will create an area that will deal the damage to the targets after a short
+  period of time.
+* delayed_aoe_can_float: Moves that can create the area of effect in the air, if a move is included in
+  delayed_aoe_at_target_position but it is not included in this list, the area of effect will be created on the ground
+  below the target if the target is in the air.
+* delayed_aoe_rise_up_tornado: Moves that will create a tornado after a short period of time. The storm has a much
+  higher bounding box height compared to the whirlpool.
+* delayed_aoe_bounding_whirlpool: Moves that will create a whirlpool at the target position, this whirlpool will be
+  activated after a short period of time. Dealing damage to the targets and slowing them down.
 * delayed_aoe_is_instant: Moves that will trigger its effect only on its activation.
 
 # V0.8.4:
+
 ### New Features:
+
 * Player's Pokemon can hurt the ender dragon now.(Recommended to use with some riding addon.)
+
 ### New Config:
+
 * player_pokemon_can_hurt_ender_dragon:If set to true, your pokemon can hurt ender dragon.
 * wild_pokemon_can_hurt_ender_dragon:If set to true, wild pokemon can hurt ender dragon.
 * aggressive_pokemon_catchable: If set to true, aggressive will be not catchable outside the battle.
 * force_wild_battle_on_player_hurt: If set to true, a battle will be started when hurt by a wild Pokemon.
 * force_player_battle_on_player_hurt: If set to true, a battle will be started when hurt by a player's Pokemon.
-* force_player_battle_check_team: If this is set to true, only the players of different team can start a battle by using the pokemon to attack the player/the player's pokemon.
+* force_player_battle_check_team: If this is set to true, only the players of different team can start a battle by using
+  the pokemon to attack the player/the player's pokemon.
+
 ### Bug Fixes:
+
 * Fixed the bug that force_wild_battle_on_pokemon_hurt is not working correctly
+
 # v0.6.2
-This is just a build using the last commit before I was trying to update to 1.21.1. It should help to solve the problem that the forge version is behaving differently from the fabric version. It's been over 10 months so I can't remember the differences very well.
+
+This is just a build using the last commit before I was trying to update to 1.21.1. It should help to solve the problem
+that the forge version is behaving differently from the fabric version. It's been over 10 months so I can't remember the
+differences very well.
+
 # V0.8.3
+
 #### Attention:
-The way we calculate the aggression is changed greatly. If you're enabling Pokemon's proactive attack, the Pokemon might be more/less aggressive than before. I'm sorry for any possible inconvenience I may cause, but it's an important change I have to made to make the config edit easier to understand.
+
+The way we calculate the aggression is changed greatly. If you're enabling Pokemon's proactive attack, the Pokemon might
+be more/less aggressive than before. I'm sorry for any possible inconvenience I may cause, but it's an important change
+I have to made to make the config edit easier to understand.
+
 ### New Features:
+
 * Implemented Spikes and its variations(Toxic Spikes, Stealth Rock and Sticky Web)
 * Player's Pokemon can throw the spikes now.
-  * Stone Axe and Ceaseless Edge can create stealth rock/spikes, too.
-* Status moves need to be used manually now.(Select them with the Poke Staff and right click/press the hotkey you set again)
-* Using the taunt moves(Taunt, Torment, Rage Powder, Follow Me) will force the mobs targeting the owner to attack the Pokemon.
-* * Reworked aggression system.
-  * It is the sum of 5 values now. Most of them have an editable base value and multiplier to allow you have a deeper customization. The threshold is editable, too. More detailed information is written in the config file.(keywords that you might use when searching through the config file: aggression_level, aggression_atk_def_dif, aggression_light_level, aggression_nature, aggression_intimidation)
+    * Stone Axe and Ceaseless Edge can create stealth rock/spikes, too.
+* Status moves need to be used manually now.(Select them with the Poke Staff and right click/press the hotkey you set
+  again)
+* Using the taunt moves(Taunt, Torment, Rage Powder, Follow Me) will force the mobs targeting the owner to attack the
+  Pokemon.
+*
+    * Reworked aggression system.
+    * It is the sum of 5 values now. Most of them have an editable base value and multiplier to allow you have a deeper
+      customization. The threshold is editable, too. More detailed information is written in the config file.(keywords
+      that you might use when searching through the config file: aggression_level, aggression_atk_def_dif,
+      aggression_light_level, aggression_nature, aggression_intimidation)
+
 ### Bug Fixes:
+
 * Fixed the bug that the cooldown of unselected moves is unusually fast.
 * Fixed the bug that can_use_held_item is not working correctly.
 * Fixed the bug that the bullet/ball projectiles didn't explode when hitting mobs.
 * Fixed the bug that the color of the bullet/ball projectiles wasn't influenced by the move's type.
 * Fixed the bug that friendly fire related configs are not working as expected.
+
 # V0.8.2
+
 ### New Features:
-* If you installed LivelierPokemon, the cat Pokemon will attack Creeper proactively.(can be disabled in the config, the cat pokemon category is in livelierpokemon-categories.json5 if you installed that mod.)
+
+* If you installed LivelierPokemon, the cat Pokemon will attack Creeper proactively.(can be disabled in the config, the
+  cat pokemon category is in livelierpokemon-categories.json5 if you installed that mod.)
+
 #### New Config:
+
 * can_use_held_item. If the pokemon can use held item(This config has the highest priority)
 * can_use_held_item_damage_influencing. If the pokemon can use damage-increasing held item
-* can_use_held_item_hp_influencing. If the pokemon can use hp-restoring/damage-inflicting held item(Life Orb not included)
+* can_use_held_item_hp_influencing. If the pokemon can use hp-restoring/damage-inflicting held item(Life Orb not
+  included)
+
 ### Bug Fixes:
-* Pokemon's explosion won't accidentally destroy gravestone from Pneumono_'s mod.(It's the only one reported in the issue, might be useful for the other blocks that shouldn't be destroyed by explosion)
+
+* Pokemon's explosion won't accidentally destroy gravestone from Pneumono_'s mod.(It's the only one reported in the
+  issue, might be useful for the other blocks that shouldn't be destroyed by explosion)
+
 # v0.8.1
+
 ### New Features:
+
 * Added tooltip for Oran Lucky Egg
 * Rocky helmet(Held Item)/Rough Skin(Ability)/Iron Barbs(Ability) hurts the attacker now.
 * Whenever the Pokémon holding Shell Bell deals damage with a move, it restores HP equal to 1/8 of the damage dealt now.
@@ -226,67 +416,115 @@ The way we calculate the aggression is changed greatly. If you're enabling Pokem
 * Pokemon holding Leftovers will be healed slowly.
 * Pokemon holding Sticky Barb will be hurt slowly. The holder can't be changed on contact currently.
 * Poison type Pokemon holding Black Sludge will be healed slowly. The other Pokemon will be hurt slowly.
+
 ### Changes:
+
 * Some damage types is changed to indirect magic to avoid being recognized as making contact with a Pokemon.
+
 ### Bug Fixes:
+
 * Fixed the log spam when the player enters the spectator mode and the Pokemon is out.
 * Fixed the bug that the projectiles could cause friendly fire.
+
 ### Misc:
+
 * More optimization, possibly solving performance issue.
 
 # v0.8.0
+
 ### New Features:
-* Player's pokemons can use the status move that raises the user's stats to enhance themselves now(The move needs to be selected by the player). 
-* Added new config pokemon_proactive_level to stop the pokemon from attacking neutural mobs that are not hostile to the owner.
-* Added new config should_check_poke_staff to set if the player needs to hold the Poke Staff to use the command keybinds.
+
+* Player's pokemons can use the status move that raises the user's stats to enhance themselves now(The move needs to be
+  selected by the player).
+* Added new config pokemon_proactive_level to stop the pokemon from attacking neutural mobs that are not hostile to the
+  owner.
+* Added new config should_check_poke_staff to set if the player needs to hold the Poke Staff to use the command
+  keybinds.
+
 ### Bug Fixes:
+
 * The cooldown of the not selected moves can be reduced correctly now.
+
 ### Misc:
+
 * Optimized a part of the algorithm, possibly solving performance issues
 
 # v0.7.9
+
 ### New features:
+
 * Moves use independent cooldown time now.
-* There will be an internal cooldown(10 ticks, 0.5s) when switching the moves and the move's cooldown is lower than 10 ticks.
+* There will be an internal cooldown(10 ticks, 0.5s) when switching the moves and the move's cooldown is lower than 10
+  ticks.
 * The cooldown of moves with a charging turn(Solar Beam) or moves that require recharging(Hyper Beam) will be doubled.
+
 ### Bug Fixes:
+
 * Fix the bug that the arrow_projectile might cause a crash
 * Fix the bug that the melee attack and range attack can't change fluently.
 
 # v0.7.8
+
 ### New features:
+
 * Added configs to enable/disable the move indicator, adjust its position and size.
+
 ### Bug Fixes:
+
 * Fixed the log spam on the neoforge side.
 * Fixed the bug that range attack won't trigger the battle when the config is enabled.
+
 # v0.7.7
+
 ### New features:
-- Type effectiveness for Pokemon: 2x damage for super effective moves, 0.5x damage for not very super effective moves and 0.1x damage for no effect. 
+
+- Type effectiveness for Pokemon: 2x damage for super effective moves, 0.5x damage for not very super effective moves
+  and 0.1x damage for no effect.
 - Adaptability can enhance the STAB now.
 - Added a new indicator located in the lower right corner of the screen that shows the move's name, type and cooldown.
-- New config options: slow_down_after_hurt slows the pokemon after being attacked, an alternative choice of stop_running_after_hurt.(Disabled by default)
-- New config options: activate_type_effect use the classical type effect that was used in the original version and before v0.7.5.(Disabled by default)
-- New config options: activate_move_effect use the move effect added in v0.7.5, you can enable them together.(Enabled by default)
-- New config options: all_pokemon_targeting_whitelist, wild_pokemon_targeting_whitelist and player_owned_pokemon_targeting_whitelist
+- New config options: slow_down_after_hurt slows the pokemon after being attacked, an alternative choice of
+  stop_running_after_hurt.(Disabled by default)
+- New config options: activate_type_effect use the classical type effect that was used in the original version and
+  before v0.7.5.(Disabled by default)
+- New config options: activate_move_effect use the move effect added in v0.7.5, you can enable them together.(Enabled by
+  default)
+- New config options: all_pokemon_targeting_whitelist, wild_pokemon_targeting_whitelist and
+  player_owned_pokemon_targeting_whitelist
+
 ### Fixes:
+
 - Probably fixed the bug that some pokemon's move can't be recognized if it learns it at a low level.
+
 ## v0.7.6
+
 A small update that fixes some small bug before I start working on the other features.
+
 ### New Features:
+
 - New config options: A config option to disable failed captures counted as provocation
+
 ### Fixes:
+
 - Bug fixes:Fix the bug that health_sync_for_wild_pokemon is disabled when set to true
-    - If I just revert it, every player has to edit the config to use their preferred choice. To avoid that, it will be renamed to enable_health_sync_for_wild_pokemon so you won't need to edit the config if you use the default setting.
+    - If I just revert it, every player has to edit the config to use their preferred choice. To avoid that, it will be
+      renamed to enable_health_sync_for_wild_pokemon so you won't need to edit the config if you use the default
+      setting.
 - Bug fixes:Fix the bug that attack_damage_player is not working.
 - Bug fixes:Fix the bug that the tracing projectile is being influenced by the gravity when tracing the target.
+
 ## v0.7.5
+
 ### New Features:
-- New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if enabled.(Similar to the spiders in Minecraft, disabled by default)
-- New config options: do_pokemon_defend_creeper_proactive: Player owned pokemon can attack creeper proactively.(disabled by default.)
+
+- New config options: light_dependent_unprovoked_attack: The aggression system will only work in the dark areas if
+  enabled.(Similar to the spiders in Minecraft, disabled by default)
+- New config options: do_pokemon_defend_creeper_proactive: Player owned pokemon can attack creeper proactively.(disabled
+  by default.)
 - Combat overhaul
     - Remove the type effects(levitate for psychic, weakness for fight,etc.)
     - Give more special effect to different moves(Stat changing/Status related attack moves)
-        - Pokemon gain strength after using Power-up Punch, gain weakness and resistance weakened(a new effect added by myself) after using Close Combat,etc.
+        - Pokemon gain strength after using Power-up Punch, gain weakness and resistance weakened(a new effect added by
+          myself) after using Close Combat,etc.
             - I want to make it easy so the effect level WON'T stack like the core series.
         - Moves that can apply status conditions can apply status effects from Minecraft:
             - Burn -> Weakness & set the entity on fire.
@@ -297,16 +535,24 @@ A small update that fixes some small bug before I start working on the other fea
             - Flinch -> Mining Fatigue & Slowness II
             - Confusion -> Confusion
         - Serene Grace can increase the chance to trigger the additional effect
-        - Sheer Force no longer boost all the moves. It works like the core series now.(Some moves are not supported yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has Sheer Force, so I didn't add it.)
-### Changes 
+        - Sheer Force no longer boost all the moves. It works like the core series now.(Some moves are not supported
+          yet. Sparkling Aria can trigger Sheer Force in Pokemon S/V, but it can't be learnt by the Pokemon which has
+          Sheer Force, so I didn't add it.)
+
+### Changes
+
 - Pokemon on shoulders should stop targeting now.
+
 ### Fixes:
+
 - Bug fixes: The tracing projectiles should work correctly now.
 - Bug fixes: The explosive projectiles can deal the damage properly now.
 - Bug fixes: The invulnerable time should work properly for pokemon entity now;
 
 ## v0.6.1
-* **Animation Support** Support for animations from cobblemon mod when attacking(These animations are not designed for this mod so it might be weird)
+
+* **Animation Support** Support for animations from cobblemon mod when attacking(These animations are not designed for
+  this mod so it might be weird)
 * Wild Pokemon cries correctly when provoked.
 * Player's Pokemon can taunt wild Pokemon.
 * Added a new hotkey that let your pokemon start a battle with the pokemon that tries to attack you.
@@ -318,19 +564,37 @@ A small update that fixes some small bug before I start working on the other fea
 * The projectiles of ball and bomb moves can cause a small explosion that don't break the blocks.
 * Balance tweaks.
 * Bug fixes.
+
 ## v0.6.0
-- **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too high ,so I lowered the default value of the maximum damage.
-- **Configurable aggression:** Added a multiplier so that you can multiply the level of the pokemon when calculating its aggression.
+
+- **Lower Pokemon Damage:** I noticed that some players commented on the curseforge page that the pokemon damage was too
+  high ,so I lowered the default value of the maximum damage.
+- **Configurable aggression:** Added a multiplier so that you can multiply the level of the pokemon when calculating its
+  aggression.
 - **Faster Pokemon:** Pokemon with a higher speed stat can run faster.(can be changed in the config)
 - **Range attack!:** Added a range attack for pokemon whose Sp.ATK is higher than its ATK.
-- - Wild pokemon are not allowed to use the range attack.(can be enabled in the config)
+-
+    - Wild pokemon are not allowed to use the range attack.(can be enabled in the config)
 - **Different ways of range attack:** If a pokemon has some special moves,they will shoot different bullet.
-- - The moves' type and power will influence the projectile's if the moves is a special move.However, if your pokemon doesn't have these moves, the type of the projectile will be based on the pokemon's primary type and the power will be set to 60(can be changed in the config).
-- - You can use the Poke Staff to select the move you want to use, even forcing a special attacker to melee!(use JEI to check the recipe)
+-
+    - The moves' type and power will influence the projectile's if the moves is a special move.However, if your pokemon
+      doesn't have these moves, the type of the projectile will be based on the pokemon's primary type and the power
+      will be set to 60(can be changed in the config).
+-
+    - You can use the Poke Staff to select the move you want to use, even forcing a special attacker to melee!(use JEI
+      to check the recipe)
 - **Special effect for moves**
-- - The panicked pokemon can teleport to a nearby position if it learns the teleport move.(can be disabled in the config)
-- - Player's pokemon will be recalled automatically when using moves like U-turn and hitting the target(melee)/shooting(range)
-- - Explosive moves can cause an explosion.
+-
+    - The panicked pokemon can teleport to a nearby position if it learns the teleport move.(can be disabled in the
+      config)
+-
+    - Player's pokemon will be recalled automatically when using moves like U-turn and hitting the target(melee)
+      /shooting(range)
+-
+    - Explosive moves can cause an explosion.
 - **Mobs killed by your pokemon will drop items and experience like it was killed by a tamed wolf.**
-- Your pokemon can gain experience and ev by killing pokemon without starting a pokemon battle(needs to be **the last mob** that deals the damage,can be disabled in the config)
-- Adds the Oran Lucky Egg(held item) to gain more experience from pokemon killed by your pokemon,right-click your pokemon while sneaking to give the item to the pokemon.(**The Oran Lucky Egg won't give you extra xp from any other ways!**)
+- Your pokemon can gain experience and ev by killing pokemon without starting a pokemon battle(needs to be **the last
+  mob** that deals the damage,can be disabled in the config)
+- Adds the Oran Lucky Egg(held item) to gain more experience from pokemon killed by your pokemon,right-click your
+  pokemon while sneaking to give the item to the pokemon.(**The Oran Lucky Egg won't give you extra xp from any other
+  ways!**)

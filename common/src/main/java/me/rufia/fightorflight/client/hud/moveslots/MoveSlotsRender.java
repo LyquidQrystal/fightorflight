@@ -9,6 +9,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.PoseStack;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
@@ -53,7 +54,10 @@ public class MoveSlotsRender {
     }
 
     public static void renderMoveSlot(GuiGraphics graphics, Font font, int x, int y, PokemonEntity entity, Move move) {
-        ElementalType type = move.getType();
+        if (move == null) {
+            return;
+        }
+        ElementalType type = PokemonAttackEffect.modifyElementalTypeByAbility(entity, move);
         int cooldown = ((PokemonInterface) entity).getAttackTime();
         int maxCooldown = ((PokemonInterface) entity).getMaxAttackTime();
         int moveDuration = ((PokemonInterface) entity).getMoveDuration();

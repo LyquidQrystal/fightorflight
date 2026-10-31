@@ -417,6 +417,91 @@ public class FightOrFlightMoveConfigModel implements ConfigData {
             "thunder",
             "earthpower"
     };
+    @Comment("Moves that will be boosted by 50% if used by a Pokemon with Strong Jaw.")
+    public String[] biting_moves={
+            "bite",
+            "hyperfang",
+            "crunch",
+            "poisonfang",
+            "thunderfang",
+            "icefang",
+            "firefang",
+            "psychicfangs",
+            "jawlock",
+            "fishiousrend"
+    };
+    @Comment("Moves that can be boosted by Iron Fist(Ability) or Punching Glove(Held Item).")
+    public String[] punching_moves={
+            "cometpunch",
+            "megapunch",
+            "firepunch",
+            "icepunch",
+            "thunderpunch",
+            "dizzypunch",
+            "machpunch",
+            "dynamicpunch",
+            "focuspunch",
+            "meteormash",
+            "shadowpunch",
+            "skyuppercut",
+            "hammerarm",
+            "drainpunch",
+            "bulletpunch",
+            "poweruppunch",
+            "icehammer",
+            "plasmafists",
+            "doubleironbash",
+            "wickedblow",
+            "surgingstrikes",
+            "headlongrush",
+            "jetpunch",
+            "ragefist",
+            "doubleshock"
+    };
+    @Comment("This won't influence the way the Pokemon use the move, but move listed here will be boosted by 50% if the move is used by a Pokemon with Mega Launcher.")
+    public String[] pulse_moves={
+            "waterpulse",
+            "aurasphere",
+            "darkpulse",
+            "dragonpulse",
+            "healpulse",
+            "originpulse",
+            "terrainpulse"
+    };
+    @Comment("Moves that will be boosted by 50% if the move is used by a Pokemon with Sharpness")
+    public String[] slicing_moves={
+            "cut",
+            "razorleaf",
+            "slash",
+            "furycutter",
+            "metalclaw",
+            "crushclaw",
+            "aircutter",
+            "aerialace",
+            "dragonclaw",
+            "leafblade",
+            "nightslash",
+            "airslash",
+            "xscissor",
+            "shadowclaw",
+            "psychocut",
+            "crosspoison",
+            "sacredsword",
+            "razorshell",
+            "secretsword",
+            "solarblade",
+            "behemothblade",
+            "direclaw",
+            "stoneaxe",
+            "ceaselessedge",
+            "populationbomb",
+            "kowtowcleave",
+            "psyblade",
+            "bitterblade",
+            "aquacutter",
+            "mightycleave",
+            "tachyoncutter"
+    };
     @ConfigEntry.Category("Pokemon Griefing")
     @Comment("Do Pokemon grief(only explosions currently)?")
     public boolean pokemon_griefing = false;

@@ -6,6 +6,7 @@ import com.cobblemon.mod.common.api.types.ElementalTypes;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.data.effectiveness.FOFTypeEffectiveness;
+import me.rufia.fightorflight.entity.PokemonAttackEffect;
 import net.minecraft.world.entity.LivingEntity;
 
 import java.util.ArrayList;
@@ -39,7 +40,7 @@ public class TypeEffectiveness {
         if (move != null) {
             var el = getTargetElementalType(defense, PokemonUtils.isMoldBreakerLike(offense));
             for (ElementalType e : el) {
-                getMoveTypeEffectiveness(move, e, effectiveness);
+                getMoveTypeEffectiveness(offense, move, e, effectiveness);
             }
         } else {
             ElementalType offenseType = offense.getPokemon().getPrimaryType();
@@ -53,7 +54,7 @@ public class TypeEffectiveness {
         Move move = PokemonUtils.getMove(offense);
 
         if (move != null) {
-            getMoveTypeEffectiveness(move, defendType, effectiveness);
+            getMoveTypeEffectiveness(offense, move, defendType, effectiveness);
         } else {
             ElementalType offenseType = offense.getPokemon().getPrimaryType();
             getTypeEffectiveness(offenseType.getName(), defendType.getName(), effectiveness);
@@ -62,13 +63,13 @@ public class TypeEffectiveness {
         return abilityCheck(offense, null, effectiveness, shouldCheckAbility);
     }
 
-    protected static void getMoveTypeEffectiveness(Move offenseMove, ElementalType defenseType, Effectiveness effectiveness) {
+    protected static void getMoveTypeEffectiveness(PokemonEntity pokemonEntity, Move offenseMove, ElementalType defenseType, Effectiveness effectiveness) {
         if (offenseMove.getName().equals("freezedry")) {
             if (defenseType.getName().equals("Water")) {
                 effectiveness.update(1, false);
             }
         }
-        getTypeEffectiveness(offenseMove.getType().getName(), defenseType.getName(), effectiveness);
+        getTypeEffectiveness(PokemonAttackEffect.modifyElementalTypeByAbility(pokemonEntity, offenseMove).getName(), defenseType.getName(), effectiveness);
         if (offenseMove.getName().equals("flyingpress")) {
             getTypeEffectiveness("Flying", defenseType.getName(), effectiveness);
         }
@@ -214,7 +215,7 @@ public class TypeEffectiveness {
                 }
             }
         }
-        ElementalType type = move != null ? move.getType() : offense.getPokemon().getPrimaryType();
+        ElementalType type = move != null ? PokemonAttackEffect.modifyElementalTypeByAbility(offense, move) : offense.getPokemon().getPrimaryType();
         if (weakness.contains(type)) {
             effectiveness.update(1, false);
         }

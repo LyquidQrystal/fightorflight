@@ -126,10 +126,10 @@ public class PokemonAttackEffect {
     }
 
     public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial) {
-        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) CobblemonFightOrFlight.moveConfig().base_power, null);
+        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) CobblemonFightOrFlight.moveConfig().base_power, null, "");
     }
 
-    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial, float movePower, ElementalType type) {
+    public static float calculatePokemonDamage(PokemonEntity pokemonEntity, Entity target, boolean isSpecial, float movePower, ElementalType type, String moveName) {
         int attack = isSpecial ? pokemonEntity.getPokemon().getSpecialAttack() : pokemonEntity.getPokemon().getAttack();
         int maxStat = isSpecial ? CobblemonFightOrFlight.commonConfig().maximum_special_attack_stat : CobblemonFightOrFlight.commonConfig().maximum_attack_stat;
         boolean isUsingRangeAttack = PokemonUtils.shouldShoot(pokemonEntity);
@@ -139,8 +139,9 @@ public class PokemonAttackEffect {
         float moveModifier = movePower / 40 * CobblemonFightOrFlight.moveConfig().move_power_multiplier;
         float minDmg = isUsingRangeAttack ? multipliers.getMinimumRangeAttackDamage() : multipliers.getMinimumAttackDamage();
         float maxDmg = isUsingRangeAttack ? multipliers.getMaximumRangeAttackDamage() : multipliers.getMaximumAttackDamage();
-        float sheerForceMultiplier = PokemonUtils.canActivateSheerForce(pokemonEntity) ? 1.3f : 1.0f;
-        float multiplier = extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * sheerForceMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack);
+        float abilityMultiplier = getAbilityMultiplier(pokemonEntity, target, movePower, type, moveName, isUsingMeleeAttack);
+        float STAB = getSTAB(pokemonEntity, type);
+        float multiplier = STAB * extraDamageFromEntityFeature(pokemonEntity, target, type) * getHeldItemDmgMultiplier(pokemonEntity, target) * abilityMultiplier * multipliers.getPlayerOwnedDamageMultiplier(isUsingRangeAttack, isUsingMeleeAttack);
         float mobEffectBoost = getMobEffectBoost(pokemonEntity);
         PokemonInterface pokemonInterface = (PokemonInterface) pokemonEntity;
         if (pokemonInterface.usingBeam() || pokemonInterface.usingSound() || pokemonInterface.usingMagic()) {
@@ -161,18 +162,58 @@ public class PokemonAttackEffect {
             return 0f;
         }
         boolean isSpecial = PokemonUtils.isSpecialMove(move);
-        float STAB;
-        var primaryType = pokemonEntity.getPokemon().getPrimaryType();
-        var secondaryType = pokemonEntity.getPokemon().getSecondaryType();
-        if (secondaryType == null) {
-            secondaryType = primaryType;
+        float powerMultiplier = multiplierFromTypeChangingAbility(pokemonEntity, move);
+        ElementalType elementalType = modifyElementalTypeByAbility(pokemonEntity, move);
+        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) (powerMultiplier * move.getPower()), elementalType, move.getName());
+    }
+
+    public static float multiplierFromTypeChangingAbility(PokemonEntity pokemonEntity, Move move) {
+        if (move == null || pokemonEntity == null) {
+            return 1f;
         }
-        if (primaryType.equals(move.getType()) || secondaryType.equals(move.getType())) {
-            STAB = PokemonUtils.abilityIs(pokemonEntity, "adaptability") ? 2f : 1.5f;
+        ElementalType moveType = move.getType();
+        if (moveType != ElementalTypes.NORMAL) {
+            if (PokemonUtils.abilityIs(pokemonEntity, "normalize")) {
+                return 1.2f;
+            }
         } else {
-            STAB = 1.0f;
+            if (PokemonUtils.abilityIs(pokemonEntity, "refrigerate")
+                    || PokemonUtils.abilityIs(pokemonEntity, "galvanize")
+                    || PokemonUtils.abilityIs(pokemonEntity, "pixilate")
+                    || PokemonUtils.abilityIs(pokemonEntity, "aerilate")
+                    || PokemonUtils.abilityIs(pokemonEntity, "dragonize")) {
+                return 1.2f;
+            }
         }
-        return calculatePokemonDamage(pokemonEntity, target, isSpecial, (float) (move.getPower() * STAB), move.getType());
+        return 1f;
+    }
+
+    public static ElementalType modifyElementalTypeByAbility(PokemonEntity pokemonEntity, Move move) {
+        if (move == null || pokemonEntity == null) {
+            return ElementalTypes.NORMAL;
+        }
+        ElementalType moveType = move.getType();
+        String moveName = move.getName();
+        String abilityName = pokemonEntity.getPokemon().getAbility().getName();
+        if (PokemonUtils.abilityIs(pokemonEntity, "normalize")) {
+            return ElementalTypes.NORMAL;
+        }
+        if (Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(moveName)) {
+            if (PokemonUtils.abilityIs(pokemonEntity, "liquidvoice")) {
+                return ElementalTypes.WATER;
+            }
+        }
+        if (ElementalTypes.NORMAL == moveType) {
+            return switch (abilityName) {
+                case "refrigerate" -> ElementalTypes.ICE;
+                case "galvanize" -> ElementalTypes.ELECTRIC;
+                case "pixilate" -> ElementalTypes.FAIRY;
+                case "aerilate" -> ElementalTypes.FLYING;
+                case "dragonize" -> ElementalTypes.DRAGON;
+                default -> ElementalTypes.NORMAL;
+            };
+        }
+        return moveType;
     }
 
     protected static float extraDamageFromEntityFeature(PokemonEntity pokemonEntity, Entity target, ElementalType moveType) {
@@ -211,6 +252,74 @@ public class PokemonAttackEffect {
         return strengthLevel * 3 - weaknessLevel * 4;
     }
 
+    public static float getSTAB(PokemonEntity pokemonEntity, ElementalType moveType) {
+        float STAB;
+        var primaryType = pokemonEntity.getPokemon().getPrimaryType();
+        var secondaryType = pokemonEntity.getPokemon().getSecondaryType();
+        if (secondaryType == null) {
+            secondaryType = primaryType;
+        }
+        if (primaryType.equals(moveType) || secondaryType.equals(moveType)) {
+            STAB = PokemonUtils.abilityIs(pokemonEntity, "adaptability") ? 2f : 1.5f;
+        } else {
+            STAB = 1.0f;
+        }
+        return STAB;
+    }
+
+    public static float getAbilityMultiplier(PokemonEntity pokemonEntity, Entity target, float movePower, ElementalType type, String moveName, boolean isMelee) {
+        float offensive = getOffensiveAbilityMultiplier(pokemonEntity, target, movePower, type, moveName, isMelee);
+        float defensive = getDefensiveAbilityMultiplier(pokemonEntity, target, movePower, type, moveName, isMelee);
+        return offensive * defensive;
+    }
+
+    public static float getOffensiveAbilityMultiplier(PokemonEntity pokemonEntity, Entity target, float movePower, ElementalType type, String moveName, boolean isMelee) {
+        if (PokemonUtils.canActivateSheerForce(pokemonEntity)) {
+            return 1.3f;
+        }
+        if (movePower <= 61 && PokemonUtils.abilityIs(pokemonEntity, "technician")) {
+            return 1.5f;
+        }
+
+        if (PokemonUtils.abilityIs(pokemonEntity, "strongjaw") && Arrays.stream(CobblemonFightOrFlight.moveConfig().biting_moves).toList().contains(moveName)) {
+            return 1.5f;
+        } else if (PokemonUtils.abilityIs(pokemonEntity, "ironfist") && Arrays.stream(CobblemonFightOrFlight.moveConfig().punching_moves).toList().contains(moveName)) {
+            return 1.2f;
+        } else if (PokemonUtils.abilityIs(pokemonEntity, "megalauncher") && Arrays.stream(CobblemonFightOrFlight.moveConfig().pulse_moves).toList().contains(moveName)) {
+            return 1.5f;
+        } else if (PokemonUtils.abilityIs(pokemonEntity, "sharpness") && Arrays.stream(CobblemonFightOrFlight.moveConfig().slicing_moves).toList().contains(moveName)) {
+            return 1.5f;
+        } else if (PokemonUtils.abilityIs(pokemonEntity, "punkrock") && Arrays.stream(CobblemonFightOrFlight.moveConfig().sound_based_moves).toList().contains(moveName)) {
+            return 1.5f;
+        }
+        if (type == ElementalTypes.FIRE && PokemonUtils.abilityIs(pokemonEntity, "firemane")) {
+            return 1.5f;
+        } else if (type == ElementalTypes.WATER && PokemonUtils.abilityIs(pokemonEntity, "waterbubble")) {
+            return 1.5f;
+        } else if (type == ElementalTypes.DRAGON && PokemonUtils.abilityIs(pokemonEntity, "dragonsmaw")) {
+            return 1.5f;
+        } else if (type == ElementalTypes.ROCK && PokemonUtils.abilityIs(pokemonEntity, "rocketpayload")) {
+            return 1.5f;
+        } else if (type == ElementalTypes.STEEL && (PokemonUtils.abilityIs(pokemonEntity, "steelworker") || PokemonUtils.abilityIs(pokemonEntity, "steelyspirit"))) {
+            return 1.5f;
+        } else if (type == ElementalTypes.ELECTRIC && (PokemonUtils.abilityIs(pokemonEntity, "transistor"))) {
+            return 1.3f;
+        }
+        if (isMelee && PokemonUtils.abilityIs(pokemonEntity, "toughclaw")) {
+            return 1.3f;
+        }
+        return 1f;
+    }
+
+    public static float getDefensiveAbilityMultiplier(PokemonEntity pokemonEntity, Entity target, float movePower, ElementalType type, String moveName, boolean isMelee) {
+        if (target instanceof PokemonEntity targetPokemon) {
+            if (type == ElementalTypes.FIRE && PokemonUtils.abilityIs(targetPokemon, "waterbubble")) {
+                return 0.6667f;
+            }
+        }
+        return 1f;
+    }
+
     public static float getHeldItemDmgMultiplier(PokemonEntity pokemonEntity, Entity target) {
         if (!FOFHeldItemManager.canUseHeldItemDamageInfluencing()) {
             return 1f;
@@ -223,7 +332,7 @@ public class PokemonAttackEffect {
         Move move = PokemonUtils.getMove(pokemonEntity);
         ElementalType type = null;
         if (move != null) {
-            type = move.getType();
+            type = modifyElementalTypeByAbility(pokemonEntity, move);
         }
 
         if (heldItem.is(CobblemonItems.LIFE_ORB)) {
@@ -404,8 +513,8 @@ public class PokemonAttackEffect {
         if (move == null) {
             return;
         }
-        makeTypeEffectParticle(particleAmount, pokemonEntity, move.getType().getName());
-        makeTypeEffectParticle(particleAmount, target, move.getType().getName());
+        makeTypeEffectParticle(particleAmount, pokemonEntity, modifyElementalTypeByAbility(pokemonEntity, move).getName());
+        makeTypeEffectParticle(particleAmount, target, modifyElementalTypeByAbility(pokemonEntity, move).getName());
     }
 
     public static void makeTypeEffectParticle(int particleAmount, Entity entity, String typeName) {
@@ -486,7 +595,7 @@ public class PokemonAttackEffect {
         }
 
         if (CobblemonFightOrFlight.commonConfig().activate_type_effect) {
-            applyTypeEffect(pokemonEntity, hurtTarget, move.getType().getName());
+            applyTypeEffect(pokemonEntity, hurtTarget, modifyElementalTypeByAbility(pokemonEntity, move).getName());
         }
 
         if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect && MoveData.moveData.containsKey(move.getName())) {
@@ -517,7 +626,7 @@ public class PokemonAttackEffect {
             addProjectileEntity(pokemonEntity, target, projectile);
             return;
         }
-        projectile.setElementalType(move.getType().getName());
+        projectile.setElementalType(modifyElementalTypeByAbility(pokemonEntity, move).getName());
         projectile.setDamage(calculatePokemonDamage(pokemonEntity, target, move));
         pokemonEntity.level().addFreshEntity(projectile);
     }
@@ -605,7 +714,7 @@ public class PokemonAttackEffect {
         }
         var aoe = AbstractPokemonAreaEffect.tryToCreate(pokemonEntity, target, move);
         if (aoe != null) {
-            aoe.setElementalType(move.getType().getName());
+            aoe.setElementalType(modifyElementalTypeByAbility(pokemonEntity, move).getName());
             pokemonEntity.level().addFreshEntity(aoe);
         }
     }
@@ -753,7 +862,7 @@ public class PokemonAttackEffect {
             if (bl) {
                 PokemonUtils.setHurtByPlayer(pokemonEntity, livingEntity);
                 applyOnHitVisualEffect(pokemonEntity, livingEntity, move);
-                makeTypeEffectParticle(10, livingEntity, move.getType().getName());
+                makeTypeEffectParticle(10, livingEntity, modifyElementalTypeByAbility(pokemonEntity, move).getName());
             }
         }
     }
@@ -867,7 +976,7 @@ public class PokemonAttackEffect {
                 hurtDamage = calculatePokemonDamage(pokemonEntity, hurtTarget, move);
             }
             if (hurtTarget instanceof LivingEntity livingEntity) {
-                makeTypeEffectParticle(10, livingEntity, move.getType().getName());
+                makeTypeEffectParticle(10, livingEntity, modifyElementalTypeByAbility(pokemonEntity, move).getName());
                 PokemonUtils.updateMoveEvolutionProgress(pokemon, move.getTemplate());
                 if (canUseMove(pokemonEntity) && CobblemonFightOrFlight.commonConfig().activate_move_effect) {
                     applyOnUseEffect(pokemonEntity, livingEntity, move);

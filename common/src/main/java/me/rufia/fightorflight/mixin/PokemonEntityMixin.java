@@ -569,7 +569,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
         if (passedTime >= chargeState && passedTime <= attackState) {
             Move move = PokemonUtils.getMove(self);
             if (move != null) {
-                PokemonUtils.makeParticle(2, self, PokemonAttackEffect.getParticleFromType(move.getType()));
+                PokemonUtils.makeParticle(2, self, PokemonAttackEffect.getParticleFromType(PokemonAttackEffect.modifyElementalTypeByAbility(self, move)));
             }
         }
         if (passedTime >= chargeState && passedTime == attackState - 5) {
