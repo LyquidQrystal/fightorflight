@@ -1,5 +1,3 @@
-# V0.11.2:
-
 ### TODO(Some of them are suggestions from the github issue. They're listed here so they will be added, but they might be added in the future update instead of this version):
 
 * Priority system for targeting
@@ -8,7 +6,8 @@
 * Alpha Pokemon Feature(Higher HP and damage)
 * Add a config option for the interval between Alpha switching moves.
 * Json file driven species behaviour
-* Fix the bug that multiple_bullet_moves and multiple_tracing_bullet_moves is not working correctly.
+
+# V0.11.2:
 
 ### New Features:
 
