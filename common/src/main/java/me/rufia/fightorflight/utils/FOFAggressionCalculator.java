@@ -5,6 +5,8 @@ import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import com.cobblemon.mod.common.pokemon.Pokemon;
 import com.cobblemon.mod.common.pokemon.PokemonSizeCategory;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import net.minecraft.tags.TagKey;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.AABB;
 
 import java.util.ArrayList;
@@ -117,6 +119,42 @@ public class FOFAggressionCalculator {
                     + getSideModExtraAggression(pokemonEntity);
         }
         return 0;
+    }
+
+    public static int biomeCheck(String biomeName) {
+        List<String> peacefulBiomeList = Arrays.stream(CobblemonFightOrFlight.commonConfig().peaceful_biome).toList();
+        List<String> neutralBiomeList = Arrays.stream(CobblemonFightOrFlight.commonConfig().neutral_biome).toList();
+        List<String> aggressiveBiomeList = Arrays.stream(CobblemonFightOrFlight.commonConfig().aggressive_biome).toList();
+        if (!peacefulBiomeList.isEmpty() && peacefulBiomeList.contains(biomeName)) {
+            return 0;
+        }
+        if (!neutralBiomeList.isEmpty() && neutralBiomeList.contains(biomeName)) {
+            return 1;
+        }
+        if (!aggressiveBiomeList.isEmpty() && aggressiveBiomeList.contains(biomeName)) {
+            return 2;
+        }
+        return -1;
+    }
+
+    public static double getBiomeValue(int val) {
+        //if val is not within the range, you shouldn't use this.
+        return switch (val) {
+            case 0 -> getPeacefulValue();
+            case 2 -> getAggressiveValue();
+            default -> getNeutralValue();
+        };
+    }
+
+    public static int biomeTagCheck(List<TagKey<Biome>> biomeTags) {
+        for (TagKey<Biome> tag : biomeTags) {
+            String name = "#" + tag.location();
+            int v = biomeCheck(name);
+            if (v != -1) {
+                return v;
+            }
+        }
+        return -1;
     }
 
 }

@@ -34,13 +34,14 @@
 * Priority system for targeting: attack targets are now arbitrated by priority (player command > self defense >
   defending the owner > provoked > auto battle > wild unprovoked aggro), so sensors and behaviors no longer overwrite
   each other.
+* Multi strike range attack works now.
+* Tags can be used in peaceful/neutral/aggressive biome list.
 
 ### Changes:
 
 * Reworked the pokemon state sync: the mod no longer injects accessors into `PokemonEntity#defineSynchedData`, it sends
   the state the client needs with a dedicated packet instead. This removes the incompatibility with other mods that
   mixin into the same method.
-* Multi strike range attack works better now.
 * Optimized projectile aiming.
 
 # V0.11.1:

@@ -25,7 +25,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 
@@ -105,19 +104,19 @@ public class CobblemonFightOrFlight {
             return FOFAggressionCalculator.getAggressiveValue();
         }
 
-        List<String> peacefulBiomeList = Arrays.stream(commonConfig().peaceful_biome).toList();
-        List<String> neutralBiomeList = Arrays.stream(commonConfig().neutral_biome).toList();
-        List<String> aggressiveBiomeList = Arrays.stream(commonConfig().aggressive_biome).toList();
-        String biomeName = pokemonEntity.level().getBiome(pokemonEntity.blockPosition()).getRegisteredName();
-        if (!peacefulBiomeList.isEmpty() && peacefulBiomeList.contains(biomeName)) {
-            return FOFAggressionCalculator.getPeacefulValue();
+        var biome = pokemonEntity.level().getBiome(pokemonEntity.blockPosition());
+        var biomeTags = biome.tags().toList();
+        String biomeName = biome.getRegisteredName();
+        int biomeCheckResult = FOFAggressionCalculator.biomeCheck(biomeName);
+        if (biomeCheckResult != -1) {
+            return FOFAggressionCalculator.getBiomeValue(biomeCheckResult);
+        } else {
+            int biomeTagCheckResult = FOFAggressionCalculator.biomeTagCheck(biomeTags);
+            if (biomeTagCheckResult != -1) {
+                return FOFAggressionCalculator.getBiomeValue(biomeTagCheckResult);
+            }
         }
-        if (!neutralBiomeList.isEmpty() && neutralBiomeList.contains(biomeName)) {
-            return FOFAggressionCalculator.getNeutralValue();
-        }
-        if (!aggressiveBiomeList.isEmpty() && aggressiveBiomeList.contains(biomeName)) {
-            return FOFAggressionCalculator.getAggressiveValue();
-        }
+
 
         return FOFAggressionCalculator.calc(pokemonEntity);
     }
