@@ -1,6 +1,5 @@
 ### TODO(Some of them are suggestions from the github issue. They're listed here so they will be added, but they might be added in the future update instead of this version):
 
-* Priority system for targeting
 * Split do_pokemon_defend_owner
 * Config to stop Pokemon being aggressive out of water
 * Alpha Pokemon Feature(Higher HP and damage)
@@ -32,6 +31,9 @@
     * Rocket Payload
     * Steel Worker
     * Tough Claw
+* Priority system for targeting: attack targets are now arbitrated by priority (player command > self defense >
+  defending the owner > provoked > auto battle > wild unprovoked aggro), so sensors and behaviors no longer overwrite
+  each other.
 
 ### Changes:
 

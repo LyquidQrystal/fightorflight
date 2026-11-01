@@ -3,40 +3,40 @@ package me.rufia.fightorflight.entity.ai.sensors;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
-import net.minecraft.server.level.ServerLevel;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import me.rufia.fightorflight.utils.FOFTargetPriority;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
-import net.minecraft.world.entity.ai.sensing.Sensor;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
-public class PokemonCaughtBySensor extends Sensor<PokemonEntity> {
+/**
+ * Holds a grudge after a failed capture. Priority {@link FOFTargetPriority#PROVOKED}: beats auto
+ * battle and wild unprovoked aggro, yields to player orders and owner defense.
+ */
+public class PokemonCaughtBySensor extends FOFPrioritizedTargetSensor {
     public PokemonCaughtBySensor() {
         super(10);
     }
 
     @Override
-    protected void doTick(ServerLevel level, PokemonEntity entity) {
-        if (!CobblemonFightOrFlight.commonConfig().failed_capture_counted_as_provocation) {
-            return;
-        }
-        if (entity.getOwner() == null) {
-            entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> setNearestTarget(entity, visibleLivingEntities));
-        }
+    public FOFTargetPriority priority() {
+        return FOFTargetPriority.PROVOKED;
     }
 
     @Override
-    public Set<MemoryModuleType<?>> requires() {
-        return Set.of(MemoryModuleType.ATTACK_TARGET);
+    protected boolean wantsTarget(PokemonEntity entity) {
+        if (!CobblemonFightOrFlight.commonConfig().failed_capture_counted_as_provocation) {
+            return false;
+        }
+        return entity.getOwner() == null;
     }
 
-    private void setNearestTarget(PokemonEntity pokemonEntity, NearestVisibleLivingEntities visibleMobs) {
-        int catcherUUID = ((PokemonInterface) pokemonEntity).getCapturedBy();
-        if (pokemonEntity.getBrain().checkMemory(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_PRESENT)) {
-            return;
+    @Override
+    protected @Nullable LivingEntity findTarget(PokemonEntity entity, @NotNull NearestVisibleLivingEntities visible) {
+        int catcherId = ((PokemonInterface) entity).getCapturedBy();
+        if (catcherId == 0) {
+            return null;
         }
-        var targetOpt = visibleMobs.findClosest(livingEntity -> catcherUUID == livingEntity.getId());
-        targetOpt.ifPresent(target -> pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, target));
+        return visible.findClosest(livingEntity -> livingEntity.getId() == catcherId).orElse(null);
     }
 }

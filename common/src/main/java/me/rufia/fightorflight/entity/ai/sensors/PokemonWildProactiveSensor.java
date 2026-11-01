@@ -2,40 +2,44 @@ package me.rufia.fightorflight.entity.ai.sensors;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
+import me.rufia.fightorflight.utils.FOFTargetPriority;
 import me.rufia.fightorflight.utils.PokemonUtils;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
-import net.minecraft.world.entity.ai.memory.MemoryStatus;
+import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
-import net.minecraft.world.entity.ai.sensing.Sensor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
-public class PokemonWildProactiveSensor extends Sensor<PokemonEntity> {
+/**
+ * Unprovoked aggro of a wild Pokemon. Lowest priority ({@link FOFTargetPriority#WILD_PROACTIVE}),
+ * only fills an empty slot and is always beaten by every other source.
+ */
+public class PokemonWildProactiveSensor extends FOFPrioritizedTargetSensor {
     public PokemonWildProactiveSensor() {
         super(10);
     }
 
     @Override
-    protected void doTick(ServerLevel level, PokemonEntity entity) {
-        if (!PokemonUtils.WildPokemonCanPerformUnprovokedAttack(entity)) {
-            return;
-        }
-        if (CobblemonFightOrFlight.getFightOrFlightCoefficient(entity) < CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD() || (CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack && entity.getLightLevelDependentMagicValue() >= 0.5f)) {
-            return;
-        }
-        entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> findTarget(entity, visibleLivingEntities));
+    public FOFTargetPriority priority() {
+        return FOFTargetPriority.WILD_PROACTIVE;
     }
 
     @Override
-    public @NotNull Set<MemoryModuleType<?>> requires() {
-        return Set.of(MemoryModuleType.ATTACK_TARGET);
+    protected boolean wantsTarget(PokemonEntity entity) {
+        if (!PokemonUtils.WildPokemonCanPerformUnprovokedAttack(entity)) {
+            return false;
+        }
+        if (CobblemonFightOrFlight.getFightOrFlightCoefficient(entity) < CobblemonFightOrFlight.AUTO_AGGRO_THRESHOLD()) {
+            return false;
+        }
+        //no unprovoked attacks once it is bright
+        return !(CobblemonFightOrFlight.commonConfig().light_dependent_unprovoked_attack
+                && entity.getLightLevelDependentMagicValue() >= 0.5f);
     }
 
-    private void findTarget(PokemonEntity pokemonEntity, NearestVisibleLivingEntities visibleLivingEntities) {
-        var nearestPlayer = visibleLivingEntities.findClosest(livingEntity -> {
+    @Override
+    protected @Nullable LivingEntity findTarget(PokemonEntity entity, @NotNull NearestVisibleLivingEntities visible) {
+        return visible.findClosest(livingEntity -> {
             if (livingEntity instanceof ServerPlayer player) {
                 if (player.isCreative() || player.isSpectator()) {
                     return false;
@@ -43,9 +47,6 @@ public class PokemonWildProactiveSensor extends Sensor<PokemonEntity> {
                 return !PokemonUtils.playerHasBattle(player);
             }
             return false;
-        });
-        if (pokemonEntity.getBrain().checkMemory(MemoryModuleType.ATTACK_TARGET, MemoryStatus.VALUE_ABSENT)) {
-            nearestPlayer.ifPresent(player -> pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, player));
-        }
+        }).orElse(null);
     }
 }

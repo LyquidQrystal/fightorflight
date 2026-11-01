@@ -2,6 +2,8 @@ package me.rufia.fightorflight.entity.ai.tasks;
 
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.utils.FOFTargetClaims;
+import me.rufia.fightorflight.utils.FOFTargetPriority;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.ai.behavior.OneShot;
@@ -26,8 +28,9 @@ public class FOFDefendSelfTask {
                                 }
                                 String cmdData = ((PokemonInterface) pokemonEntity).getCommandData();
                                 if (pokemonEntity.getOwner() == null || pokemonEntity.getOwner() != null && cmdData.isEmpty()) {
-                                    attackTargetAccessor.set(hurtByEntity);
-                                    return true;
+                                    //claim instead of writing memory directly, so a standing player order is not stolen
+                                    return FOFTargetClaims.tryClaim(pokemonEntity, hurtByEntity,
+                                            FOFTargetPriority.SELF_DEFENSE, FOFTargetClaims.TASK_CLAIM_LEASE);
                                 }
                             }
                             return false;

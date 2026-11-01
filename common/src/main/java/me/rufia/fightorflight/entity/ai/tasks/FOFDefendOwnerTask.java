@@ -2,6 +2,8 @@ package me.rufia.fightorflight.entity.ai.tasks;
 
 import com.cobblemon.mod.common.CobblemonMemories;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
+import me.rufia.fightorflight.utils.FOFTargetClaims;
+import me.rufia.fightorflight.utils.FOFTargetPriority;
 import me.rufia.fightorflight.utils.PokemonUtils;
 import net.minecraft.world.entity.ai.behavior.OneShot;
 import net.minecraft.world.entity.ai.behavior.declarative.BehaviorBuilder;
@@ -21,7 +23,9 @@ public class FOFDefendOwnerTask {
                                     return false;
                                 }
                             }
-                            attackTargetAccessor.set(attacker);
+                            //claim through the arbiter so a player order or self defense keeps precedence
+                            FOFTargetClaims.tryClaim(pokemonEntity, attacker,
+                                    FOFTargetPriority.OWNER_DEFENSE, FOFTargetClaims.TASK_CLAIM_LEASE);
                             return true;
                         })));
     }

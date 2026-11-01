@@ -3,17 +3,19 @@ package me.rufia.fightorflight.entity.ai.sensors;
 import com.cobblemon.mod.common.entity.pokemon.PokemonEntity;
 import me.rufia.fightorflight.CobblemonFightOrFlight;
 import me.rufia.fightorflight.PokemonInterface;
+import me.rufia.fightorflight.utils.FOFTargetPriority;
 import me.rufia.fightorflight.utils.PokemonUtils;
-import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.memory.MemoryModuleType;
 import net.minecraft.world.entity.ai.memory.NearestVisibleLivingEntities;
-import net.minecraft.world.entity.ai.sensing.Sensor;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.Set;
-
-public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
+/**
+ * Fights back when the owner is attacked / inherits the owner's target. Priority
+ * {@link FOFTargetPriority#OWNER_DEFENSE}, below a player order: once the player ordered an attack,
+ * the owner being hit does not drag the Pokemon away from it.
+ */
+public class PokemonHelpOwnerSensor extends FOFPrioritizedTargetSensor {
     private static final int REFRESH_RATE = 1200;
 
     public PokemonHelpOwnerSensor() {
@@ -21,44 +23,36 @@ public class PokemonHelpOwnerSensor extends Sensor<PokemonEntity> {
     }
 
     @Override
-    protected void doTick(ServerLevel level, PokemonEntity entity) {
-        if (!CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner) {
-            return;
-        }
-        var owner = entity.getOwner();
-        if (owner != null) {
-            entity.getBrain().getMemory(MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES).ifPresent(visibleLivingEntities -> setNearestTarget(entity, visibleLivingEntities, owner));
-        }
+    public FOFTargetPriority priority() {
+        return FOFTargetPriority.OWNER_DEFENSE;
     }
 
     @Override
-    public @NotNull Set<MemoryModuleType<?>> requires() {
-        return Set.of(MemoryModuleType.ATTACK_TARGET, MemoryModuleType.NEAREST_VISIBLE_LIVING_ENTITIES);
+    protected boolean wantsTarget(PokemonEntity entity) {
+        return CobblemonFightOrFlight.commonConfig().do_pokemon_defend_owner && entity.getOwner() != null;
     }
 
-    private void setNearestTarget(PokemonEntity pokemonEntity, NearestVisibleLivingEntities visibleMobs, LivingEntity owner) {
-        //Inherit the target. lastHurtBy will be cleared automatically
-        int ownerLastHurtTick = ((PokemonInterface) pokemonEntity).getOwnerLastHurtTick();
-        var ownerLastHurtTarget = ((PokemonInterface) pokemonEntity).getOwnerLastHurt();
+    @Override
+    protected @Nullable LivingEntity findTarget(PokemonEntity pokemonEntity, @NotNull NearestVisibleLivingEntities visibleMobs) {
+        var pokemon = (PokemonInterface) pokemonEntity;
+        //inherit the owner's latest target, expires on its own once it goes stale or is cleared
+        int ownerLastHurtTick = pokemon.getOwnerLastHurtTick();
+        var ownerLastHurtTarget = pokemon.getOwnerLastHurt();
         if (ownerLastHurtTarget != null && ownerLastHurtTarget.isAlive() && pokemonEntity.tickCount - ownerLastHurtTick < REFRESH_RATE) {
-            pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, ownerLastHurtTarget);
-            return;
+            return ownerLastHurtTarget;
         }
-        //Finding target
-        var nearestAttacker = visibleMobs.findClosest(livingEntity -> {
+        //otherwise look for whoever is attacking the owner
+        LivingEntity owner = pokemonEntity.getOwner();
+        LivingEntity nearestAttacker = visibleMobs.findClosest(livingEntity -> {
             var lastHurtByMob = livingEntity.getLastHurtByMob();
-            if (lastHurtByMob instanceof PokemonEntity pokemonEntity1) {
-                if (PokemonUtils.tryToAvoidWildShiny(pokemonEntity1)) {
+            if (lastHurtByMob instanceof PokemonEntity attacker) {
+                if (PokemonUtils.tryToAvoidWildShiny(attacker)) {
                     return false;
                 }
             }
             return lastHurtByMob != null && lastHurtByMob.is(owner);
-        });
-        //Trying to set target
-        LivingEntity livingEntity = nearestAttacker.orElse(null);
-        ((PokemonInterface) pokemonEntity).setOwnerLastHurt(livingEntity);
-        if (livingEntity != null) {
-            pokemonEntity.getBrain().setMemory(MemoryModuleType.ATTACK_TARGET, nearestAttacker);
-        }
+        }).orElse(null);
+        pokemon.setOwnerLastHurt(nearestAttacker);
+        return nearestAttacker;
     }
 }
