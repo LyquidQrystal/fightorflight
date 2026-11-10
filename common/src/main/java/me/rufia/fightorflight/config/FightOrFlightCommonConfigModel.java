@@ -259,14 +259,6 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     public float water_type_super_effective_dmg_multiplier = 2.0f;
     @Comment("Fire type damage will be not very effective against fire immune entity.(set to 0 if you want a complete immune)")
     public float fire_type_no_effect_dmg_multiplier = 0.1f;
-    @Comment("Ice type damage will be not very effective against entity that can't be frozen.(set to 0 if you want a complete immune)")
-    public float ice_type_no_effect_dmg_multiplier = 0.1f;
-    @Comment("Ice type damage will be more effective against entity that has a weaker resistant to the frost damage.")
-    public float ice_type_super_effective_dmg_multiplier = 2.0f;
-    @Comment("Poison type damage will be not very effective against undead mobs.(set to 0 if you want a complete immune)")
-    public float poison_type_no_effect_dmg_multiplier = 0.1f;
-    @Comment("If the Ender Dragon should have the Dragon Type weaknesses and resistances?")
-    public boolean ender_dragon_has_dragon_type = false;
     @ConfigEntry.Category("Health Calculation & Synchronization")
     @Comment("If you want to use FOF health mechanic. A different curve that was used in FOF previously. The following configurations needs this one to work.")
     public boolean shouldOverrideHealthMechanic = true;
@@ -328,22 +320,10 @@ public class FightOrFlightCommonConfigModel implements ConfigData {
     @Comment("If you want to set willFlee to true in Pokemon's combat behaviour of Cobblemon. Will only be enabled to Pokemon that won't attack.(Not aggressive enough/not allowed to attack by the config.")
     public boolean attack_in_peaceful_difficulty = true;
     @ConfigEntry.Category("Mod Compat")
-    @Comment("Sizes that will be recognized as S for FOF when you are using the basic sizer.(The default sizer)(Deprecated)")
-    public String[] size_S_basic_sizer = {"Tiny", "Small"};
-    @Comment("Sizes that will be recognized as M for FOF when you are using the basic sizer.(The default sizer)(Deprecated)")
-    public String[] size_M_basic_sizer = {"Average"};
-    @Comment("Sizes that will be recognized as L for FOF when you are using the basic sizer.(The default sizer)(Deprecated)")
-    public String[] size_L_basic_sizer = {"Big", "Large", "Huge"};
-    @Comment("Sizes that will be recognized as S for FOF when you are using the Gen9 sizer.(Deprecated)")
-    public String[] size_S_gen9_sizer = {"S", "XS", "XXS", "XXXS"};
-    @Comment("Sizes that will be recognized as M for FOF when you are using the Gen9 sizer.(Deprecated)")
-    public String[] size_M_gen9_sizer = {"M"};
-    @Comment("Sizes that will be recognized as L for FOF when you are using the Gen9 sizer.(Deprecated)")
-    public String[] size_L_gen9_sizer = {"L", "XL", "XXL", "XXXL"};
     @Comment("Sizes that will be recognized as L for FOF when you are using Cobblemon")
     public String[] size_S_cobblemon_sizer = {"S", "XS"};
     @Comment("Sizes that will be recognized as L for FOF when you are using Cobblemon")
-    public String[] size_M_cobblemon_sizer = {"L", "XL"};
+    public String[] size_M_cobblemon_sizer = {"M"};
     @Comment("Sizes that will be recognized as L for FOF when you are using Cobblemon")
     public String[] size_L_cobblemon_sizer = {"L", "XL"};
     @Comment("The extra aggression a Pokemon can get if it's size is S.")

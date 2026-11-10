@@ -14,5 +14,4 @@ dependencies {
 
     modApi("me.shedaniel.cloth:cloth-config:${project.properties["cloth_config_version"]}")
     modApi("dev.architectury:architectury:${project.properties["architectury_version"]}")
-    modImplementation("maven.modrinth:cobblemon-size-variations:${project.properties["cobblemon_size_variations_version"]}-fabric")
 }

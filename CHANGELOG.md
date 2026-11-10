@@ -43,6 +43,7 @@
   the state the client needs with a dedicated packet instead. This removes the incompatibility with other mods that
   mixin into the same method.
 * Optimized projectile aiming.
+* Remove some unused config options.
 
 # V0.11.1:
 
