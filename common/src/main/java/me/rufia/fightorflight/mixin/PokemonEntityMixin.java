@@ -202,7 +202,7 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
 
     public void setTarget(LivingEntity target) {
         super.setTarget(target);
-        setAttackTargetId(target.getId());
+        setAttackTargetId(target != null ? target.getId() : 0);
     }
 
     @Override

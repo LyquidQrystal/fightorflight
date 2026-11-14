@@ -1,5 +1,11 @@
 # V0.11.2:
 
+### Bug Fixes:
+
+* 修复一个会导致NullPointerException的bug。
+
+# V0.11.2:
+
 ### 新特性：
 
 * 以下的特性生效：

@@ -6,6 +6,12 @@
 * Add a config option for the interval between Alpha switching moves.
 * Json file driven species behaviour
 
+# V0.11.3:
+
+### Bug Fixes:
+
+* Fixed the bug that will cause a NullPointerException.
+
 # V0.11.2:
 
 ### New Features:
