@@ -6,6 +6,12 @@
 * Add a config option for the interval between Alpha switching moves.
 * Json file driven species behaviour
 
+# V0.11.4:
+
+### Bug Fixes:
+
+* Fix the bug that wild Pokemon can be hurt even if player hurting pokemon is disabled.
+
 # V0.11.3:
 
 ### Bug Fixes:
