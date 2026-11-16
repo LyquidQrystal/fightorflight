@@ -1,6 +1,7 @@
 package me.rufia.fightorflight.mixin;
 
 
+import com.cobblemon.mod.common.Cobblemon;
 import com.cobblemon.mod.common.CobblemonItems;
 import com.cobblemon.mod.common.api.moves.Move;
 import com.cobblemon.mod.common.api.moves.categories.DamageCategories;
@@ -446,11 +447,17 @@ public abstract class PokemonEntityMixin extends TamableAnimal implements Pokemo
             return true;
         }
 
-        if (!CobblemonFightOrFlight.commonConfig().pvp_immunity && getOwnerUUID() != null && (damageSource.getEntity() instanceof ServerPlayer player)) {
-            if (getBattleId() != null) {
-                CobblemonFightOrFlight.LOGGER.info("Occupied by a battle.");
+        if (damageSource.getEntity() instanceof ServerPlayer player) {
+            if (!Cobblemon.INSTANCE.getConfig().getPlayerDamagePokemon()) {
                 return true;
             }
+            if (CobblemonFightOrFlight.commonConfig().pvp_immunity && getOwnerUUID() != null) {
+                return true;
+            }
+        }
+        if (getBattleId() != null) {
+            CobblemonFightOrFlight.LOGGER.info("Occupied by a battle.");
+            return true;
         }
         return super.isInvulnerableTo(damageSource);
     }
